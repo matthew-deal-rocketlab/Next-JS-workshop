@@ -1,0 +1,101 @@
+#!/bin/sh
+# this script helps to manage the Directus container
+
+CONTAINER_NAME=rlwm-directus-dev
+APP_PORT=9002
+
+# Usually no need to change variables below
+DOCKER_NETWORK=bridge1
+
+set_password() {
+  AUTH_USER="$1"
+  AUTH_PASSWORD="$2"
+  SHOW_ERROR=""
+
+  if [ "$AUTH_USER" = "" ]; then SHOW_ERROR="1" ; fi
+  if [ "$AUTH_PASSWORD" = "" ]; then SHOW_ERROR="1" ; fi
+  if [ ! "$SHOW_ERROR" = "" ]; then
+    echo "Missing parameters:  Usage: ./run setpass <your_user> <your_password>"
+    exit 255
+  fi
+
+  docker run --rm --entrypoint htpasswd httpd:2.4-alpine -Bbn $AUTH_USER $AUTH_PASSWORD >> auth/htpasswd
+  
+  # openssl generated password does not work 2023-06-23
+  # echo "$AUTH_USER:$(openssl passwd -apr1 \"$AUTH_PASSWORD\")" > auth/htpasswd
+}
+
+app_init() {
+  if [ ! -d "$PWD/_data" ]; then
+    echo "Initializing application"
+    mkdir -p _data/opt/app
+    docker_start
+    docker exec -it $CONTAINER_NAME adduser --uid $(id -u) --gecos "" --disabled-password user1
+    docker exec -it $CONTAINER_NAME su - user1 -c 'echo "{\"name\":\"$CONTAINER_NAME\"}" > /opt/app/package.json'
+    docker exec -it $CONTAINER_NAME su - user1 -c 'cd /opt/app; npm init -y ; npm add directus'
+    # docker exec -it $CONTAINER_NAME su - user1 -c "cd /opt/app; ./node_modules/.bin/directus init"
+    docker_stop
+  else
+    echo "Application already initialized"
+  fi
+}
+
+docker_start() {
+  if [ "$(docker ps -a -q -f name=$CONTAINER_NAME)" ]; then
+    echo ">> Starting existing container:"
+    docker container start $CONTAINER_NAME
+  else
+    docker run -dit --restart=always \
+      -p $APP_PORT:8055 \
+      --network=$DOCKER_NETWORK \
+      -v $PWD/_data/opt:/opt \
+      -v $PWD/run:/opt/run \
+      --entrypoint /bin/sh \
+      --name $CONTAINER_NAME \
+      node:18-bookworm-slim \
+      /opt/run launch
+  fi
+}
+
+docker_stop() {
+  docker container stop $CONTAINER_NAME
+}
+
+docker_rm() {
+  docker container rm $CONTAINER_NAME
+}
+
+docker_term() {
+  docker exec -it $CONTAINER_NAME /bin/bash
+}
+
+app_launch() {
+  if [ ! -d /home/user1 ]; then adduser --uid 1002 --gecos "" --disabled-password user1 ; fi
+
+  grep 'PORT=' /opt/app/.env
+  if [ "$?" = "0" ]; then
+    su - user1 -c "cd /opt/app ; ./node_modules/.bin/directus start"
+  else
+    /bin/sh
+  fi
+}
+
+if [ "$1" = "init" ]; then app_init; exit $? ; fi
+
+if [ "$1" = "start" ]; then docker_start; exit $? ; fi
+if [ "$1" = "stop" ]; then docker_stop; exit $? ; fi
+if [ "$1" = "rm" ]; then docker_rm; exit $? ; fi
+
+if [ "$1" = "term" ]; then docker_term; exit $? ; fi
+if [ "$1" = "setpass" ]; then set_password "$2" "$3"; exit $? ; fi
+
+if [ "$1" = "launch" ]; then app_launch; exit $? ; fi
+
+if [ "$1" = "reset" ]; then
+  ./run stop ; ./run rm
+  rm -rf _data/
+  exit $?
+fi
+
+
+echo "Command not found"

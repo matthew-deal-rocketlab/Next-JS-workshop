@@ -1,0 +1,19 @@
+{
+  "name": "rlwm-api",
+  "license": "MIT",
+  "scripts": {
+    "start": "",
+    "dev": "",
+    "build": "esbuild src/index.ts --platform=node --bundle --minify --outfile=build/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.4.1",
+    "@types/pg": "^8.10.2",
+    "esbuild": "^0.18.11"
+  }
+}

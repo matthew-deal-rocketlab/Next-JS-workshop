@@ -1,0 +1,104 @@
+#!/bin/sh
+# This script helps you to quickly spin up a postgres database and manage it separate to your application
+
+# This script just needs 3 environment variables (put into .env file) to initialize a database
+# DB_DATABASE="test_db"
+# DB_USER="test_user"
+# DB_PASSWORD="XXXXX_YOUR_PASSWORD_XXXXX"
+
+APP_NAME=pgdb15
+DB_PORT=5432
+NET_NAME=bridge1
+
+# Command should always be run from this folder
+# cd /home/deploy/apps/pgdb15
+
+auto_create_bridge() {
+  docker network ls | grep "$NET_NAME" > /dev/null
+  if [ ! $? = 0 ]; then docker network create $NET_NAME; fi
+}
+
+app_init() {
+  auto_create_bridge
+  if [ ! -d "$PWD/_data/sql" ]; then
+    mkdir -p $PWD/_data/sql $PWD/_data/opt $PWD/backups
+  fi
+}
+
+
+docker_start() {
+  if [ ! -d $PWD/_data/sql ]; then
+    mkdir -p $PWD/_data/sql $PWD/_data/opt
+    chmod a+rw $PWD/_data/sql
+  fi
+
+  docker run -dt --restart=always \
+  -p $DB_PORT:5432 \
+  --net $NET_NAME \
+  -v "$PWD/_data/sql":/var/lib/postgresql/data \
+  -v "$PWD/_data/opt":/opt \
+  -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+  --name="$APP_NAME" postgres:15-alpine
+}
+
+docker_stop() {
+  docker stop -t 2 $APP_NAME
+}
+
+docker_rm() {
+  docker container rm $APP_NAME
+}
+
+docker_init() {
+  ENVFILE=$1
+  if [ -f $ENVFILE ]; then . $ENVFILE ; fi
+  if [ "$DB_USER" = "" ] || [ "$DB_PASSWORD" = "" ]; then echo "no credentials provided"; exit 255; fi
+  docker exec -t $APP_NAME psql -c "CREATE DATABASE $DB_DATABASE" postgres postgres
+  docker exec -t $APP_NAME psql -c "CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD'" "$DB_DATABASE" postgres
+  docker exec -t $APP_NAME psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_DATABASE TO $DB_USER;" "$DB_DATABASE" postgres
+  docker exec -t $APP_NAME psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_USER;" "$DB_DATABASE" postgres
+}
+
+docker_term() {
+  docker exec -it $APP_NAME /bin/bash
+}
+
+docker_export() {
+  EXP_DB_NAME="$1"
+  EXP_FILE="$2"
+  if [ "$EXP_FILE" = "" ]; then echo "no file specified" ; exit 255 ; fi
+  if [ "$EXP_DB_NAME" = "" ]; then echo "database must be specified" ; exit 255 ; fi
+  docker exec -t $APP_NAME /bin/sh -c "pg_dump -U postgres --no-owner -d $EXP_DB_NAME | gzip > /opt/tmpout.sql.gz"
+  mv _data/opt/tmpout.sql.gz $EXP_FILE
+}
+
+docker_import() {
+  INP_FILE="$1"
+  INP_DB="$2"
+  if [ "$INP_FILE" = "" ]; then echo "no file specified" ; exit 255 ; fi
+  if [ "$INP_DB" = "" ]; then echo "database must be specified" ; exit 255 ; fi
+  cp $INP_FILE _data/opt/tmp.sql.gz
+  docker exec -t $APP_NAME /bin/sh -c "gunzip -c /opt/tmp.sql.gz | psql -U postgres $INP_DB"
+  rm _data/opt/tmp.sql.gz 
+}
+
+docker_listdb() {
+  docker exec -it $APP_NAME psql -U postgres -c '\list'
+}
+
+if [ -f ./.env ]; then . ./.env ; fi
+
+if [ "$1" = "init" ]; then app_init ; exit $?; fi
+
+if [ "$1" = "start" ]; then auto_create_bridge ; docker_start; exit $?; fi
+if [ "$1" = "stop" ]; then docker_stop; exit $?; fi
+if [ "$1" = "rm" ]; then docker_rm; exit $?; fi
+
+if [ "$1" = "initdb" ]; then docker_init "$2"; exit $?; fi
+if [ "$1" = "term" ]; then docker_term; exit $?; fi
+
+if [ "$1" = "listdb" ]; then docker_listdb; exit $?; fi
+if [ "$1" = "export" ]; then docker_export "$2" "$3"; exit $?; fi
+if [ "$1" = "import" ]; then docker_import "$2" "$3"; exit $?; fi
+
+echo "Command not found: $1 $2 $3"

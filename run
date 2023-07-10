@@ -1,0 +1,8 @@
+#!/bin/sh
+
+
+if [ "$1" = "api-dev" ]; then cd api; node dev-watch.js ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "api-build" ]; then cd api; yarn build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+
+echo "Command not found"
+

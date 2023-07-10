@@ -1,0 +1,4 @@
+rlwm.rokt.io - main site
+cms.rlwm.rokt.io - directus
+
+mkdir rlwm-api-staging mkdir rlwm-directus-staging
