@@ -2,6 +2,7 @@ import express, { Express, NextFunction, Request, Response } from "express";
 
 import { API_HEADER, API_KEY, API_PREFIX } from "../constants";
 import { getTime, getVersion } from "../resolvers/utils";
+import { sysCheck } from "../resolvers/syscheck";
 
 const prnt = console.log;
 
@@ -49,6 +50,15 @@ const addRoutes = (app: Express) => {
         time: new Date().toISOString(),
         version: "2023.07.10",
       });
+    }
+  );
+
+  app.get(
+    `${API_PREFIX}/syscheck`,
+    async (req: Request, res: Response): Promise<Response> => {
+      const rc: ResolverContext = { userid: "", db: null };
+      const result = await sysCheck({}, rc);
+      return res.json(result);
     }
   );
 
