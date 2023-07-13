@@ -1,24 +1,28 @@
-import express, { Express, NextFunction, Request, Response } from "express";
+import express, { Express, NextFunction, Request, Response } from 'express';
 
-import { API_HEADER, API_KEY, API_PREFIX } from "../constants";
-import { getTime, getVersion } from "../resolvers/utils";
-import { sysCheck } from "../resolvers/syscheck";
+import { API_HEADER, API_KEY, API_PREFIX } from '../constants';
+import { getTime, getVersion } from '../resolvers/utils';
+import { sysCheck } from '../resolvers/syscheck';
+import { userLogin, userSignup } from '../resolvers/user';
+import { dbClose, dbConnect } from '../services/db';
 
 const prnt = console.log;
 
 const MAX_REQUESTS = 10;
 
 const resolverMap = new Map();
-resolverMap.set("time", getTime);
-resolverMap.set("version", getVersion);
+resolverMap.set('time', getTime);
+resolverMap.set('version', getVersion);
+resolverMap.set('userSignup', userSignup);
+resolverMap.set('userLogin', userLogin);
 
 const jsonErrorHandler = (
   err: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-  if (err instanceof SyntaxError && "body" in err) {
+  if (err instanceof SyntaxError && 'body' in err) {
     let formattedError = { status: 400, message: err.message };
     return res.status(400).json(formattedError);
   }
@@ -29,11 +33,11 @@ const funcWrapper = async (
   fnName: string,
   fn: Function,
   input: object,
-  rc: ResolverContext
+  rc: ResolverContext,
 ): Promise<object> => {
   const res = await fn(input, rc);
   // if returned object contains a key named `error` that is a string, then return the string instead
-  const output = typeof res.error === "string" ? res.error : res;
+  const output = typeof res.error === 'string' ? res.error : res;
 
   const result = new Map();
   result.set(fnName, output);
@@ -46,20 +50,20 @@ const addRoutes = (app: Express) => {
     (req: Request, res: Response): Response => {
       prnt(`${req.method} ${req.path}`);
       return res.json({
-        status: "ok",
+        status: 'ok',
         time: new Date().toISOString(),
-        version: "2023.07.10",
+        version: '2023.07.10',
       });
-    }
+    },
   );
 
   app.get(
     `${API_PREFIX}/syscheck`,
     async (req: Request, res: Response): Promise<Response> => {
-      const rc: ResolverContext = { userid: "", db: null };
+      const rc: ResolverContext = { userid: '', db: null };
       const result = await sysCheck({}, rc);
       return res.json(result);
-    }
+    },
   );
 
   app.post(
@@ -77,12 +81,12 @@ const addRoutes = (app: Express) => {
       // check input
       const reqKeys = Object.keys(req.body);
       if (reqKeys.length === 0)
-        return res.status(400).send({ error: "invalid request" });
+        return res.status(400).send({ error: 'invalid request' });
 
       // builder resolver context
       const rc: ResolverContext = {
-        userid: "",
-        db: null,
+        userid: '',
+        db: await dbConnect(),
       };
 
       const requests = [];
@@ -95,10 +99,20 @@ const addRoutes = (app: Express) => {
         if (keyCount > MAX_REQUESTS) break;
       }
 
-      const results = await Promise.all(requests);
+      const resultArray = await Promise.all(requests);
 
-      return res.json(results);
-    }
+      await dbClose(rc.db);
+
+      // reformat output from an array of objects to one object
+      let result: JsonQLOutput = {};
+      resultArray.forEach(resultItem => {
+        const key = Object.keys(resultItem)[0] ?? '';
+        // @ts-expect-error
+        result = Object.assign(result, { [key]: resultItem[key].result });
+      });
+
+      return res.json(result);
+    },
   );
 };
 

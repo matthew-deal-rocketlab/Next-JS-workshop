@@ -9,7 +9,19 @@ export DB_PORT=$DB_PORT
 export DB_HOST=$DB_HOST
 export PORT=$PORT
 
+export GAPP_EMAIL_URL=$GAPP_EMAIL_URL
+export GAPP_EMAIL_API_KEY=$GAPP_EMAIL_API_KEY
+
 if [ "$1" = "api-dev" ]; then cd api; node dev-watch.js ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "api-check" ]; then cd api; yarn type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "api-build" ]; then cd api; yarn build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+
+if [ "$1" = "dt-start" ]; then cd directus; ./run start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "dt-stop" ]; then cd directus; ./run stop ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "dt-export" ]; then cd directus; ./run export ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "dt-import" ]; then cd directus; ./run import "$2" ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+
+
+if [ "$1" = "web-dev" ]; then cd web; ./run start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
 echo "Command not found"

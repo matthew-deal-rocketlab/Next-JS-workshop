@@ -33,10 +33,21 @@ app_init() {
     docker exec -it $CONTAINER_NAME adduser --uid $(id -u) --gecos "" --disabled-password user1
     docker exec -it $CONTAINER_NAME su - user1 -c 'echo "{\"name\":\"$CONTAINER_NAME\"}" > /opt/app/package.json'
     docker exec -it $CONTAINER_NAME su - user1 -c 'cd /opt/app; npm init -y ; npm add directus'
-    # docker exec -it $CONTAINER_NAME su - user1 -c "cd /opt/app; ./node_modules/.bin/directus init"
+    docker exec -it $CONTAINER_NAME su - user1 -c "cd /opt/app; ./node_modules/.bin/directus init"
     docker_stop
   else
     echo "Application already initialized"
+  fi
+}
+
+app_config() {
+  if [ -f "$PWD/_data/opt/app//node_modules/.bin/directus" ]; then
+    echo "Starting Directus configuration ..."
+    docker_start
+    docker exec -it $CONTAINER_NAME su - user1 -c "cd /opt/app; ./node_modules/.bin/directus init"
+    docker_stop
+  else
+    echo "Application has not been initialized. Execute ./run init"
   fi
 }
 
@@ -72,7 +83,7 @@ docker_term() {
 app_launch() {
   if [ ! -d /home/user1 ]; then adduser --uid 1002 --gecos "" --disabled-password user1 ; fi
 
-  grep 'PORT=' /opt/app/.env
+  grep 'PORT=' /opt/app/.env > dev/null
   if [ "$?" = "0" ]; then
     su - user1 -c "cd /opt/app ; ./node_modules/.bin/directus start"
   else
@@ -80,7 +91,27 @@ app_launch() {
   fi
 }
 
+app_container_run() {
+  COMMAND="$1"
+  grep 'PORT=' _data/opt/app/.env > /dev/null
+  if [ "$?" = "0" ]; then
+    docker exec -it $CONTAINER_NAME /bin/sh -c "$COMMAND"
+  fi
+}
+
+app_export() {
+  app_container_run "su - user1 -c \"cd /opt/app ; ./node_modules/.bin/directus schema snapshot -y --format json directus_schema.json\""
+}
+
+app_import() {
+  SCHEMA_FILENAME="$1"
+  app_container_run "su - user1 -c \"cd /opt/app ; ./node_modules/.bin/directus schema apply -y $SCHEMA_FILENAME\""
+}
+
+# Initialize application
 if [ "$1" = "init" ]; then app_init; exit $? ; fi
+# Configur Directus
+if [ "$1" = "config" ]; then app_config; exit $? ; fi
 
 if [ "$1" = "start" ]; then docker_start; exit $? ; fi
 if [ "$1" = "stop" ]; then docker_stop; exit $? ; fi
@@ -90,6 +121,9 @@ if [ "$1" = "term" ]; then docker_term; exit $? ; fi
 if [ "$1" = "setpass" ]; then set_password "$2" "$3"; exit $? ; fi
 
 if [ "$1" = "launch" ]; then app_launch; exit $? ; fi
+
+if [ "$1" = "export" ]; then app_export; exit $? ; fi
+if [ "$1" = "import" ]; then app_import "$2"; exit $? ; fi
 
 if [ "$1" = "reset" ]; then
   ./run stop ; ./run rm

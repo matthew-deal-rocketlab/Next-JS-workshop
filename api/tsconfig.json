@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "lib": [
-      "es2022"
-    ],
+    "lib": ["es2022"],
     "strict": true,
     "module": "commonjs",
     "rootDir": "src",
@@ -23,14 +21,12 @@
     "allowUnreachableCode": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    // "noImplicitAny": false,
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "tests"
-  ],
+  "include": ["src", "../_docs/gmail.js"],
+  "exclude": ["node_modules", "tests"],
+  "typeRoots": ["./src"], // "./node_modules/@types", 
+  "types": ["express", "node", "pg"],
   "ts-node": {
     "transpileOnly": true,
     "compilerOptions": {
