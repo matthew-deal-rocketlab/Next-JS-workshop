@@ -2,17 +2,17 @@
 API_NAME=rlwm-api
 
 if [ -f ./.env ]; then . ./.env ; fi
+if [ -f ./env.settings ]; then . ./env.settings ; fi
 export DB_DATABASE=$DB_DATABASE
 export DB_USER=$DB_USER
 export DB_PASSWORD=$DB_PASSWORD
 export DB_PORT=$DB_PORT
 export DB_HOST=$DB_HOST
-export PORT=$PORT
 
 export GAPP_EMAIL_URL=$GAPP_EMAIL_URL
 export GAPP_EMAIL_API_KEY=$GAPP_EMAIL_API_KEY
 
-if [ "$1" = "api-dev" ]; then cd api; node dev-watch.js ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "api-dev" ]; then cd api; PORT=$API_PORT node dev-watch.js ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "api-check" ]; then cd api; yarn type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "api-build" ]; then cd api; yarn build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
@@ -22,6 +22,9 @@ if [ "$1" = "dt-export" ]; then cd directus; ./run export ; EXITCODE=$? ; cd .. 
 if [ "$1" = "dt-import" ]; then cd directus; ./run import "$2" ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
 
-if [ "$1" = "web-dev" ]; then cd web; ./run start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "web-dev" ]; then cd web; PORT=$WEB_PORT yarn dev ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "web-build" ]; then cd web; yarn build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "web-start" ]; then cd web; PORT=$WEB_PORT yarn start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+
 
 echo "Command not found"
