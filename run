@@ -26,5 +26,20 @@ if [ "$1" = "web-dev" ]; then cd web; PORT=$WEB_PORT yarn dev ; EXITCODE=$? ; cd
 if [ "$1" = "web-build" ]; then cd web; yarn build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "web-start" ]; then cd web; PORT=$WEB_PORT yarn start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
+if [ "$1" = "start-all" ]; then
+  osascript -e "tell application \"Terminal\"
+      activate
+      do script \"cd $PWD ; ./run web-dev\"
+      set current settings of selected tab of window 1 to settings set \"Grass\"
+      end tell"
+
+  sleep 2
+
+  osascript -e "tell application \"Terminal\"
+      activate
+      do script \"cd $PWD ; ./run api-dev\"
+      set current settings of selected tab of window 1 to settings set \"Ocean\"
+      end tell"
+fi
 
 echo "Command not found"
