@@ -34,7 +34,7 @@ const FormInput = ({
 }: InputProps) => {
   return (
     <StyledInputContainer id={`${id}-container`}>
-      <StyledInput id={id} name={name || id} {...restProps} />
+      <StyledInput id={id} name={name || id} {...restProps} type={type} />
       {error && <StyledError>{error}</StyledError>}
     </StyledInputContainer>
   );
