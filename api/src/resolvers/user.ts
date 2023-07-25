@@ -1,5 +1,6 @@
 import { dbQuery } from '../services/db';
 import {
+  ERROR_DB_UPDATE,
   ERROR_INVALID_CREDENTIALS,
   ERROR_NO_DB,
   RESULT_OK,
@@ -8,6 +9,7 @@ import {
 import { getUserJWT, getUserRefreshToken, hashPassword } from '../utils/auth';
 import { uuidv4 } from '../utils/misc';
 import { sendEmail } from '../services/email';
+import { updateTable } from '../utils/db';
 
 const getUserbyEmail = async (
   db: DBConnection,
@@ -59,7 +61,7 @@ const addUser = async (
 };
 
 // Adds a user in the system
-const userSignup = async (input: JsonQLInput, rc: ResolverContext) => {
+export const userSignup = async (input: JsonQLInput, rc: ResolverContext) => {
   if (!rc.db) return ERROR_NO_DB;
 
   // get input parameters
@@ -84,7 +86,7 @@ const userSignup = async (input: JsonQLInput, rc: ResolverContext) => {
   return { result: addResult.value };
 };
 
-const userLogin = async (input: JsonQLInput, rc: ResolverContext) => {
+export const userLogin = async (input: JsonQLInput, rc: ResolverContext) => {
   if (!rc.db) return ERROR_NO_DB;
 
   // get input parameters
@@ -121,7 +123,7 @@ const userLogin = async (input: JsonQLInput, rc: ResolverContext) => {
 };
 
 // Initiates sending an email to reset password
-const userForgotPassword = async (input: JsonQLInput, rc: ResolverContext) => {
+export const userForgotPassword = async (input: JsonQLInput, rc: ResolverContext) => {
   if (!rc.db) return ERROR_NO_DB;
 
   // get input parameters
@@ -145,4 +147,15 @@ const userForgotPassword = async (input: JsonQLInput, rc: ResolverContext) => {
   return RESULT_OK;
 };
 
-export { userSignup, userLogin, userForgotPassword };
+export const userUpdate = async (input: JsonQLInput, rc: ResolverContext) => {
+  if (!rc.db) return ERROR_NO_DB;
+
+  const userId = rc.userid;
+  if (!userId) return ERROR_INVALID_CREDENTIALS;
+
+  const allowedFields = ['firstname', 'lastname', 'email'];
+  const result = await updateTable(input, rc, 'tbl_users', allowedFields, `id='${userId}'`);
+  if (result.error) return { error: result.error };
+
+  return RESULT_OK;
+}

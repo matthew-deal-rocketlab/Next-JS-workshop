@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 
-import { APP_SECRET, JWT_SECRET } from '../constants';
-import { btoa, uuidv4 } from './misc';
+import { APP_SECRET, JWT_EXPIRY_INTERVAL, JWT_SECRET } from '../constants';
+import { btoa, atob } from './converters';
+import { uuidv4 } from './misc';
+import { Request } from 'express';
 
 export const hashPassword = (pass: string, salt: string): string => {
   const hash = crypto.createHash('sha256');
@@ -46,3 +48,29 @@ export const getUserRefreshToken = (userID: string) => {
 
   return generateJWT(payload, JWT_SECRET);
 };
+
+// If validated, returns the userId in .result or error message in .error
+export const validateToken = (req: Request): FnResult => {
+  const jwtRaw = (req.headers['authorization'] ?? '').replace('Bearer ', '');
+  const jwtParts = jwtRaw.split('.')
+  if (jwtParts.length !== 3) return { error: 'error: token invalid(1)' };
+
+  const jwtPayload = (jwtParts[1] ?? '') as string;
+  let payload = null
+  try {
+    payload = JSON.parse(atob(jwtPayload));
+  } catch (_) { }
+  if (payload === null) return { error: 'error: token invalid(2)' };
+
+  // check date
+  const now = new Date();
+  let expiry = new Date(payload.iat * 1000)
+  expiry.setSeconds(expiry.getSeconds() + JWT_EXPIRY_INTERVAL);
+  if (now > expiry) return { error: 'error: token expired' };
+
+  // check signature
+  const calculated = generateJWT(payload, JWT_SECRET);
+  if (calculated !== jwtRaw) return { error: 'error: token invalid(3)' };
+
+  return { result: payload.sub };
+}
