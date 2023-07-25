@@ -10,9 +10,11 @@ export const defaultTheme: DefaultTheme = {
     labelText: 'white',
     bodyText: 'white',
     // neutral colors
-    white: '#e2e2e2',
+    white: '#fff',
     dark: '#595959',
     dark2: '#353535	',
+    light: '#e2e2e2',
+    light2: '#f2f2f2',
 
     // Generated palette
     'Columbia blue': '#bfd7ea',
@@ -32,6 +34,12 @@ export const themeStatic = {
     // desktop: '1024px', plus
   },
   font: 'Arial',
+  fontSizes: {
+    small: '12px',
+    medium: '16px',
+    large: '20px',
+    xlarge: '24px',
+  },
   spacing: {
     formfieldY: '5px',
     formfieldX: '10px',

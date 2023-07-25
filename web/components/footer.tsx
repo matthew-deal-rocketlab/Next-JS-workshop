@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
 import styled from 'styled-components';
-import { menuItems } from '@/utils/data';
-import { IMenuItem } from './types';
+import { themeStatic } from '@/theme';
 
 const Label = styled.div`
-  font-size: 14px;
+  font-size: ${themeStatic.fontSizes.medium};
   color: ${({ theme }) => theme.colors.white};
   padding: 0 10px;
 `;
@@ -19,10 +17,10 @@ const FooterContainer = styled.nav`
   border-right: 1px solid #212529;
 `;
 const Title = styled.div`
-  font-size: 16px;
+  font-size: ${themeStatic.fontSizes.medium};
   margin: 0;
   color: ${({ theme }) => theme.colors.primary};
-  font-family: 700;
+  font-weight: 700;
 `;
 
 const Footer = () => {

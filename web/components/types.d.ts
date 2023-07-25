@@ -7,5 +7,6 @@ interface ISimpleProps {
 interface IMenuItem {
   index: number;
   label: string;
-  link: string;
+  link?: string;
+  items?: IMenuItem[];
 }
