@@ -28,7 +28,7 @@ const DrawerContainer = styled.div<{ $isDrawerOpen: boolean }>`
 const Title = styled.h1`
   font-size: ${themeStatic.fontSizes.xlarge};
   padding: 500px 0x;
-  font-weight: 700;
+  font-weight: ${themeStatic.fontWeight.bold};
   color: ${({ theme }) => theme.colors.titleText};
 `;
 
@@ -54,6 +54,7 @@ const GroupMenuItem = styled(MenuItem)`
   align-items: center;
   text-align: center;
   padding-left: 10%;
+  margin: 0px 10px;
 `;
 
 // REFACTOR: use a button component
@@ -83,12 +84,12 @@ const MenuItemContainer = styled.div`
 `;
 
 // REFACTOR: Use a arrow image
-const Arrow = styled.div<{ isOpen: boolean }>`
+const Arrow = styled.div<{ $isOpen: boolean }>`
   background-repeat: no-repeat;
   background-size: cover;
   align-self: flex-end;
   margin-left: -50%;
-  rotate: ${({ isOpen }) => (isOpen ? '90deg' : '270deg')};
+  rotate: ${({ $isOpen }) => ($isOpen ? '90deg' : '270deg')};
 `;
 
 const Drawer = ({
@@ -131,19 +132,19 @@ const Drawer = ({
               $isActive={item.index === activeItem}
               onClick={() => handleClickeableMenuItemClick(item)}>
               {item.label}
-              <Arrow isOpen={isMenuOpen && activeItem === item.index}>
+              <Arrow $isOpen={isMenuOpen && activeItem === item.index}>
                 {'>'}
               </Arrow>
             </GroupMenuItem>
             {isMenuOpen &&
               activeItem === item.index &&
               item.items.map((item, subindex) => (
-                <MenuItem
+                <GroupMenuItem
                   key={`menu--${item.index}`}
                   $isActive={index === activeItem && subindex === activeSubItem}
                   onClick={() => handleSubMenuItemClick(item)}>
                   {item.label}
-                </MenuItem>
+                </GroupMenuItem>
               ))}
           </MenuItemContainer>
         ) : (

@@ -40,6 +40,10 @@ export const themeStatic = {
     large: '20px',
     xlarge: '24px',
   },
+  fontWeight: {
+    normal: 500,
+    bold: 700,
+  },
   spacing: {
     formfieldY: '5px',
     formfieldX: '10px',

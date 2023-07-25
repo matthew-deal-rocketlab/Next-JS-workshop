@@ -23,7 +23,7 @@ const NavbarContainer = styled.nav`
 const Title = styled.h1`
   font-size: ${themeStatic.fontSizes.xlarge};
   margin: 0;
-  font-weight: 700;
+  font-weight: ${themeStatic.fontWeight.bold};
   color: ${({ theme }) => theme.colors.titleText};
 `;
 
