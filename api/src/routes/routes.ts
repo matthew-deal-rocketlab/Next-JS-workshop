@@ -3,8 +3,9 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import { API_HEADER, API_KEY, API_PREFIX } from '../constants';
 import { getTime, getVersion } from '../resolvers/utils';
 import { sysCheck } from '../resolvers/syscheck';
-import { userLogin, userSignup } from '../resolvers/user';
+import { userLogin, userSignup, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
+import { validateToken } from '../utils/auth';
 
 const prnt = console.log;
 
@@ -15,6 +16,7 @@ resolverMap.set('time', getTime);
 resolverMap.set('version', getVersion);
 resolverMap.set('userSignup', userSignup);
 resolverMap.set('userLogin', userLogin);
+resolverMap.set('userUpdate', userUpdate);
 
 const jsonErrorHandler = (
   err: Error,
@@ -31,7 +33,7 @@ const jsonErrorHandler = (
 
 const funcWrapper = async (
   fnName: string,
-  fn: Function,
+  fn: (o: object, r: ResolverContext) => Promise<FnResult>,
   input: object,
   rc: ResolverContext,
 ): Promise<object> => {
@@ -39,9 +41,8 @@ const funcWrapper = async (
   // if returned object contains a key named `error` that is a string, then return the string instead
   const output = typeof res.error === 'string' ? res.error : res;
 
-  const result = new Map();
-  result.set(fnName, output);
-  return Object.fromEntries(result);
+  if (typeof output === 'string' || typeof output.result === 'string') return { [fnName]: output };
+  return { [fnName]: output.result };
 };
 
 const addRoutes = (app: Express) => {
@@ -84,8 +85,9 @@ const addRoutes = (app: Express) => {
         return res.status(400).send({ error: 'invalid request' });
 
       // builder resolver context
+      const userIdOrError = validateToken(req);
       const rc: ResolverContext = {
-        userid: '',
+        userid: userIdOrError.result ?? '',
         db: await dbConnect(),
       };
 
@@ -106,9 +108,7 @@ const addRoutes = (app: Express) => {
       // reformat output from an array of objects to one object
       let result: JsonQLOutput = {};
       resultArray.forEach(resultItem => {
-        const key = Object.keys(resultItem)[0] ?? '';
-        // @ts-expect-error
-        result = Object.assign(result, { [key]: resultItem[key].result });
+        result = Object.assign(result, resultItem);
       });
 
       return res.json(result);

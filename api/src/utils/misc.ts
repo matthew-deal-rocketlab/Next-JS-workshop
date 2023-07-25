@@ -6,8 +6,6 @@ export const sleep = (ms: number): Promise<void> => {
   });
 };
 
-export const btoa = (str: string) => Buffer.from(str).toString('base64');
-
 export const uuidv4 = (includeDashes: boolean = true) => {
   // @ts-expect-error
   const uuid = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(

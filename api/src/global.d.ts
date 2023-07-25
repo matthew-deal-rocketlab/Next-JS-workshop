@@ -1,17 +1,15 @@
 import { Client } from 'pg';
 
-export {};
-
 declare global {
   type DBConnection = Client;
 
   type JsonQLInput = {
     [key: string]:
-      | string
-      | number
-      | boolean
-      | Array<string | number | boolean>
-      | JsonQLInput;
+    | string
+    | number
+    | boolean
+    | Array<string | number | boolean>
+    | JsonQLInput;
   };
 
   type JsonQLOutput = JsonQLInput;
@@ -19,6 +17,12 @@ declare global {
   interface ResolverContext {
     userid: string;
     db: DBConnection | null;
+  }
+
+  // Generic type that returns a string for an error or a string as a result
+  interface FnResult {
+    error?: string
+    result?: string
   }
 
   // interface for returning simple success values
