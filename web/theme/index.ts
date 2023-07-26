@@ -1,3 +1,4 @@
+import { inter, roboto } from '@/utils/fonts';
 import { DefaultTheme } from 'styled-components';
 
 export const defaultTheme: DefaultTheme = {
@@ -33,7 +34,10 @@ export const themeStatic = {
     tablet: '1023px',
     // desktop: '1024px', plus
   },
-  font: 'Arial',
+  font: {
+    roboto: roboto.style.fontFamily,
+    inter: inter.style.fontFamily,
+  },
   fontSizes: {
     small: '12px',
     medium: '16px',
@@ -41,7 +45,7 @@ export const themeStatic = {
     xlarge: '24px',
   },
   fontWeight: {
-    normal: 500,
+    normal: 400,
     bold: 700,
   },
   spacing: {

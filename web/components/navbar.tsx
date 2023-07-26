@@ -24,8 +24,8 @@ const NavbarContainer = styled.nav`
 const Title = styled.h1`
   font-size: ${themeStatic.fontSizes.xlarge};
   margin: 0;
-  font-weight: ${themeStatic.fontWeight.bold};
   color: ${({ theme }) => theme.colors.titleText};
+  font-family: ${themeStatic.font.inter};
 `;
 
 const MenuOptions = styled.div`
@@ -72,7 +72,7 @@ const DropdownItem = styled.a`
   }
 `;
 
-// TODO: manage the state of the menu and the drawer with something persistent with context
+// TODO: manage the state of the menu and the drawer with something persistent like context
 
 const Navbar = () => {
   const { push } = useRouter();

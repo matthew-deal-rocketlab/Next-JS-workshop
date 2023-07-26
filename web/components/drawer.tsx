@@ -27,10 +27,9 @@ const DrawerContainer = styled.div<{ $isDrawerOpen: boolean }>`
 
 // REFACTOR: use or create reusable components
 const Title = styled.h1`
-  font-size: ${themeStatic.fontSizes.xlarge};
-  padding: 500px 0x;
-  font-weight: ${themeStatic.fontWeight.bold};
   color: ${({ theme }) => theme.colors.titleText};
+  font-size: ${themeStatic.fontSizes.xlarge};
+  font-weight: ${themeStatic.fontWeight.bold};
 `;
 
 const MenuItem = styled.div<{ $isActive: boolean }>`
