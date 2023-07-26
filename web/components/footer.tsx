@@ -4,21 +4,25 @@ import { themeStatic } from '@/theme';
 const Label = styled.div`
   font-size: ${themeStatic.fontSizes.medium};
   color: ${({ theme }) => theme.colors.white};
-  padding: 0 10px;
+  padding: 0 20px;
 `;
 const FooterContainer = styled.nav`
-  height: 60px;
+  height: 80px;
   display: flex;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.dark2};
-  padding: 10px 40px;
 `;
 const Title = styled.div`
   font-size: ${themeStatic.fontSizes.medium};
   margin: 0;
   color: ${({ theme }) => theme.colors.primary};
   font-weight: ${themeStatic.fontWeight.bold};
+  padding: 0 20px;
 `;
 
 const Footer = () => {
