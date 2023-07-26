@@ -5,17 +5,27 @@ import { menuItems } from '@/utils/data';
 import { themeStatic } from '@/theme';
 import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@/components';
 
-const DrawerContainer = styled.div<{ $isDrawerOpen: boolean }>`
+interface IDrawerProps {
+  $isDrawerOpen: boolean;
+  $position: 'left' | 'right';
+}
+
+const DrawerContainer = styled.div<IDrawerProps>`
   text-align: center;
   height: 100vh;
   width: 50%;
   position: absolute;
   z-index: 1;
   top: 0;
-  right: 0;
+  ${({ $position }) => ($position === 'left' ? 'left: 0;' : 'right: 0;')}
   background-color: ${({ theme }) => theme.colors.dark2};
   overflow-x: hidden;
-  transform: translateX(${({ $isDrawerOpen }) => ($isDrawerOpen ? 0 : 100)}%);
+  transform: translateX(
+    ${({ $isDrawerOpen, $position }) => {
+      const traslation = $position === 'left' ? -100 : 100;
+      return $isDrawerOpen ? 0 : traslation;
+    }}%
+  );
   transition: transform 0.5s;
   @media (min-width: ${themeStatic.breakpoints.mobile}) {
     width: 30%;
@@ -57,12 +67,12 @@ const GroupMenuItem = styled(MenuItem)`
 `;
 
 const Button = styled.button`
-  width: 20%;
-  float: right;
+  position: absolute;
+  right: 0;
   background-color: transparent;
   border: none;
   border-radius: 5px;
-  padding: 10px 20px;
+  padding: 10px;
   cursor: pointer;
   &:hover {
     background-color: ${({ theme }) => theme.colors.dark};
@@ -76,13 +86,16 @@ const MenuItemContainer = styled.div`
   overflow: hidden;
 `;
 
+interface Props {
+  isDrawerOpen: boolean;
+  setIsDrawerOpen: (value: boolean) => void;
+  position?: 'left' | 'right';
+}
 const Drawer = ({
   setIsDrawerOpen,
   isDrawerOpen,
-}: {
-  isDrawerOpen: boolean;
-  setIsDrawerOpen: any;
-}) => {
+  position = 'right',
+}: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(menuItems[0].index);
   const [activeSubItem, setActiveSubItem] = useState<number | null>();
@@ -105,7 +118,7 @@ const Drawer = ({
   };
 
   return (
-    <DrawerContainer $isDrawerOpen={isDrawerOpen}>
+    <DrawerContainer $isDrawerOpen={isDrawerOpen} $position={position}>
       <Button onClick={() => setIsDrawerOpen(false)}>
         <XMarkIcon
           height={15}
