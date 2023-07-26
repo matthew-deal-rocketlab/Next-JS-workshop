@@ -11,7 +11,6 @@ import BarsIcon from './icons/bars';
 const NavbarContainer = styled.nav`
   height: 60px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.dark2};
   color: #ffffff;
@@ -23,15 +22,21 @@ const NavbarContainer = styled.nav`
 
 const Title = styled.h1`
   font-size: ${themeStatic.fontSizes.xlarge};
-  margin: 0;
+  margin: 0 auto;
   color: ${({ theme }) => theme.colors.titleText};
   font-family: ${themeStatic.font.inter};
+  text-align: center;
+  @media (min-width: ${themeStatic.breakpoints.mobile}) {
+    margin: 0px;
+  }
 `;
 
 const MenuOptions = styled.div`
+  margin: 0 auto;
   display: none;
-  @media (min-width: ${themeStatic.breakpoints.small}) {
-  display: flex;
+  @media (min-width: ${themeStatic.breakpoints.mobile}) {
+    display: flex;
+  }
 `;
 
 const MenuItem = styled.div<{ $isActive: boolean }>`
@@ -43,14 +48,13 @@ const MenuItem = styled.div<{ $isActive: boolean }>`
 `;
 
 const Button = styled.button<{ $isDrawerOpen: boolean }>`
-  display: ${({ $isDrawerOpen }) => ($isDrawerOpen ? 'none' : 'flex')};
   background-color: ${({ theme }) => theme.colors.light};
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
-  @media (min-width: ${themeStatic.breakpoints.small}) {
-    display: flex;
+  @media (min-width: ${themeStatic.breakpoints.mobile}) {
+    display: none;
   }
   &:hover {
     background-color: ${({ theme }) => theme.colors.light2};
@@ -88,8 +92,19 @@ const Navbar = () => {
   };
   return (
     <NavbarContainer>
+      <Button
+        $isDrawerOpen={isDrawerOpen}
+        onClick={() => {
+          setIsDrawerOpen(!isDrawerOpen);
+        }}>
+        <BarsIcon height={20} width={20} />
+      </Button>
       <Title>My Website</Title>
-      <Drawer setIsDrawerOpen={setIsDrawerOpen} isDrawerOpen={isDrawerOpen} />
+      <Drawer
+        setIsDrawerOpen={setIsDrawerOpen}
+        isDrawerOpen={isDrawerOpen}
+        position="left"
+      />
       <>
         <MenuOptions>
           {menuItems.map((item, index) =>
@@ -122,13 +137,6 @@ const Navbar = () => {
             Login
           </MenuItem>
         </MenuOptions>
-        <Button
-          $isDrawerOpen={isDrawerOpen}
-          onClick={() => {
-            setIsDrawerOpen(!isDrawerOpen);
-          }}>
-          <BarsIcon height={20} width={20} />
-        </Button>
       </>
     </NavbarContainer>
   );
