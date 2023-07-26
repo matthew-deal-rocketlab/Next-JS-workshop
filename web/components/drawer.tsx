@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { IMenuItem } from './types';
 import { menuItems } from '@/utils/data';
 import { themeStatic } from '@/theme';
+import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@/components';
 
 const DrawerContainer = styled.div<{ $isDrawerOpen: boolean }>`
   text-align: center;
@@ -54,24 +55,18 @@ const GroupMenuItem = styled(MenuItem)`
   align-items: center;
   text-align: center;
   padding-left: 10%;
-  margin: 0px 10px;
 `;
 
-// REFACTOR: use a button component
 const Button = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.buttonText};
+  width: 20%;
+  float: right;
+  background-color: transparent;
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-
   &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
+    background-color: ${({ theme }) => theme.colors.dark};
   }
   &:focus {
     outline: none;
@@ -79,17 +74,7 @@ const Button = styled.button`
 `;
 
 const MenuItemContainer = styled.div`
-  display: block;
   overflow: hidden;
-`;
-
-// REFACTOR: Use a arrow image
-const Arrow = styled.div<{ $isOpen: boolean }>`
-  background-repeat: no-repeat;
-  background-size: cover;
-  align-self: flex-end;
-  margin-left: -50%;
-  rotate: ${({ $isOpen }) => ($isOpen ? '90deg' : '270deg')};
 `;
 
 const Drawer = ({
@@ -122,7 +107,14 @@ const Drawer = ({
 
   return (
     <DrawerContainer $isDrawerOpen={isDrawerOpen}>
-      <Button onClick={() => setIsDrawerOpen(false)}>Close</Button>
+      <Button onClick={() => setIsDrawerOpen(false)}>
+        <XMarkIcon
+          height={15}
+          width={15}
+          fill="white"
+          onClick={() => setIsDrawerOpen(false)}
+        />
+      </Button>
       <Title>Menu</Title>
       {menuItems.map((item, index) =>
         item.items ? (
@@ -132,9 +124,11 @@ const Drawer = ({
               $isActive={item.index === activeItem}
               onClick={() => handleClickeableMenuItemClick(item)}>
               {item.label}
-              <Arrow $isOpen={isMenuOpen && activeItem === item.index}>
-                {'>'}
-              </Arrow>
+              {isMenuOpen && activeItem === item.index ? (
+                <ArrowUpIcon fill="white" height={10} width={10} />
+              ) : (
+                <ArrowDownIcon fill="white" height={10} width={10} />
+              )}
             </GroupMenuItem>
             {isMenuOpen &&
               activeItem === item.index &&

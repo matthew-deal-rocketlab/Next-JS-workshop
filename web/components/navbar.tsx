@@ -6,6 +6,7 @@ import { IMenuItem } from './types';
 import Drawer from './drawer';
 import { themeStatic } from '@/theme';
 import Dropdown from './dropdown';
+import BarsIcon from './icons/bars';
 
 const NavbarContainer = styled.nav`
   height: 60px;
@@ -41,23 +42,18 @@ const MenuItem = styled.div<{ $isActive: boolean }>`
   cursor: pointer;
 `;
 
-// REFACTOR: use a button component
 const Button = styled.button<{ $isDrawerOpen: boolean }>`
   display: ${({ $isDrawerOpen }) => ($isDrawerOpen ? 'none' : 'flex')};
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.buttonText};
+  background-color: ${({ theme }) => theme.colors.light};
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
   @media (min-width: ${themeStatic.breakpoints.small}) {
-    display: none;
+    display: flex;
   }
   &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
+    background-color: ${({ theme }) => theme.colors.light2};
   }
   &:focus {
     outline: none;
@@ -131,10 +127,8 @@ const Navbar = () => {
           onClick={() => {
             setIsDrawerOpen(!isDrawerOpen);
           }}>
-          Icon
+          <BarsIcon height={20} width={20} />
         </Button>
-
-        {isDrawerOpen && <>Drawer</>}
       </>
     </NavbarContainer>
   );

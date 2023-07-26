@@ -13,8 +13,6 @@ const FooterContainer = styled.nav`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.dark2};
   padding: 10px 40px;
-  border-left: 1px solid #212529;
-  border-right: 1px solid #212529;
 `;
 const Title = styled.div`
   font-size: ${themeStatic.fontSizes.medium};
