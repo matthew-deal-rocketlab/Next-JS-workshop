@@ -3,7 +3,7 @@ import { ThemeProvider } from 'styled-components';
 
 import '@/styles/globals.css';
 import { defaultTheme } from '@/theme';
-import { roboto } from '@/utils/fonts';
+import { roboto } from '@/theme/fonts';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

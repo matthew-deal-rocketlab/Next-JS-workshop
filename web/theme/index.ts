@@ -1,4 +1,4 @@
-import { inter, roboto } from '@/utils/fonts';
+import { inter, roboto } from '@/theme/fonts';
 import { DefaultTheme } from 'styled-components';
 
 export const defaultTheme: DefaultTheme = {
