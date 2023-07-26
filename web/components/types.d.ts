@@ -1,5 +1,12 @@
-import { ReactNode } from 'react'
+import { ReactNode } from 'react';
 
 interface ISimpleProps {
-  children: ReactNode
+  children: ReactNode;
+}
+
+interface IMenuItem {
+  index: number;
+  label: string;
+  link?: string;
+  items?: IMenuItem[];
 }
