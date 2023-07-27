@@ -2,6 +2,9 @@
 
 import { Client, ClientConfig, QueryResult } from 'pg';
 
+const DEBUG_SQL = true
+
+
 export const dbConnect = async (): Promise<DBConnection> => {
   const dbOptions: ClientConfig = {
     // postgres://user:password@host:5432/database
@@ -22,7 +25,9 @@ export const dbQuery = async (
   sql: string,
   values?: any[],
 ): Promise<QueryResult<any>> => {
+  if (DEBUG_SQL) console.log(sql);
   if (values) {
+    if (DEBUG_SQL) console.log(values);
     return await db.query(sql, values);
   } else {
     return await db.query(sql);

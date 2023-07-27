@@ -3,7 +3,8 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import { API_HEADER, API_KEY, API_PREFIX } from '../constants';
 import { getTime, getVersion } from '../resolvers/utils';
 import { sysCheck } from '../resolvers/syscheck';
-import { userLogin, userSignup, userUpdate } from '../resolvers/user';
+import { authForgotPassword, authLogin, authLogout, authResetPassword, authSignup, authVerify } from '../resolvers/auth';
+import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateToken } from '../utils/auth';
 
@@ -14,9 +15,19 @@ const MAX_REQUESTS = 10;
 const resolverMap = new Map();
 resolverMap.set('time', getTime);
 resolverMap.set('version', getVersion);
-resolverMap.set('userSignup', userSignup);
-resolverMap.set('userLogin', userLogin);
+
+// authentication
+resolverMap.set('authSignup', authSignup);
+resolverMap.set('authVerify', authVerify);
+resolverMap.set('authForgotPassword', authForgotPassword);
+resolverMap.set('authResetPassword', authResetPassword);
+resolverMap.set('authLogin', authLogin);
+resolverMap.set('authLogout', authLogout);
+
+// user management
+resolverMap.set('userRead', userRead);
 resolverMap.set('userUpdate', userUpdate);
+
 
 const jsonErrorHandler = (
   err: Error,
