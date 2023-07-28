@@ -38,7 +38,18 @@ const StyledButton = styled.button<ButtonProps>`
   color: white;
   background-color: ${(props: ButtonProps) =>
     props.bgColor || props.theme!.colors.primary};
-  font-family: ${themeStatic.font};
+  border: none;
+  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.5);
+  &:hover {
+    cursor: pointer;
+    background-color: ${(props: ButtonProps) => props.theme!.colors.tertiary};
+  }
+  &:focus {
+    outline: none;
+  }
+  &:active {
+    transform: translateY(1px);
+  }
 `;
 
 const Button = ({

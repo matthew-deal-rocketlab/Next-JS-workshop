@@ -9,8 +9,9 @@ interface LabelProps {
 }
 
 const StyledLabel = styled.label<LabelProps>`
-  color: ${props => props.theme.colors.labelText};
-  font-family: ${themeStatic.font};
+  color: ${props => props.theme.colors.primary};
+  font-family: ${themeStatic.font.inter};
+  font-size: ${themeStatic.fontSizes.normal};
 `;
 
 const FormLabel = ({ htmlFor, ...restProps }: LabelProps) => {

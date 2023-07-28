@@ -8,8 +8,8 @@ interface LabelProps {
 }
 
 const StyledTitle = styled.h3<LabelProps>`
-  color: ${props => props.theme.colors.titleText};
-  font-family: ${themeStatic.font};
+  color: ${props => props.theme.colors.primary};
+  font-family: ${themeStatic.font.inter};
   margin: 5px 0;
 `;
 

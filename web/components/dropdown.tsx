@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import { IMenuItem } from './types';
+import { themeStatic } from '@/theme';
 
 // ** This dropdown requires a title component and an item component **
 
@@ -14,7 +15,7 @@ const DropdownContent = styled.div`
   background-color: ${({ theme }) => theme.colors.white};
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: ${themeStatic.zIndex.two};
   border-radius: 5px;
 
   ${DropdownContainer}:hover & {
@@ -44,7 +45,7 @@ const Dropdown = ({
       <DropdownContent>
         {items.map((item, index) => (
           <Item
-            key={`dropdownItem-${index}-${item.index}`}
+            key={`dropdownItem-${index}-${item.id}`}
             onClick={() => handleDropdownItemClick(item)}>
             {item.label}
           </Item>

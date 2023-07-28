@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { menuItems } from '@/utils/data';
 import { IMenuItem } from './types';
-import Drawer from './drawer';
 import { themeStatic } from '@/theme';
 import Dropdown from './dropdown';
 import BarsIcon from './icons/bars';
+import { UiContext } from '@/context/ui-context';
 
 const NavbarContainer = styled.nav`
   height: 60px;
@@ -17,7 +17,7 @@ const NavbarContainer = styled.nav`
   padding: 10px 20px;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: ${themeStatic.zIndex.one};
 `;
 
 const Title = styled.h1`
@@ -76,35 +76,27 @@ const DropdownItem = styled.a`
   }
 `;
 
-// TODO: manage the state of the menu and the drawer with something persistent like context
-
 const Navbar = () => {
+  const uiData = useContext(UiContext);
+  const { navbarActive, setUiData, isDrawerOpen } = uiData;
   const { push } = useRouter();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState(menuItems[0].index);
   const handleMenuItemClick = (item: IMenuItem) => {
-    setActiveItem(item.index);
+    setUiData({ ...uiData, navbarActive: item.id });
 
     // Add any logic you want to perform when a menu item is clicked
   };
   const handleDropdownItemClick = (item: IMenuItem) => {
     // Add any logic you want to perform when a Dropdown menu item is clicked
   };
+  const handleOpenDrawer = () => {
+    setUiData({ ...uiData, isDrawerOpen: true });
+  };
   return (
     <NavbarContainer>
-      <Button
-        $isDrawerOpen={isDrawerOpen}
-        onClick={() => {
-          setIsDrawerOpen(!isDrawerOpen);
-        }}>
+      <Button $isDrawerOpen={isDrawerOpen} onClick={handleOpenDrawer}>
         <BarsIcon height={20} width={20} />
       </Button>
       <Title>My Website</Title>
-      <Drawer
-        setIsDrawerOpen={setIsDrawerOpen}
-        isDrawerOpen={isDrawerOpen}
-        position="left"
-      />
       <>
         <MenuOptions>
           {menuItems.map((item, index) =>
@@ -120,8 +112,8 @@ const Navbar = () => {
               />
             ) : (
               <MenuItem
-                key={`menu--${item.index}`}
-                $isActive={item.index === activeItem}
+                key={`menu--${item.id}`}
+                $isActive={item.id === navbarActive}
                 onClick={() => handleMenuItemClick(item)}>
                 {item.label}
               </MenuItem>
@@ -132,9 +124,9 @@ const Navbar = () => {
             $isActive={false}
             key={`login`}
             onClick={() => {
-              push('/login');
+              push('/dashboard2');
             }}>
-            Login
+            Dashboard2
           </MenuItem>
         </MenuOptions>
       </>

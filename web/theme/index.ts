@@ -12,6 +12,7 @@ export const defaultTheme: DefaultTheme = {
     bodyText: 'white',
     // neutral colors
     white: '#fff',
+    black: '#000',
     dark: '#595959',
     dark2: '#353535	',
     light: '#e2e2e2',
@@ -39,7 +40,9 @@ export const themeStatic = {
     inter: inter.style.fontFamily,
   },
   fontSizes: {
+    mini: '10px',
     small: '12px',
+    normal: '14px',
     medium: '16px',
     large: '20px',
     xlarge: '24px',
@@ -51,5 +54,11 @@ export const themeStatic = {
   spacing: {
     formfieldY: '5px',
     formfieldX: '10px',
+  },
+  zIndex: {
+    zero: 0,
+    one: 1,
+    two: 2,
+    three: 3,
   },
 };
