@@ -1,7 +1,7 @@
-import React, { ReactNode } from 'react';
 import styled from 'styled-components';
-import { IMenuItem } from './types';
+
 import { themeStatic } from '@/theme';
+import { IMenuItem } from './types';
 
 // ** This dropdown requires a title component and an item component **
 

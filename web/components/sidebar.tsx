@@ -1,11 +1,12 @@
-// write a container for the sidebar
-import { themeStatic } from '@/theme';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import styled from 'styled-components';
-import Collapsible from './collapsible';
+
+import { themeStatic } from '@/theme';
 import { menuItems } from '@/utils/data';
 import { UiContext } from '@/context/ui-context';
 import { IMenuItem } from './types';
+import { Collapsible } from '.';
+
 const SidebarContainer = styled.div`
   color: ${({ theme }) => theme.colors.light2};
   background-color: ${({ theme }) => theme.colors.primary};

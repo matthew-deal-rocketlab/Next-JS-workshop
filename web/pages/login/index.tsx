@@ -1,15 +1,17 @@
 import * as React from 'react';
 import { useRouter } from 'next/router';
 
-import PageLayoutFullPage from '@/components/page-layouts/page-layout-fullpage';
-import Card from '@/components/card';
-import Form from '@/components/form';
-import FormRow from '@/components/form/field';
-import FormLabel from '@/components/form/label';
-import FormInput from '@/components/form/input';
-import Button from '@/components/button';
 import { isEmail } from '@/utils/validators';
-import FormTitle from '@/components/form/title';
+import {
+  Button,
+  Card,
+  Form,
+  FormInput,
+  FormLabel,
+  FormRow,
+  FormTitle,
+  PageLayoutFullPage,
+} from '@/components';
 
 interface formFields {
   email: string;

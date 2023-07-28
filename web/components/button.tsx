@@ -1,7 +1,4 @@
-import React from 'react';
 import styled, { DefaultTheme, StyleSheetManager } from 'styled-components';
-
-import { themeStatic } from '@/theme';
 
 interface ButtonProps {
   children: React.ReactNode;

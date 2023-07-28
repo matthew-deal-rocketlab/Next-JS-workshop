@@ -1,5 +1,4 @@
-import PageLayout3Part from '@/components/page-layouts/page-layout-3part';
-import React from 'react';
+import { PageLayout3Part } from '@/components';
 import styled from 'styled-components';
 
 //create a container with a background color

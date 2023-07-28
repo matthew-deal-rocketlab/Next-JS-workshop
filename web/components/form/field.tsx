@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import styled, { StyleSheetManager } from 'styled-components';
 
 import { themeStatic } from '@/theme';

@@ -1,5 +1,4 @@
-import React, { FormEventHandler, ReactNode } from 'react';
-import styled from 'styled-components';
+import { FormEventHandler, ReactNode } from 'react';
 
 interface FormProps {
   id?: string;

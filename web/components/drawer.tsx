@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import styled from 'styled-components';
 
 import { themeStatic } from '@/theme';
-import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@/components';
-import Sidebar from './sidebar';
+import { ArrowDownIcon, ArrowUpIcon, Sidebar, XMarkIcon } from '@/components';
 import { UiContext } from '@/context/ui-context';
 
 interface IDrawerProps {
@@ -69,41 +68,3 @@ const Drawer = ({ position = 'right' }: Props) => {
 };
 
 export default Drawer;
-{
-  /* <Title>Menu</Title>
-{menuItems.map((item, index) =>
-  item.items ? (
-    // Is a group menu item
-    <MenuItemContainer key={`sub-menu-${index}-${item.id}`}>
-      <GroupMenuItem
-        $isActive={item.id === activeItem}
-        onClick={() => handleClickeableMenuItemClick(item)}>
-        {item.label}
-        {isMenuOpen && activeItem === item.id ? (
-          <ArrowUpIcon fill="white" height={10} width={10} />
-        ) : (
-          <ArrowDownIcon fill="white" height={10} width={10} />
-        )}
-      </GroupMenuItem>
-      {isMenuOpen &&
-        activeItem === item.id &&
-        item.items.map((item, subindex) => (
-          <GroupMenuItem
-            key={`menu--${item.id}`}
-            $isActive={index === activeItem && subindex === activeSubItem}
-            onClick={() => handleSubMenuItemClick(item)}>
-            {item.label}
-          </GroupMenuItem>
-        ))}
-    </MenuItemContainer>
-  ) : (
-    // Is a simple menu item
-    <MenuItem
-      key={`menu--${item.id}`}
-      $isActive={item.id === activeItem}
-      onClick={() => handleMenuItemClick(item)}>
-      {item.label}
-    </MenuItem>
-  ),
-)} */
-}

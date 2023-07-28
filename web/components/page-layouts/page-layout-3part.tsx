@@ -1,13 +1,12 @@
 // TODO
 
-import styled from 'styled-components';
-import Footer from '../footer';
-import Navbar from '../navbar';
-import { ISimpleProps } from '../types';
-import Drawer from '../drawer';
-import { UiContext } from '@/context/ui-context';
 import { useContext } from 'react';
+import styled from 'styled-components';
+
 import { themeStatic } from '@/theme';
+import { UiContext } from '@/context/ui-context';
+import { ISimpleProps } from '../types';
+import { Drawer, Footer, Navbar } from '..';
 
 // write a container for the content of the page that will be passed in as a prop to this component with max widf of 1440 and min height of 100vh
 const ContentContainer = styled.div`

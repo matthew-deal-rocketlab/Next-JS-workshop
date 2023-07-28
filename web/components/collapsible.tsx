@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, useRef, useEffect } from 'react';
+import { useState, ReactNode, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 type CollapsibleProps = {

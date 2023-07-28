@@ -1,4 +1,3 @@
-import React, { ReactNode, ReactPropTypes } from 'react';
 import styled from 'styled-components';
 import { ISimpleProps } from '../types';
 // it is possible here add a aprop to change the background

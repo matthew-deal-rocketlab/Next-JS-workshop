@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+
 import { menuItems } from '@/utils/data';
-import { IMenuItem } from './types';
 import { themeStatic } from '@/theme';
-import Dropdown from './dropdown';
-import BarsIcon from './icons/bars';
 import { UiContext } from '@/context/ui-context';
+import { IMenuItem } from './types';
+import { BarsIcon, Dropdown } from '.';
 
 const NavbarContainer = styled.nav`
   height: 60px;

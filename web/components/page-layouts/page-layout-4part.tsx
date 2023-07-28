@@ -1,9 +1,7 @@
 import styled from 'styled-components';
-import Footer from '../footer';
-import Navbar from '../navbar';
+
 import { ISimpleProps } from '../types';
-import Sidebar from '../sidebar';
-import { themeStatic } from '@/theme';
+import { Footer, Navbar, Sidebar } from '..';
 
 // write a container for the content of the page that will be passed in as a prop to this component with max widf of 1440 and min height of 100vh
 const ContentContainer = styled.div`
