@@ -1,11 +1,12 @@
 import { useContext } from 'react';
-import styled from 'styled-components';
+import { useRouter } from 'next/router';
+import styled, { useTheme } from 'styled-components';
 
 import { themeStatic } from '@/theme';
 import { menuItems } from '@/utils/data';
 import { UiContext } from '@/context/ui-context';
 import { IMenuItem } from './types';
-import { Collapsible } from '.';
+import { ArrowDownIcon, ArrowUpIcon, Collapsible } from '.';
 
 const SidebarContainer = styled.div`
   color: ${({ theme }) => theme.colors.light2};
@@ -16,7 +17,7 @@ const SidebarContainer = styled.div`
 `;
 const Title = styled.h1`
   text-align: left;
-  color: ${({ theme }) => theme.colors.titleText};
+  color: ${({ theme }) => theme.colors.light2};
   font-size: ${themeStatic.fontSizes.xlarge};
   font-weight: ${themeStatic.fontWeight.bold};
   padding: 5px 20px;
@@ -24,7 +25,10 @@ const Title = styled.h1`
   margin-top: 20px;
 `;
 
-const SidebarItem = styled.div<{ $isActive: boolean }>`
+const SidebarItem = styled.div<{ $isActive: boolean; $display?: string }>`
+  display: ${({ $display }) => $display || 'block'};
+  justify-content: space-between;
+  align-items: center;
   transition: background-color 0.4s ease;
   text-align: left;
   background-color: ${({ $isActive, theme }) =>
@@ -40,13 +44,26 @@ const SidebarItem = styled.div<{ $isActive: boolean }>`
   &:focus {
     outline: none;
   }
+  @media (max-width: ${themeStatic.breakpoints.mobile}) {
+    padding: 10px;
+  }
 `;
 
 const Sidebar = () => {
+  const theme = useTheme();
+  const { push } = useRouter();
   const uiData = useContext(UiContext);
   const { sidebarActive, subSidebarActive, setUiData } = uiData;
   const handleSidebarItemClick = (item: IMenuItem) => {
-    setUiData({ ...uiData, sidebarActive: item.id, subSidebarActive: '' });
+    setUiData({
+      ...uiData,
+      sidebarActive: item.id,
+      navbarActive: item.id,
+      subSidebarActive: '',
+    });
+    if (item.link) {
+      push(item.link!);
+    }
   };
   const handleSidebarSubItemClick = (item: IMenuItem, subItem: IMenuItem) => {
     setUiData({
@@ -66,9 +83,15 @@ const Sidebar = () => {
             key={index}
             title={
               <SidebarItem
+                $display="flex"
                 $isActive={sidebarActive === item.id}
                 onClick={() => handleSidebarItemClick(item)}>
                 {item.label}
+                <ArrowDownIcon
+                  height={10}
+                  width={10}
+                  fill={theme.colors.light2}
+                />
               </SidebarItem>
             }>
             {item.items.map((subItem, index) => (

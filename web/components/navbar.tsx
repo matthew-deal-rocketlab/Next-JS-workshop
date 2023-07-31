@@ -81,7 +81,9 @@ const Navbar = () => {
   const { navbarActive, setUiData, isDrawerOpen } = uiData;
   const { push } = useRouter();
   const handleMenuItemClick = (item: IMenuItem) => {
-    setUiData({ ...uiData, navbarActive: item.id });
+    setUiData({ ...uiData, navbarActive: item.id, sidebarActive: item.id });
+    console.log('item', item);
+    push(item.link!);
 
     // Add any logic you want to perform when a menu item is clicked
   };
@@ -119,15 +121,6 @@ const Navbar = () => {
               </MenuItem>
             ),
           )}
-          {/* Just for navigation convenience, remove after */}
-          <MenuItem
-            $isActive={false}
-            key={`login`}
-            onClick={() => {
-              push('/dashboard2');
-            }}>
-            Dashboard2
-          </MenuItem>
         </MenuOptions>
       </>
     </NavbarContainer>

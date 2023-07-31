@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import { ISimpleProps } from '../types';
 import { Footer, Navbar, Sidebar } from '..';
+import { themeStatic } from '@/theme';
 
 // write a container for the content of the page that will be passed in as a prop to this component with max widf of 1440 and min height of 100vh
 const ContentContainer = styled.div`
@@ -10,6 +11,9 @@ const ContentContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.light};
   margin: 0 auto;
   padding: 20px;
+  @media (max-width: ${themeStatic.breakpoints.mobile}) {
+    padding: 20px 1px;
+  }
 `;
 const GlobalContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.dark};
@@ -24,15 +28,18 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 5fr;
   grid-template-rows: 100%;
+  @media (max-width: ${themeStatic.breakpoints.mobile}) {
+    grid-template-columns: 1fr 2fr;
+  }
 `;
 
-const PageLayout4Part = (props: ISimpleProps) => {
+const PageLayout4Part = ({ children }: ISimpleProps) => {
   return (
     <GlobalContainer>
       <Navbar />
       <Grid>
         <Sidebar />
-        <ContentContainer>Content</ContentContainer>
+        <ContentContainer>{children}</ContentContainer>
       </Grid>
       <Footer />
     </GlobalContainer>

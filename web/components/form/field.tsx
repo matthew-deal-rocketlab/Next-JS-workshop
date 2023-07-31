@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import styled, { StyleSheetManager } from 'styled-components';
 
 import { themeStatic } from '@/theme';
@@ -7,9 +7,13 @@ interface FormRowProps {
   align?: 'left' | 'center' | 'right';
   fullwidth?: boolean;
   children: ReactNode;
+  width?: string;
 }
 const StyledFormRow = styled.div<FormRowProps>`
-  width: 100%;
+  width: ${props => props.width || '100%'};
+  @media (max-width: ${themeStatic.breakpoints.mobile}) {
+    width: 100%;
+  }
   margin-top: ${themeStatic.spacing.formfieldY};
   margin-bottom: ${themeStatic.spacing.formfieldY};
   display: ${(props: FormRowProps) => (props.fullwidth ? 'flex' : 'block')};

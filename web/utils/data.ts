@@ -6,22 +6,22 @@ export const menuItems: IMenuItem[] = [
   {
     id: 'f47a8e5c-6e04-4ca0-b98a-b9e9a3b15e19',
     label: 'Home',
-    link: '/',
+    link: '/signup',
   },
   {
     id: '649dcb2d-8a2f-4e5e-9564-6a6af9a07d57',
-    label: 'About',
-    link: '/about',
+    label: 'Profile',
+    link: '/update-profile',
   },
   {
     id: '19744b1a-2654-439e-a297-b40f35ac7761',
-    label: 'Services',
-    link: '/services',
+    label: 'Dashboard',
+    link: '/dashboard',
   },
   {
     id: '9a795e59-6512-4b8e-8782-2aa232ac3a1e',
-    label: 'Contact',
-    link: '/contact',
+    label: 'Dashboard2',
+    link: '/dashboard2',
   },
   {
     id: '20d63b2c-18cc-432f-8d7d-e43e6a3677c1',
@@ -47,6 +47,7 @@ export const menuItems: IMenuItem[] = [
   {
     id: '5e85c650-8e84-4e87-9e14-ef2a0c072620',
     label: 'Dropdown 2',
+
     items: [
       {
         id: 'e349d356-1975-4332-9f39-3ec1971e6bcf',
