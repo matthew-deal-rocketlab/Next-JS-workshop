@@ -1,12 +1,13 @@
 import { useState, ReactNode, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
-type CollapsibleProps = {
+import { ICommonProps } from '@/types';
+
+interface CollapsibleProps extends ICommonProps {
   title: ReactNode;
-  children: ReactNode;
 };
 
-type ContentProps = {
+interface ContentProps {
   $expanded: boolean;
   $height: number;
 };

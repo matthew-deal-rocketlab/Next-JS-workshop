@@ -5,11 +5,11 @@
 import { ReactNode } from "react";
 import { ThemeType, CSSProperties } from "styled-components";
 
-// Generic input props for components
-interface ISimpleProps {
+// Common props for all custom components
+interface ICommonProps {
   children?: ReactNode;
   theme?: ThemeType;
-  style?: CSSProperties;
+  style?: CSSProperties; // allows overriding styles for a component
 }
 
 interface IMenuItem {

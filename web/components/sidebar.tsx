@@ -2,11 +2,16 @@ import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import styled, { useTheme } from 'styled-components';
 
+import { IMenuItem } from "@/types";
 import { themeStatic } from '@/theme';
-import { menuItems } from '@/utils/data';
 import { UiContext } from '@/context/ui-context';
-import { IMenuItem } from './types';
 import { ArrowDownIcon, ArrowUpIcon, Collapsible } from '.';
+import { ICommonProps } from '@/types';
+
+interface ISidebarProps {
+  title: string;
+  menuItems: IMenuItem[];
+}
 
 const SidebarContainer = styled.div`
   color: ${({ theme }) => theme.colors.light2};
@@ -49,7 +54,7 @@ const SidebarItem = styled.div<{ $isActive: boolean; $display?: string }>`
   }
 `;
 
-const Sidebar = () => {
+const Sidebar = ({ title, menuItems }: ISidebarProps) => {
   const theme = useTheme();
   const { push } = useRouter();
   const uiData = useContext(UiContext);
@@ -58,8 +63,6 @@ const Sidebar = () => {
     setUiData({
       ...uiData,
       sidebarActive: item.id,
-      navbarActive: item.id,
-      subSidebarActive: '',
     });
     if (item.link) {
       push(item.link!);
@@ -75,7 +78,7 @@ const Sidebar = () => {
 
   return (
     <SidebarContainer>
-      <Title>Title side</Title>
+      <Title>{title}</Title>
       <hr />
       {menuItems.map((item, index) =>
         item.items ? (

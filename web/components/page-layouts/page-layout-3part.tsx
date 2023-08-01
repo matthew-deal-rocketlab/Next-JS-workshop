@@ -5,8 +5,9 @@ import styled from 'styled-components';
 
 import { themeStatic } from '@/theme';
 import { UiContext } from '@/context/ui-context';
-import { ISimpleProps } from '@/types';
+import { ICommonProps } from '@/types';
 import { Drawer, Footer, Navbar } from '..';
+import { GlobalContainer } from './common';
 
 // write a container for the content of the page that will be passed in as a prop to this component with max widf of 1440 and min height of 100vh
 const ContentContainer = styled.div`
@@ -15,12 +16,6 @@ const ContentContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.white};
   margin: 0 auto;
   padding: 20px;
-`;
-const GlobalContainer = styled.div`
-  background-color: ${({ theme }) => theme.colors.dark};
-  width: 100%;
-  height: 100%;
-  margin: 0;
 `;
 const OverlayContainer = styled.div`
   position: fixed;
@@ -34,7 +29,7 @@ const OverlayContainer = styled.div`
   transition: opacity 0.5s;
 `;
 
-const PageLayout3Part = (props: ISimpleProps) => {
+const PageLayout3Part = (props: ICommonProps) => {
   const uiData = useContext(UiContext);
   const { isDrawerOpen, setUiData } = uiData;
   const handleOverlayClick = () => {

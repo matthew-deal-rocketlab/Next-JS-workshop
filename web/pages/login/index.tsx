@@ -95,7 +95,15 @@ const LoginPage = () => {
             />
           </FormRow>
 
-          <FormRow fullwidth={false} align="center">
+          <FormRow style={{marginTop:'1em'}}>
+            <span>Do not have an account? <a href="/signup">signup</a></span>
+          </FormRow>
+
+          <FormRow style={{marginTop:'1em'}}>
+            <span>Forgot password? <a href="/forgot-password">reset it</a></span>
+          </FormRow>
+
+          <FormRow fullwidth={false} align="center" style={{marginTop:'2em'}}>
             <Button variant="medium" type="submit">
               Submit
             </Button>

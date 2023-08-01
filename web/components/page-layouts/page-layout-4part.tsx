@@ -1,8 +1,14 @@
-import styled from 'styled-components';
+import { ReactElement } from 'react';
+import styled from "styled-components";
 
-import { ISimpleProps } from '../types';
 import { Footer, Navbar, Sidebar } from '..';
 import { themeStatic } from '@/theme';
+import { GlobalContainer } from './common';
+import { ICommonProps } from "@/types";
+
+interface ILayout4PageProps extends ICommonProps {
+  sidebar: ReactElement<typeof Sidebar>;
+}
 
 // write a container for the content of the page that will be passed in as a prop to this component with max widf of 1440 and min height of 100vh
 const ContentContainer = styled.div`
@@ -14,12 +20,6 @@ const ContentContainer = styled.div`
   @media (max-width: ${themeStatic.breakpoints.mobile}) {
     padding: 20px 1px;
   }
-`;
-const GlobalContainer = styled.div`
-  background-color: ${({ theme }) => theme.colors.dark};
-  width: 100%;
-  height: 100%;
-  margin: 0;
 `;
 
 const Grid = styled.div`
@@ -33,12 +33,12 @@ const Grid = styled.div`
   }
 `;
 
-const PageLayout4Part = ({ children }: ISimpleProps) => {
+const PageLayout4Part = ({ sidebar, children }: ILayout4PageProps) => {
   return (
     <GlobalContainer>
       <Navbar />
       <Grid>
-        <Sidebar />
+        {sidebar}
         <ContentContainer>{children}</ContentContainer>
       </Grid>
       <Footer />

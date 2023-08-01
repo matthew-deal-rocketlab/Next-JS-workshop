@@ -1,16 +1,16 @@
+import React from 'react'
 import styled from 'styled-components';
 
 import { themeStatic } from '@/theme';
 
-interface InputProps {
+interface InputProps extends React.HTMLProps<HTMLInputElement> {
   id: string;
-  name?: string;
-  type?: string;
+  name: string;
   error?: string;
-  required?: boolean;
+  type: 'text' | 'password' | 'email' | 'number';
 }
 
-const StyledInputContainer = styled.div<InputProps>`
+const StyledInputContainer = styled.div`
   display: inline;
   font-family: ${themeStatic.font.inter};
   width: 100%;
@@ -24,6 +24,9 @@ const StyledInput = styled.input<InputProps>`
   &:focus {
     outline: none;
     border: 2px solid ${props => props.theme!.colors.primary};
+  }
+  &::placeholder {
+    color: ${props => props.theme!.colors.tertiary};
   }
 `;
 

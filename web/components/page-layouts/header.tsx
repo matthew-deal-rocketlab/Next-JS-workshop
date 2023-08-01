@@ -2,11 +2,11 @@ import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
-import { menuItems } from '@/utils/data';
+import { headerMenuItems } from '@/utils/mainmenu';
 import { themeStatic } from '@/theme';
 import { UiContext } from '@/context/ui-context';
 import { IMenuItem } from '@/types.d';
-import { BarsIcon, Dropdown } from '.';
+import { BarsIcon, Dropdown } from '..';
 
 const NavbarContainer = styled.nav`
   height: 60px;
@@ -76,13 +76,12 @@ const DropdownItem = styled.a`
   }
 `;
 
-const Navbar = () => {
+const Header = () => {
   const uiData = useContext(UiContext);
   const { navbarActive, setUiData, isDrawerOpen } = uiData;
   const { push } = useRouter();
   const handleMenuItemClick = (item: IMenuItem) => {
-    setUiData({ ...uiData, navbarActive: item.id, sidebarActive: item.id });
-    console.log('item', item);
+    setUiData({ ...uiData, navbarActive: item.id });
     push(item.link!);
 
     // Add any logic you want to perform when a menu item is clicked
@@ -98,10 +97,10 @@ const Navbar = () => {
       <Button $isDrawerOpen={isDrawerOpen} onClick={handleOpenDrawer}>
         <BarsIcon height={20} width={20} />
       </Button>
-      <Title>My Website</Title>
+      <Title>&#x1F441; Sauron</Title>
       <>
         <MenuOptions>
-          {menuItems.map((item, index) =>
+          {headerMenuItems.map((item, index) =>
             item.items ? (
               <Dropdown
                 items={item.items}
@@ -127,4 +126,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Header;

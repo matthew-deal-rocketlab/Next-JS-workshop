@@ -2,10 +2,12 @@ import { useContext } from 'react';
 import styled from 'styled-components';
 
 import { themeStatic } from '@/theme';
-import { ArrowDownIcon, ArrowUpIcon, Sidebar, XMarkIcon } from '@/components';
+import { Sidebar, XMarkIcon } from '@/components';
 import { UiContext } from '@/context/ui-context';
+import { headerMenuItems } from '@/utils/mainmenu';
+import { ICommonProps } from '@/types';
 
-interface IDrawerProps {
+interface IDrawerProps extends ICommonProps {
   $isDrawerOpen: boolean;
   $position: 'left' | 'right';
 }
@@ -62,7 +64,7 @@ const Drawer = ({ position = 'right' }: Props) => {
       <Button onClick={handleDrawerClose}>
         <XMarkIcon height={15} width={15} fill="white" />
       </Button>
-      <Sidebar />
+      <Sidebar title='' menuItems={headerMenuItems} />
     </DrawerContainer>
   );
 };

@@ -2,8 +2,9 @@ import React, { ReactNode } from 'react';
 import styled, { StyleSheetManager } from 'styled-components';
 
 import { themeStatic } from '@/theme';
+import { ICommonProps } from '@/types';
 
-interface FormRowProps {
+interface FormRowProps extends ICommonProps{
   align?: 'left' | 'center' | 'right' | 'space-between';
   fullwidth?: boolean;
   children: ReactNode;

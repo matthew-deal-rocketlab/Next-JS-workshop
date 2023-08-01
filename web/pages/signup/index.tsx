@@ -14,8 +14,9 @@ import {
 } from '@/components';
 import { apiPost } from '@/utils/api-client';
 import { ApiStatus } from '@/services/apiclient';
-import { ISimpleProps, SubmitResult, SubmitResultType } from '@/types.d';
+import { ICommonProps, SubmitResult, SubmitResultType } from '@/types.d';
 import { useRouter } from 'next/router';
+import { themeStatic } from '@/theme';
 
 
 interface FormFields {
@@ -110,7 +111,7 @@ const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
 }
 
 
-const SignupPage = (props: ISimpleProps) => {
+const SignupPage = (props: ICommonProps) => {
   const { push } = useRouter();
 
   const [showContinue, setShowContinue] = React.useState(false);
@@ -217,7 +218,11 @@ const SignupPage = (props: ISimpleProps) => {
           </FormRow>
 
           <FormRow>
-            * Required
+            <span style={{fontSize:themeStatic.fontSizes.mini}}>* Required</span>
+          </FormRow>
+
+          <FormRow>
+            <span>Already have an account? <a href="/login">login</a></span>
           </FormRow>
 
           <FormRow align='center'>
@@ -225,7 +230,7 @@ const SignupPage = (props: ISimpleProps) => {
               {submitResult.text}
             </ColoredSpan>
           </FormRow>
-          <FormRow fullwidth={false} align="space-between">
+          <FormRow fullwidth={false} align="space-between" style={{marginTop:'2em'}}>
             <Button variant="medium" type="submit">
               {showContinue ? 'Continue' : 'Submit'}
             </Button>

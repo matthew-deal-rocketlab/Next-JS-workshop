@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { ISimpleProps } from '../types';
+import { ICommonProps } from '@/types.d';
+
 // it is possible here add a aprop to change the background
 const StyledPageFull = styled.div`
   width: 100vw;
@@ -21,7 +22,7 @@ const StyledPageFull = styled.div`
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 `;
 
-const PageLayoutFullPage = (props: ISimpleProps) => {
+const PageLayoutFullPage = (props: ICommonProps) => {
   return <StyledPageFull>{props.children}</StyledPageFull>;
 };
 

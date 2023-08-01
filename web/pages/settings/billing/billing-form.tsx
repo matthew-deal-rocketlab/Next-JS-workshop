@@ -1,3 +1,6 @@
+import { FormEvent, useState } from 'react';
+import styled from 'styled-components';
+
 import {
   Button,
   Card,
@@ -6,14 +9,11 @@ import {
   FormLabel,
   FormRow,
   FormTitle,
-} from '.';
-import styled from 'styled-components';
+} from '@/components';
 import { isEmail } from '@/utils/validators';
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/router';
 import { themeStatic } from '@/theme';
 
-const NameContainer = styled.div`
+const ColumnContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -28,6 +28,7 @@ const Container = styled.div`
 `;
 
 interface formFields {
+  company: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -39,6 +40,7 @@ interface formFields {
 }
 
 const initialFormFields: formFields = {
+  company: '',
   email: '',
   firstName: '',
   lastName: '',
@@ -94,8 +96,7 @@ const validateInputs = (inputs: formFields): formFields | null => {
   return hasErrors ? result : null;
 };
 
-const UserForm = () => {
-  const { push } = useRouter();
+const BillingForm = () => {
   const [formErrors, setFormErrors] = useState(initialFormFields);
 
   const onClickLogin = (event: FormEvent<HTMLFormElement>) => {
@@ -120,12 +121,23 @@ const UserForm = () => {
 
   return (
     <Container>
-      <Card width="60%">
+      <Card>
         <Form onSubmit={onClickLogin}>
           <FormRow align="center">
-            <FormTitle>Update profile details</FormTitle>
+            <FormTitle>Billing Details</FormTitle>
           </FormRow>
-          <NameContainer>
+          <FormRow>
+            <FormLabel htmlFor="emcompanyail">Company Name</FormLabel>
+            <FormInput
+              type="text"
+              id="company"
+              name="company"
+              error={formErrors.company}
+            />
+          </FormRow>
+
+          <h4>Billing contact</h4>
+          <ColumnContainer>
             <FormRow width="45%">
               <FormLabel htmlFor="firstName">First name</FormLabel>
               <FormInput
@@ -144,7 +156,7 @@ const UserForm = () => {
                 error={formErrors.lastName}
               />
             </FormRow>
-          </NameContainer>
+          </ColumnContainer>
           <FormRow>
             <FormLabel htmlFor="email">Email</FormLabel>
             <FormInput
@@ -154,6 +166,8 @@ const UserForm = () => {
               error={formErrors.email}
             />
           </FormRow>
+
+          <h4>Billing Address</h4>
           <FormRow>
             <FormLabel htmlFor="address">Address</FormLabel>
             <FormInput
@@ -172,7 +186,8 @@ const UserForm = () => {
               error={formErrors.city}
             />
           </FormRow>
-          <FormRow>
+          <ColumnContainer>
+          <FormRow width="45%">
             <FormLabel htmlFor="email">State</FormLabel>
             <FormInput
               type="text"
@@ -181,7 +196,7 @@ const UserForm = () => {
               error={formErrors.state}
             />
           </FormRow>
-          <FormRow>
+          <FormRow width="45%">
             <FormLabel htmlFor="">Postcode</FormLabel>
             <FormInput
               type="number"
@@ -190,6 +205,7 @@ const UserForm = () => {
               error={formErrors.postcode}
             />
           </FormRow>
+          </ColumnContainer>
           <FormRow>
             <FormLabel htmlFor="country">Country</FormLabel>
             <FormInput
@@ -200,7 +216,7 @@ const UserForm = () => {
             />
           </FormRow>
 
-          <FormRow fullwidth={false} align="center">
+          <FormRow fullwidth={false} align="center" style={{marginTop:'2em'}}>
             <Button variant="medium" type="submit">
               Update
             </Button>
@@ -211,4 +227,4 @@ const UserForm = () => {
   );
 };
 
-export default UserForm;
+export default BillingForm;

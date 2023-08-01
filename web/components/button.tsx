@@ -1,11 +1,12 @@
-import styled, { DefaultTheme, StyleSheetManager } from 'styled-components';
+import styled, { StyleSheetManager } from 'styled-components';
 
-interface ButtonProps {
+import { ICommonProps } from '@/types';
+
+interface ButtonProps extends ICommonProps {
   children: React.ReactNode;
   variant: 'small' | 'medium' | 'large';
   bgColor?: string;
   type?: 'submit' | 'reset' | 'button';
-  theme?: DefaultTheme;
   onClick?: (e?: any) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 }
