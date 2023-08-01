@@ -1,17 +1,12 @@
 import styled from 'styled-components';
 
-import { ISimpleProps } from './types';
-import { themeStatic } from '@/theme';
+import { ISimpleProps } from '@/types.d';
 
-interface ICardProps extends ISimpleProps {
-  width?: string;
-}
+// Note default width can be override with inline style
+// example: <Card style={{ width: '640px' }}>
 
-const StyledCard = styled.div<ICardProps>`
+const StyledCard = styled.div<ISimpleProps>`
   width: 300px;
-  @media (max-width: ${themeStatic.breakpoints.mobile}) {
-    width: 80%;
-  }
   padding: 20px;
   border-radius: 10px;
   background-color: ${props => props.theme.colors.white};
@@ -20,7 +15,7 @@ const StyledCard = styled.div<ICardProps>`
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
 `;
 
-const Card = (props: ICardProps) => {
+const Card = (props: ISimpleProps) => {
   return <StyledCard x-name="Card" {...props} />;
 };
 

@@ -21,15 +21,15 @@ declare global {
 
   // Generic type that returns a string for an error or a string as a result
   interface FnResult {
-    error?: string
-    result?: string
+    error?: string;
+    result?: string;
   }
 
   // interface for returning simple success values
   interface OkString {
-    value: string
+    value: string;
   }
   interface OkNumber {
-    value: number
+    value: number;
   }
 }

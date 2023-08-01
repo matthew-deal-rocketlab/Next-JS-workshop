@@ -9,7 +9,7 @@ import {
   SALT_PASS_SEPARATOR,
   UserStatus,
 } from '../constants';
-import { getUserJWT, getUserRefreshToken, hashPassword } from '../utils/auth';
+import { getUserJWT, getUserRefreshToken, hashPassword, validateRefreshToken } from '../utils/auth';
 import { uuidv4 } from '../utils/misc';
 import { sendEmail } from '../services/email';
 import { getUserBy } from '../utils/db';
@@ -54,9 +54,12 @@ const addUser = async (
 export const authSignup = async (input: JsonQLInput, rc: ResolverContext) => {
   if (!rc.db) return ERROR_NO_DB;
 
-  // get input parameters
-  const inputEmail = (input['email'] as string) ?? '';
-  const inputPass = (input['pass'] as string) ?? '';
+  // get input parameters. firstname and lastname is optional
+  const inputEmail = (input['email'] ?? '') as string;
+  const inputPass = (input['pass'] ?? '') as string;
+  const inputFirstname = (input['firstname'] ?? '') as string;
+  const inputLastname = (input['lastname'] ?? '') as string;
+
   if (!inputEmail || !inputPass || !isEmail(inputEmail)) return ERROR_INVALID_INPUT;
 
   if (await emailExists(rc.db, inputEmail))
@@ -74,6 +77,8 @@ export const authSignup = async (input: JsonQLInput, rc: ResolverContext) => {
     inputEmail.toLowerCase(),
     savedPassword,
     verifyCode,
+    inputFirstname.trim(),
+    inputLastname.trim(),
   );
   if (!addResult || typeof addResult === 'string')
     return { error: `error: ${addResult}` };
@@ -82,7 +87,7 @@ export const authSignup = async (input: JsonQLInput, rc: ResolverContext) => {
   sendEmail(
     inputEmail,
     'Please verify your email',
-    `call API with this code to reset your password ${verifyCode}`,
+    `call authVerify API with this code to verify your email ${verifyCode}`,
   );
 
   return { result: addResult.value };
@@ -124,6 +129,19 @@ export const authVerify = async (input: JsonQLInput, rc: ResolverContext) => {
   return RESULT_OK;
 }
 
+const saveRefreshToken = async (db: DBConnection, userId: string, refreshToken: string): Promise<FnResult> => {
+  const querySetSession = `UPDATE tbl_user SET session = $1 WHERE id = $2`
+  let result = null;
+  try {
+    result = await dbQuery(db, querySetSession, [refreshToken, userId]);
+    if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
+  } catch (err) {
+    return { error: `ERROR: ${err}` };
+  }
+
+  return RESULT_OK;
+}
+
 export const authLogin = async (input: JsonQLInput, rc: ResolverContext) => {
   if (!rc.db) return ERROR_NO_DB;
 
@@ -153,14 +171,8 @@ export const authLogin = async (input: JsonQLInput, rc: ResolverContext) => {
   const userRefreshToken = getUserRefreshToken(userId);
 
   // Save refresh token
-  const querySetSession = `UPDATE tbl_user SET session = $1 WHERE id = $2`
-  let result = null;
-  try {
-    result = await dbQuery(rc.db!, querySetSession, [userRefreshToken, userInfo['id']]);
-    if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
-  } catch (err) {
-    return { error: `ERROR: ${err}` };
-  }
+  const saveResult = await saveRefreshToken(rc.db!, (userInfo['id'] ?? '') as string, userRefreshToken);
+  if (saveResult.error) return saveResult.error;
 
   // Get other user details
   const firstname = (userInfo['firstname'] ?? '') as string;
@@ -194,6 +206,41 @@ export const authLogout = async (input: JsonQLInput, rc: ResolverContext) => {
   return RESULT_OK;
 }
 
+export const authRefresh = async (input: JsonQLInput, rc: ResolverContext) => {
+  if (!rc.db) return ERROR_NO_DB;
+
+  const refreshToken = (input['refreshToken'] as string) ?? '';
+  if (!refreshToken) return ERROR_INVALID_INPUT;
+
+  const rtResult = validateRefreshToken(refreshToken);
+  if (rtResult.error || !rtResult.userId) return ERROR_INVALID_INPUT;
+
+  // refresh token passes all tests. Check if it exists in database to confirm authenticity
+  const userInfo = await getUserBy(rc.db, 'session', refreshToken);
+  if (typeof userInfo === 'string') return ERROR_INVALID_CREDENTIALS;
+
+  // compare user uuid in token with database
+  const dbUserUUID = (userInfo['id'] ?? '') as string
+  const tokenUserUUID = rtResult.userId;
+  const isTokenGood = dbUserUUID.replaceAll('-', '') === tokenUserUUID;
+  if (!isTokenGood) return ERROR_INVALID_CREDENTIALS;
+
+  // Generate JWT and refreshToken for user
+  const userId = ((userInfo['id'] ?? '') as string).replaceAll('-', '');
+  const userJwt = getUserJWT(userId);
+  const now = new Date();
+  if (now < rtResult.renewDate!) {
+    return { result: { token: userJwt, refreshToken: refreshToken } };
+  }
+
+  const newRefreshToken = getUserRefreshToken(userId);
+
+  // Save refresh token
+  const saveResult = await saveRefreshToken(rc.db!, userId, newRefreshToken);
+  if (saveResult.error) return saveResult.error;
+
+  return { result: { token: userJwt, refreshToken: newRefreshToken } };
+}
 
 // Initiates sending an email to reset password
 export const authForgotPassword = async (input: JsonQLInput, rc: ResolverContext) => {
@@ -227,7 +274,7 @@ export const authForgotPassword = async (input: JsonQLInput, rc: ResolverContext
   await sendEmail(
     userEmail,
     'password reset',
-    `call API with this code to reset your password ${newCode}`,
+    `call authResetPassword API with this code to reset your password ${newCode}`,
   );
 
   return RESULT_OK;
@@ -242,17 +289,20 @@ export const authResetPassword = async (input: JsonQLInput, rc: ResolverContext)
   const inputNewPass = (input['newpass'] as string) ?? '';
   if (!inputCode || !inputNewPass || inputCode.length !== 32) return ERROR_INVALID_INPUT;
 
+  // check code in database
   const userInfo = await getUserBy(rc.db, 'verify_code', inputCode);
   if (typeof userInfo === 'string') return ERROR_INVALID_INPUT;
 
   const userEmail = (userInfo['email'] ?? '') as string;
   if (!userEmail) return ERROR_INVALID_INPUT;
 
+  // Create new hashed password
   const salt = uuidv4(false);
   const hashedPassword = hashPassword(inputNewPass, salt);
   const savedPassword = `${salt}${SALT_PASS_SEPARATOR}${hashedPassword}`;
 
-  const querySetPass = `UPDATE tbl_user SET pass = $1, verify_code = '' WHERE id =$2`
+  // save new password and clear verification code
+  const querySetPass = `UPDATE tbl_user SET pass = $1, verify_code = '' WHERE id = $2`
   let result = null;
   try {
     result = await dbQuery(rc.db!, querySetPass, [savedPassword, userInfo['id']]);

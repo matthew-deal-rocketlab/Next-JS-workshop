@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { menuItems } from '@/utils/data';
 import { themeStatic } from '@/theme';
 import { UiContext } from '@/context/ui-context';
-import { IMenuItem } from './types';
+import { IMenuItem } from '@/types.d';
 import { BarsIcon, Dropdown } from '.';
 
 const NavbarContainer = styled.nav`

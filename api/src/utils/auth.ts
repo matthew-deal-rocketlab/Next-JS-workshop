@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { APP_SECRET, JWT_EXPIRY_INTERVAL, JWT_SECRET } from '../constants';
+import { APP_SECRET, ERROR_TOKEN_EXPIRED, JWT_EXPIRY, JWT_REFRESH_EXPIRY, JWT_REFRESH_INTERVAL, JWT_SECRET } from '../constants';
 import { btoa, atob } from './converters';
 import { uuidv4 } from './misc';
 import { Request } from 'express';
@@ -33,6 +33,7 @@ export const generateJWT = (payload: object, secret: string): string => {
 export const getUserJWT = (userID: string): string => {
   var payload = {
     sub: userID,
+    rnd: Math.floor(Math.random() * 100000),
     iat: Math.floor(Date.now() / 1000),
   };
 
@@ -42,7 +43,7 @@ export const getUserJWT = (userID: string): string => {
 export const getUserRefreshToken = (userID: string) => {
   var payload = {
     sub: userID,
-    rando: uuidv4(false),
+    rnd: uuidv4(false),
     iat: Math.floor(Date.now() / 1000),
   };
 
@@ -65,12 +66,50 @@ export const validateToken = (req: Request): FnResult => {
   // check date
   const now = new Date();
   let expiry = new Date(payload.iat * 1000)
-  expiry.setSeconds(expiry.getSeconds() + JWT_EXPIRY_INTERVAL);
-  if (now > expiry) return { error: 'error: token expired' };
+  expiry.setSeconds(expiry.getSeconds() + JWT_EXPIRY);
+  if (now > expiry) return ERROR_TOKEN_EXPIRED;
 
   // check signature
   const calculated = generateJWT(payload, JWT_SECRET);
   if (calculated !== jwtRaw) return { error: 'error: token invalid(3)' };
 
   return { result: payload.sub };
+}
+
+interface validateRefreshTokenResult {
+  error?: string;
+  userId?: string;
+  renewDate?: Date;
+}
+
+// If validated, returns the userId in .result or error message in .error
+export const validateRefreshToken = (refreshToken: string): validateRefreshTokenResult => {
+  const jwtParts = refreshToken.split('.')
+  if (jwtParts.length !== 3) return { error: 'error: token invalid(1)' };
+
+  const jwtPayload = (jwtParts[1] ?? '') as string;
+  let payload = null
+  try {
+    payload = JSON.parse(atob(jwtPayload));
+  } catch (_) { }
+  if (payload === null) return { error: 'error: token invalid(2)' };
+
+  // check date
+  const now = new Date();
+  const iatTime = payload.iat * 1000;
+  let expiry = new Date(iatTime)
+  expiry.setSeconds(expiry.getSeconds() + JWT_REFRESH_EXPIRY);
+  if (now > expiry) return ERROR_TOKEN_EXPIRED;
+
+  // check signature
+  const calculated = generateJWT(payload, JWT_SECRET);
+  if (calculated !== refreshToken) return { error: 'error: token invalid(3)' };
+
+  let renewDate = new Date(iatTime)
+  renewDate.setSeconds(renewDate.getSeconds() + JWT_REFRESH_INTERVAL);
+
+  return {
+    userId: payload.sub,
+    renewDate: renewDate,
+  };
 }

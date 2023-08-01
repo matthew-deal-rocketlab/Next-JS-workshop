@@ -4,7 +4,7 @@ import styled, { StyleSheetManager } from 'styled-components';
 import { themeStatic } from '@/theme';
 
 interface FormRowProps {
-  align?: 'left' | 'center' | 'right';
+  align?: 'left' | 'center' | 'right' | 'space-between';
   fullwidth?: boolean;
   children: ReactNode;
   width?: string;
@@ -16,8 +16,9 @@ const StyledFormRow = styled.div<FormRowProps>`
   }
   margin-top: ${themeStatic.spacing.formfieldY};
   margin-bottom: ${themeStatic.spacing.formfieldY};
-  display: ${(props: FormRowProps) => (props.fullwidth ? 'flex' : 'block')};
-  flex-direction: column;
+  display: ${(props: FormRowProps) => props.fullwidth ? 'flex' : 'inline-flex'};
+  flex-direction: ${(props: FormRowProps) => props.align === 'space-between' ? 'row' : 'column'};
+  justify-content: ${(props: FormRowProps) => props.align};
   text-align: ${(props: FormRowProps) => props.align};
 `;
 

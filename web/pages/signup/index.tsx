@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react';
+import styled from 'styled-components';
 
 import { isEmail } from '@/utils/validators';
 import {
@@ -11,21 +12,41 @@ import {
   FormTitle,
   PageLayoutFullPage,
 } from '@/components';
+import { apiPost } from '@/utils/api-client';
+import { ApiStatus } from '@/services/apiclient';
+import { ISimpleProps, SubmitResult, SubmitResultType } from '@/types.d';
+import { useRouter } from 'next/router';
 
-interface formFields {
+
+interface FormFields {
   email: string;
   pass: string;
-  username: string;
+  firstname: string;
+  lastname: string;
   confirmPass: string;
 }
-const initialFormFields: formFields = {
+
+const initialFormFields: FormFields = {
   email: '',
   pass: '',
-  username: '',
+  firstname: '',
+  lastname: '',
   confirmPass: '',
 };
+
+interface ColoredSpanProps {
+  type: SubmitResultType;
+  children: string;
+}
+
+const ColoredSpan = styled.span<ColoredSpanProps>`
+  color: ${props => props.type === SubmitResultType.error ?
+    props.theme.colors.error : props.theme.colors.success}
+`
+
+
 // Checks the form inputs.  Returns null for no errors or object with error messages for each field
-const validateInputs = (inputs: formFields): formFields | null => {
+const validateInputs = (inputs: FormFields): FormFields | null => {
   let hasErrors = false;
   let result = initialFormFields;
 
@@ -38,9 +59,9 @@ const validateInputs = (inputs: formFields): formFields | null => {
     result.email = 'Invalid Email';
   }
   // check username
-  if (!inputs.username) {
+  if (!inputs.firstname) {
     hasErrors = true;
-    result.username = 'User name can not be empty';
+    result.firstname = 'Firstname can not be empty';
   }
 
   // Check password
@@ -64,61 +85,117 @@ const validateInputs = (inputs: formFields): formFields | null => {
     result.confirmPass = 'Confirm password must match password';
   }
 
-  //
-
   return hasErrors ? result : null;
 };
 
-const SignupPage = () => {
+const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
+  const payload = { authSignup: { ...data, confirmPass: undefined } }
+  const loginResult = await apiPost('/jsonql', payload);
+
+  if (loginResult.status !== ApiStatus.OK) {
+    return { text: "Error logging in", type: SubmitResultType.error };
+  }
+
+  // @ts-ignore
+  const authRefreshResult = loginResult.result['authSignup'];
+
+  if (!(authRefreshResult.result && authRefreshResult.result.length === 36)) {
+    return { text: authRefreshResult, type: SubmitResultType.error };
+  };
+
+  return {
+    text: "Welcome! Check your email to continue",
+    type: SubmitResultType.ok,
+  }
+}
+
+
+const SignupPage = (props: ISimpleProps) => {
+  const { push } = useRouter();
+
+  const [showContinue, setShowContinue] = React.useState(false);
+  const [submitResult, setSubmitResult] = React.useState<SubmitResult>({ text: '', type: SubmitResultType.ok });
   const [formErrors, setFormErrors] =
-    React.useState<formFields>(initialFormFields);
+    React.useState<FormFields>(initialFormFields);
+
+
+  const onClickCancel = (event: React.FormEvent<HTMLFormElement>) => {
+    push('/login');
+  }
+
+  const onClickContinue = (event: React.FormEvent<HTMLFormElement>) => {
+    // prevent default form submission
+    event.preventDefault();
+
+    push('/login');
+  }
 
   const onClickSignUp = (event: React.FormEvent<HTMLFormElement>) => {
-    const data = Object.fromEntries(
-      new FormData(event.currentTarget),
-    ) as unknown;
-    console.log('data', data);
+    // prevent default form submission
+    event.preventDefault();
 
-    const formErrorMessages = validateInputs(data as formFields);
+    // clear errors when re-submitting
+    setSubmitResult(Object.assign({}));
+    setFormErrors(Object.assign({}));
+
+    const data = Object.fromEntries(new FormData(event.currentTarget)) as unknown;
+    const formData = data as FormFields;
+    console.log('data', formData);
+
+    const formErrorMessages = validateInputs(formData);
     console.log('formErrorMessages', formErrorMessages);
     if (formErrorMessages !== null) {
-      setFormErrors(formErrorMessages);
+      setFormErrors(Object.assign({}, formErrorMessages));
+      return;
     }
 
     // Submit form data and catch errors in the response
-
-    // prevent default form submission
-    event.preventDefault();
+    (async () => {
+      const result = await submitFormData(formData);
+      setSubmitResult(result);
+      setShowContinue(result.type === SubmitResultType.ok)
+    })();
   };
 
   return (
     <PageLayoutFullPage>
       <Card>
-        <Form onSubmit={onClickSignUp}>
+        <Form onSubmit={showContinue ? onClickContinue : onClickSignUp}>
           <FormRow align="center">
             <FormTitle>Signup</FormTitle>
           </FormRow>
           <FormRow>
-            <FormLabel htmlFor="">User name</FormLabel>
+            <FormLabel htmlFor="firstname">First name *</FormLabel>
             <FormInput
               type="text"
-              id="username"
-              name="username"
-              error={formErrors.username}
+              id="firstname"
+              name="firstname"
+              required
+              error={formErrors.firstname}
             />
           </FormRow>
           <FormRow>
-            <FormLabel htmlFor="email">Email</FormLabel>
+            <FormLabel htmlFor="lastname">Last name</FormLabel>
+            <FormInput
+              type="text"
+              id="lastname"
+              name="lastname"
+              error={formErrors.lastname}
+            />
+          </FormRow>
+          <FormRow>
+            <FormLabel htmlFor="email">Email *</FormLabel>
             <FormInput
               type="email"
               id="email"
               name="email"
+              required
               error={formErrors.email}
             />
           </FormRow>
 
           <FormRow>
-            <FormLabel htmlFor="pass">Password</FormLabel>
+            <FormLabel htmlFor="pass">Password *</FormLabel>
             <FormInput
               type="password"
               id="pass"
@@ -129,7 +206,7 @@ const SignupPage = () => {
           </FormRow>
 
           <FormRow>
-            <FormLabel htmlFor="pass">Confirm password</FormLabel>
+            <FormLabel htmlFor="confirmPass">Confirm password *</FormLabel>
             <FormInput
               type="password"
               id="confirmPass"
@@ -139,9 +216,21 @@ const SignupPage = () => {
             />
           </FormRow>
 
-          <FormRow fullwidth={false} align="center">
+          <FormRow>
+            * Required
+          </FormRow>
+
+          <FormRow align='center'>
+            <ColoredSpan type={submitResult.type}>
+              {submitResult.text}
+            </ColoredSpan>
+          </FormRow>
+          <FormRow fullwidth={false} align="space-between">
             <Button variant="medium" type="submit">
-              Submit
+              {showContinue ? 'Continue' : 'Submit'}
+            </Button>
+            <Button variant="medium" type="button" onClick={onClickCancel}>
+              Cancel
             </Button>
           </FormRow>
         </Form>

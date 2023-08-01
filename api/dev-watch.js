@@ -16,7 +16,10 @@ const RUN_ARGS = [OUTPUT_FILE];
 
 const WATCH_PATH = "./src/";
 
+const DEBOUNCE_DELAY = 1500; // in milliseconds
+
 var childProc = null;
+var debounceTimer = null;
 
 function getLogTime() {
   return new Date().toISOString().slice(0, -5)
@@ -48,11 +51,11 @@ async function spawnProcessAsync(cmd, args) {
   });
 }
 
-async function rerun() {
+async function spawnApp() {
   if (childProc !== null) childProc.kill("SIGHUP");
 
-  // wait half a second after killing command to rebuild and run again
-  await sleep(500);
+  // wait 1.5 second after killing command to rebuild and run again
+  await sleep(1500);
 
   prnt(`${getLogTime()} Building app:`);
   const buildProc = await spawnProcessAsync(BUILD_COMMAND, BUILD_ARGS);
@@ -64,6 +67,17 @@ async function rerun() {
   } else {
     prnt(`${getLogTime()} Nothing to run`);
   }
+}
+
+async function rerun() {
+  if (debounceTimer !== null) {
+    clearTimeout(debounceTimer);
+    debounceTimer = null;
+  };
+
+  debounceTimer = setTimeout(() => {
+    spawnApp();
+  }, DEBOUNCE_DELAY);
 }
 
 fs.watch(WATCH_PATH, { recursive: true }, (event, filename) => {

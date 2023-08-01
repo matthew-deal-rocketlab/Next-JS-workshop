@@ -7,6 +7,7 @@ export const defaultTheme: DefaultTheme = {
     secondary: '#91aec1',
     tertiary: '#bfd7ea',
     error: 'red',
+    success: '#004f2d',
     titleText: 'white',
     labelText: 'white',
     bodyText: 'white',

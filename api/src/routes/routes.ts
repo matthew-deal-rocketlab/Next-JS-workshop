@@ -3,7 +3,7 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import { API_HEADER, API_KEY, API_PREFIX } from '../constants';
 import { getTime, getVersion } from '../resolvers/utils';
 import { sysCheck } from '../resolvers/syscheck';
-import { authForgotPassword, authLogin, authLogout, authResetPassword, authSignup, authVerify } from '../resolvers/auth';
+import { authForgotPassword, authLogin, authLogout, authRefresh, authResetPassword, authSignup, authVerify } from '../resolvers/auth';
 import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateToken } from '../utils/auth';
@@ -21,6 +21,7 @@ resolverMap.set('authSignup', authSignup);
 resolverMap.set('authVerify', authVerify);
 resolverMap.set('authForgotPassword', authForgotPassword);
 resolverMap.set('authResetPassword', authResetPassword);
+resolverMap.set('authRefresh', authRefresh);
 resolverMap.set('authLogin', authLogin);
 resolverMap.set('authLogout', authLogout);
 
@@ -97,6 +98,10 @@ const addRoutes = (app: Express) => {
 
       // builder resolver context
       const userIdOrError = validateToken(req);
+      if (req.headers['authorization'] && userIdOrError.error) {
+        return res.status(400).send({ error: userIdOrError.error });
+      }
+
       const rc: ResolverContext = {
         userid: userIdOrError.result ?? '',
         db: await dbConnect(),

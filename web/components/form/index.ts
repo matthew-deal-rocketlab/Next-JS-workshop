@@ -1,4 +1,4 @@
-import FormRow from './field';
+import FormRow from './row';
 import Form from './form';
 import FormInput from './input';
 import FormLabel from './label';
