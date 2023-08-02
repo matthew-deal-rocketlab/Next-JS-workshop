@@ -1,4 +1,4 @@
-import { FormEventHandler, ReactNode } from 'react';
+import { FormEvent, FormEventHandler, ReactNode } from 'react';
 
 interface FormProps {
   id?: string;
@@ -6,8 +6,16 @@ interface FormProps {
   children: ReactNode;
 }
 
-const Form = ({ children, ...restProps }: FormProps) => {
-  return <form {...restProps}>{children}</form>;
+const Form = ({ onSubmit, children, ...restProps }: FormProps) => {
+
+  const onSubmitWrapper = (event: FormEvent<HTMLFormElement>) => {
+    if (typeof onSubmit == 'function') {
+      event.preventDefault();
+      onSubmit(event);
+    }
+  }
+
+  return <form onSubmit={onSubmitWrapper} {...restProps}>{children}</form>;
 };
 
 export default Form;

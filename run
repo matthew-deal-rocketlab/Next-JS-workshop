@@ -28,18 +28,26 @@ if [ "$1" = "web-start" ]; then cd web; PORT=$WEB_PORT yarn start ; EXITCODE=$? 
 
 if [ "$1" = "start-all" ]; then
   osascript -e "tell application \"Terminal\"
-      activate
-      do script \"cd $PWD ; ./run web-dev\"
-      set current settings of selected tab of window 1 to settings set \"Grass\"
-      end tell"
+    activate
+    tell application \"System Events\" to keystroke \"t\" using command down
+    repeat while contents of selected tab of window 1 starts with linefeed
+      delay 0.01
+    end repeat
+    do script \"cd $PWD ; ./run web-dev\" in window 1
+    set current settings of selected tab of window 1 to settings set \"Grass\"
+    end tell"
 
-  sleep 2
+  sleep 1
 
   osascript -e "tell application \"Terminal\"
-      activate
-      do script \"cd $PWD ; ./run api-dev\"
-      set current settings of selected tab of window 1 to settings set \"Ocean\"
-      end tell"
+    activate
+    tell application \"System Events\" to keystroke \"t\" using command down
+    repeat while contents of selected tab of window 1 starts with linefeed
+    delay 0.01
+    end repeat
+    do script \"cd $PWD ; ./run api-dev\" in window 1
+    set current settings of selected tab of window 1 to settings set \"Ocean\"
+    end tell"
 fi
 
 echo "Command not found"

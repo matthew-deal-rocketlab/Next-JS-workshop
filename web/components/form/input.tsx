@@ -5,7 +5,7 @@ import { themeStatic } from '@/theme';
 
 interface InputProps extends React.HTMLProps<HTMLInputElement> {
   id: string;
-  name: string;
+  name?: string;
   error?: string;
   type: 'text' | 'password' | 'email' | 'number';
 }
@@ -38,7 +38,7 @@ const StyledError = styled.div`
 
 const FormInput = ({
   id,
-  name = '',
+  name,
   type = 'text',
   error = '',
   ...restProps
