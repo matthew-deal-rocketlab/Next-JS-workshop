@@ -18,7 +18,6 @@ import { ICommonProps, SubmitResult, SubmitResultType } from '@/types.d';
 import { useRouter } from 'next/router';
 import { themeStatic } from '@/theme';
 
-
 interface FormFields {
   email: string;
   pass: string;
@@ -41,10 +40,11 @@ interface ColoredSpanProps {
 }
 
 const ColoredSpan = styled.span<ColoredSpanProps>`
-  color: ${props => props.type === SubmitResultType.error ?
-    props.theme.colors.error : props.theme.colors.success}
-`
-
+  color: ${props =>
+    props.type === SubmitResultType.error
+      ? props.theme.colors.error.main
+      : props.theme.colors.success.dark};
+`;
 
 // Checks the form inputs.  Returns null for no errors or object with error messages for each field
 const validateInputs = (inputs: FormFields): FormFields | null => {
@@ -90,11 +90,11 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
 };
 
 const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
-  const payload = { authSignup: { ...data, confirmPass: undefined } }
+  const payload = { authSignup: { ...data, confirmPass: undefined } };
   const loginResult = await apiPost('/jsonql', payload);
 
   if (loginResult.status !== ApiStatus.OK) {
-    return { text: "Error logging in", type: SubmitResultType.error };
+    return { text: 'Error logging in', type: SubmitResultType.error };
   }
 
   // @ts-ignore
@@ -102,34 +102,35 @@ const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
 
   if (!(authRefreshResult.result && authRefreshResult.result.length === 36)) {
     return { text: authRefreshResult, type: SubmitResultType.error };
-  };
+  }
 
   return {
-    text: "Welcome! Check your email to continue",
+    text: 'Welcome! Check your email to continue',
     type: SubmitResultType.ok,
-  }
-}
-
+  };
+};
 
 const SignupPage = (props: ICommonProps) => {
   const { push } = useRouter();
 
   const [showContinue, setShowContinue] = React.useState(false);
-  const [submitResult, setSubmitResult] = React.useState<SubmitResult>({ text: '', type: SubmitResultType.ok });
+  const [submitResult, setSubmitResult] = React.useState<SubmitResult>({
+    text: '',
+    type: SubmitResultType.ok,
+  });
   const [formErrors, setFormErrors] =
     React.useState<FormFields>(initialFormFields);
 
-
   const onClickCancel = (event: React.FormEvent<HTMLFormElement>) => {
     push('/login');
-  }
+  };
 
   const onClickContinue = (event: React.FormEvent<HTMLFormElement>) => {
     // prevent default form submission
     event.preventDefault();
 
     push('/login');
-  }
+  };
 
   const onClickSignUp = (event: React.FormEvent<HTMLFormElement>) => {
     // prevent default form submission
@@ -139,7 +140,9 @@ const SignupPage = (props: ICommonProps) => {
     setSubmitResult(Object.assign({}));
     setFormErrors(Object.assign({}));
 
-    const data = Object.fromEntries(new FormData(event.currentTarget)) as unknown;
+    const data = Object.fromEntries(
+      new FormData(event.currentTarget),
+    ) as unknown;
     const formData = data as FormFields;
     console.log('data', formData);
 
@@ -154,7 +157,7 @@ const SignupPage = (props: ICommonProps) => {
     (async () => {
       const result = await submitFormData(formData);
       setSubmitResult(result);
-      setShowContinue(result.type === SubmitResultType.ok)
+      setShowContinue(result.type === SubmitResultType.ok);
     })();
   };
 
@@ -218,19 +221,26 @@ const SignupPage = (props: ICommonProps) => {
           </FormRow>
 
           <FormRow>
-            <span style={{fontSize:themeStatic.fontSizes.mini}}>* Required</span>
+            <span style={{ fontSize: themeStatic.fontSizes.mini }}>
+              * Required
+            </span>
           </FormRow>
 
           <FormRow>
-            <span>Already have an account? <a href="/login">login</a></span>
+            <span>
+              Already have an account? <a href="/login">login</a>
+            </span>
           </FormRow>
 
-          <FormRow align='center'>
+          <FormRow align="center">
             <ColoredSpan type={submitResult.type}>
-              {submitResult.text}
+              {submitResult.text} asdasd
             </ColoredSpan>
           </FormRow>
-          <FormRow fullwidth={false} align="space-between" style={{marginTop:'2em'}}>
+          <FormRow
+            fullwidth={false}
+            align="space-between"
+            style={{ marginTop: '2em' }}>
             <Button variant="medium" type="submit">
               {showContinue ? 'Continue' : 'Submit'}
             </Button>

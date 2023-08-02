@@ -6,6 +6,7 @@ import { Sidebar, XMarkIcon } from '@/components';
 import { UiContext } from '@/context/ui-context';
 import { headerMenuItems } from '@/utils/mainmenu';
 import { ICommonProps } from '@/types';
+import { useIsFirstRender } from '@/hooks/isFirstRender';
 
 interface IDrawerProps extends ICommonProps {
   $isDrawerOpen: boolean;
@@ -54,17 +55,19 @@ interface Props {
   position?: 'left' | 'right';
 }
 const Drawer = ({ position = 'right' }: Props) => {
+  const isFirst = useIsFirstRender();
   const uiData = useContext(UiContext);
   const { isDrawerOpen, setUiData } = uiData;
   const handleDrawerClose = () => {
     setUiData({ ...uiData, isDrawerOpen: false });
   };
+  if (isFirst) return null;
   return (
     <DrawerContainer $isDrawerOpen={isDrawerOpen} $position={position}>
       <Button onClick={handleDrawerClose}>
         <XMarkIcon height={15} width={15} fill="white" />
       </Button>
-      <Sidebar title='' menuItems={headerMenuItems} />
+      <Sidebar title="" menuItems={headerMenuItems} />
     </DrawerContainer>
   );
 };

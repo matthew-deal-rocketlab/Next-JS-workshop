@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react';
 import styled from 'styled-components';
 
 import {
+  Alert,
   Button,
   Card,
   Form,
@@ -9,9 +10,13 @@ import {
   FormLabel,
   FormRow,
   FormTitle,
+  Modal,
+  Select,
 } from '@/components';
 import { isEmail } from '@/utils/validators';
 import { themeStatic } from '@/theme';
+import { IAlertMessage } from '@/types';
+import { countries, countriesTemp } from '@/utils/countries';
 
 const NameContainer = styled.div`
   display: flex;
@@ -48,7 +53,10 @@ const initialFormFields: formFields = {
   postcode: '',
   country: '',
 };
-
+const initialAlertMessage: IAlertMessage = {
+  type: 'error',
+  message: '',
+};
 // Checks the form inputs.  Returns null for no errors or object with error messages for each field
 const validateInputs = (inputs: formFields): formFields | null => {
   let hasErrors = false;
@@ -96,6 +104,9 @@ const validateInputs = (inputs: formFields): formFields | null => {
 
 const UserDetailForm = () => {
   const [formErrors, setFormErrors] = useState(initialFormFields);
+  const [alertMessage, setAlertMessage] = useState(initialAlertMessage);
+  const [showModal, setShowModal] = useState(false);
+  const closeAlert = () => setAlertMessage({ type: '', message: '' });
 
   const onClickLogin = (event: FormEvent<HTMLFormElement>) => {
     const data = Object.fromEntries(
@@ -111,15 +122,29 @@ const UserDetailForm = () => {
     }
 
     // Submit form data and catch errors in the response
-    // push('/dashboard');
-
+    // setAlert to success or error
     // prevent default form submission
     event.preventDefault();
   };
 
+  const onCancel = () => {
+    setShowModal(false);
+    console.log('cancel');
+  };
+  const onConfirm = () => {
+    setShowModal(false);
+    console.log('confirm');
+  };
   return (
     <Container>
       <Card>
+        {/* Display alert message if there is one */}
+        {alertMessage.message && (
+          <Alert type={alertMessage.type} onClose={closeAlert}>
+            {alertMessage.message}
+          </Alert>
+        )}
+
         <Form onSubmit={onClickLogin}>
           <FormRow align="center">
             <FormTitle>Profile Details</FormTitle>
@@ -191,20 +216,33 @@ const UserDetailForm = () => {
           </FormRow>
           <FormRow>
             <FormLabel htmlFor="country">Country</FormLabel>
-            <FormInput
-              type="text"
-              id="country"
-              name="country"
-              error={formErrors.country}
+            <Select
+              label="Choose country"
+              values={countriesTemp}
+              onChange={country => console.log(country)}
             />
           </FormRow>
 
-          <FormRow fullwidth={false} align="center" style={{marginTop:'2em'}}>
+          <FormRow
+            fullwidth={false}
+            align="center"
+            style={{ marginTop: '2em' }}>
             <Button variant="medium" type="submit">
               Update
             </Button>
           </FormRow>
         </Form>
+        <Button variant="medium" onClick={() => setShowModal(true)}>
+          Show Modal
+        </Button>
+
+        <Modal
+          title="Testing"
+          description='Delete all your data?'
+          showModal={showModal}
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+        />
       </Card>
     </Container>
   );

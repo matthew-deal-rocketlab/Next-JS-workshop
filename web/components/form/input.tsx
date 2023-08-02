@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components';
 
 import { themeStatic } from '@/theme';
@@ -17,9 +16,13 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledInput = styled.input<InputProps>`
+  padding-left: 5px;
+  padding-right: 0;
+  margin: 0;
+  color: ${({ theme }) => theme.colors.dark};
   border: 1px solid ${props => props.theme!.colors.tertiary};
   border-radius: 4px;
-  width: 100%;
+  width: calc(100% - 7px);
   height: 20px;
   &:focus {
     outline: none;
@@ -31,7 +34,7 @@ const StyledInput = styled.input<InputProps>`
 `;
 
 const StyledError = styled.div`
-  color: ${props => props.theme!.colors.error};
+  color: ${props => props.theme!.colors.error.main};
   font-family: ${themeStatic.font.inter};
   font-size: ${themeStatic.fontSizes.mini};
 `;
@@ -45,8 +48,8 @@ const FormInput = ({
 }: InputProps) => {
   return (
     <StyledInputContainer id={`${id}-container`}>
-      {error && <StyledError>{error}</StyledError>}
       <StyledInput id={id} name={name || id} {...restProps} type={type} />
+      {error && <StyledError>{error}</StyledError>}
     </StyledInputContainer>
   );
 };

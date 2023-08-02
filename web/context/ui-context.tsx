@@ -1,3 +1,4 @@
+import { headerMenuItems } from '@/utils/mainmenu';
 import React, {
   createContext,
   useState,
@@ -15,7 +16,7 @@ interface UiContextProps {
 
 const initialState: UiContextProps = {
   isMenuOpen: false,
-  navbarActive: '',
+  navbarActive: headerMenuItems[0].id,
   sidebarActive: '',
   subSidebarActive: '',
   isDrawerOpen: false,
@@ -23,18 +24,23 @@ const initialState: UiContextProps = {
 
 type UiData = UiContextProps & {
   setUiData: Dispatch<SetStateAction<UiContextProps>>;
+  cleanUpUiData: () => void;
 };
 
 export const UiContext = createContext<UiData>({
   ...initialState,
   setUiData: () => {},
+  cleanUpUiData: () => {},
 });
 
 const UiProvider = ({ children }: any) => {
   const [uiData, setUiData] = useState<UiContextProps>(initialState);
+  const cleanUpUiData = () => {
+    setUiData(initialState);
+  };
 
   return (
-    <UiContext.Provider value={{ ...uiData, setUiData }}>
+    <UiContext.Provider value={{ ...uiData, setUiData, cleanUpUiData }}>
       {children}
     </UiContext.Provider>
   );

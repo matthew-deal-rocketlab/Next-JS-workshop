@@ -29,7 +29,7 @@ const OverlayContainer = styled.div`
   transition: opacity 0.5s;
 `;
 
-const PageLayout3Part = (props: ICommonProps) => {
+const PageLayout3Part = ({ children }: ICommonProps) => {
   const uiData = useContext(UiContext);
   const { isDrawerOpen, setUiData } = uiData;
   const handleOverlayClick = () => {
@@ -40,7 +40,7 @@ const PageLayout3Part = (props: ICommonProps) => {
       {isDrawerOpen && <OverlayContainer onClick={handleOverlayClick} />}
       <Navbar />
       <Drawer position="left" />
-      <ContentContainer>Content</ContentContainer>
+      <ContentContainer>{children}</ContentContainer>
       <Footer />
     </GlobalContainer>
   );

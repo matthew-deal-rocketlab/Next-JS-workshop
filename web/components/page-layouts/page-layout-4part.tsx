@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
-import styled from "styled-components";
+import styled from 'styled-components';
 
 import { Footer, Navbar, Sidebar } from '..';
 import { themeStatic } from '@/theme';
 import { GlobalContainer } from './common';
-import { ICommonProps } from "@/types";
+import { ICommonProps } from '@/types';
 
 interface ILayout4PageProps extends ICommonProps {
   sidebar: ReactElement<typeof Sidebar>;

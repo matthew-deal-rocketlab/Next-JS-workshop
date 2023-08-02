@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
@@ -6,7 +6,7 @@ import { headerMenuItems } from '@/utils/mainmenu';
 import { themeStatic } from '@/theme';
 import { UiContext } from '@/context/ui-context';
 import { IMenuItem } from '@/types.d';
-import { BarsIcon, Dropdown } from '..';
+import { BarsIcon, Dropdown, Modal } from '@/components';
 
 const NavbarContainer = styled.nav`
   height: 60px;
@@ -77,10 +77,15 @@ const DropdownItem = styled.a`
 `;
 
 const Header = () => {
+  const [showModal, setShowModal] = useState(false);
   const uiData = useContext(UiContext);
-  const { navbarActive, setUiData, isDrawerOpen } = uiData;
+  const { navbarActive, setUiData, isDrawerOpen, cleanUpUiData } = uiData;
   const { push } = useRouter();
   const handleMenuItemClick = (item: IMenuItem) => {
+    if (item.label === 'Logout') {
+      setShowModal(true);
+      return;
+    }
     setUiData({ ...uiData, navbarActive: item.id });
     push(item.link!);
 
@@ -91,6 +96,14 @@ const Header = () => {
   };
   const handleOpenDrawer = () => {
     setUiData({ ...uiData, isDrawerOpen: true });
+  };
+  const onConfirmModal = () => {
+    setShowModal(false);
+    cleanUpUiData();
+    push('/login');
+  };
+  const onCancelModal = () => {
+    setShowModal(false);
   };
   return (
     <NavbarContainer>
@@ -122,6 +135,13 @@ const Header = () => {
           )}
         </MenuOptions>
       </>
+      <Modal
+        showModal={showModal}
+        onConfirm={onConfirmModal}
+        onCancel={onCancelModal}
+        title="Logout"
+        description="Are you sure you want to logout?"
+      />
     </NavbarContainer>
   );
 };

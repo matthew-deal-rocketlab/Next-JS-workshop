@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 
 import { ICommonProps } from '@/types.d';
+import { themeStatic } from '@/theme';
 
 // Note default width can be override with inline style
 // example: <Card style={{ width: '640px' }}>
 
 const StyledCard = styled.div<ICommonProps>`
-  width: 300px;
+  max-width: 300px;
+  width: 80%;
   padding: 20px;
   border-radius: 10px;
   background-color: ${props => props.theme.colors.white};

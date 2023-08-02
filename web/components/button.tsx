@@ -5,7 +5,7 @@ import { ICommonProps } from '@/types';
 interface ButtonProps extends ICommonProps {
   children: React.ReactNode;
   variant: 'small' | 'medium' | 'large';
-  bgColor?: string;
+  $bgcolor?: string;
   type?: 'submit' | 'reset' | 'button';
   onClick?: (e?: any) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
@@ -28,14 +28,15 @@ const buttonPadY = {
 
 const StyledButton = styled.button<ButtonProps>`
   border-radius: 4px;
+  min-width: 80px;
   padding: ${(props: ButtonProps) => {
     const px = buttonPadX[props.variant] || buttonPadX['medium'];
     const py = buttonPadY[props.variant] || buttonPadY['medium'];
     return `${py} ${px}`;
   }};
   color: white;
-  background-color: ${(props: ButtonProps) =>
-    props.bgColor || props.theme!.colors.primary};
+  background-color: ${({ $bgcolor, theme }: ButtonProps) =>
+    $bgcolor || theme.colors.primary};
   border: none;
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.5);
   &:hover {
