@@ -36,7 +36,7 @@ const addUser = async (
 ): Promise<OkString | string> => {
   const queryAddUser =
     `INSERT INTO tbl_user (status, email, pass, firstname, lastname, verify_code) ` +
-    `VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`;
+    `VALUES ($1, $2, $3, $4, $5, $6) RETURNING uid`;
 
   let result = null;
   const parameters = [UserStatus.Pending, email, password, firstname, lastname, verifyCode];
@@ -47,7 +47,7 @@ const addUser = async (
     return `ERROR: ${err}`;
   }
 
-  return { value: result.rows[0]['id'] };
+  return { value: result.rows[0]['uid'] };
 };
 
 // Adds a user in the system
@@ -117,10 +117,10 @@ export const authVerify = async (input: JsonQLInput, rc: ResolverContext) => {
   }
 
   // add row for user details
-  const queryAddUserDetails = 'INSERT INTO tbl_user_detail (id) VALUES ($1)'
+  const queryAddUserDetails = 'INSERT INTO tbl_user_detail (uid) VALUES ($1)'
   let result2 = null;
   try {
-    result2 = await dbQuery(rc.db!, queryAddUserDetails, [userInfo['id']]);
+    result2 = await dbQuery(rc.db!, queryAddUserDetails, [userInfo['uid']]);
     if (!result2 || result2.rowCount !== 1) return ERROR_DB_UPDATE;
   } catch (err) {
     return { error: `ERROR: ${err}` };
@@ -166,9 +166,9 @@ export const authLogin = async (input: JsonQLInput, rc: ResolverContext) => {
   if (userInfo['status'] !== UserStatus.Verified) return ERROR_USER_UNVERIFIED;
 
   // Generate JWT and refreshToken for user
-  const userId = ((userInfo['id'] ?? '') as string).replaceAll('-', '');
-  const userJwt = getUserJWT(userId);
-  const userRefreshToken = getUserRefreshToken(userId);
+  const userUid = ((userInfo['uid'] ?? '') as string).replaceAll('-', '');
+  const userJwt = getUserJWT(userUid);
+  const userRefreshToken = getUserRefreshToken(userUid);
 
   // Save refresh token
   const saveResult = await saveRefreshToken(rc.db!, (userInfo['id'] ?? '') as string, userRefreshToken);
@@ -191,7 +191,7 @@ export const authLogout = async (input: JsonQLInput, rc: ResolverContext) => {
   const userId = rc.userid;
   if (!userId) return ERROR_INVALID_CREDENTIALS;
 
-  const userInfo = await getUserBy(rc.db, 'id', userId);
+  const userInfo = await getUserBy(rc.db, 'uid', userId);
   if (typeof userInfo === 'string') return ERROR_INVALID_CREDENTIALS;
 
   const querySetVerifyCode = `UPDATE tbl_user SET session = '' WHERE id = $1`
@@ -220,13 +220,13 @@ export const authRefresh = async (input: JsonQLInput, rc: ResolverContext) => {
   if (typeof userInfo === 'string') return ERROR_INVALID_CREDENTIALS;
 
   // compare user uuid in token with database
-  const dbUserUUID = (userInfo['id'] ?? '') as string
+  const dbUserUUID = (userInfo['uid'] ?? '') as string
   const tokenUserUUID = rtResult.userId;
   const isTokenGood = dbUserUUID.replaceAll('-', '') === tokenUserUUID;
   if (!isTokenGood) return ERROR_INVALID_CREDENTIALS;
 
   // Generate JWT and refreshToken for user
-  const userId = ((userInfo['id'] ?? '') as string).replaceAll('-', '');
+  const userId = ((userInfo['uid'] ?? '') as string).replaceAll('-', '');
   const userJwt = getUserJWT(userId);
   const now = new Date();
   if (now < rtResult.renewDate!) {

@@ -69,11 +69,11 @@ export const getUserBy = async (
   return result.rows[0];
 };
 
-export const getUserDetailById = async (
+export const getUserDetailByUid = async (
   db: DBConnection,
   uuid: string,
 ): Promise<JsonQLOutput | string> => {
-  const queryUserDetailByUUID = 'SELECT * FROM tbl_user_detail WHERE id = $1';
+  const queryUserDetailByUUID = 'SELECT * FROM tbl_user_detail WHERE uid = $1';
   let result = null;
 
   try {

@@ -2,7 +2,7 @@
 # this script helps to manage the Directus container
 
 CONTAINER_NAME=rlwm-directus-dev
-APP_PORT=9002
+APP_PORT=5002
 
 # Usually no need to change variables below
 DOCKER_NETWORK=bridge1

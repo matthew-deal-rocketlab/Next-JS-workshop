@@ -1,6 +1,6 @@
 import { IMenuItem } from "@/types";
 
-export const menuTitle = 'Site'
+export const menuTitle = 'Sites'
 
 export const menu: IMenuItem[] = [
   {

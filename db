@@ -78,7 +78,7 @@ docker_import() {
   if [ "$INP_FILE" = "" ]; then echo "no file specified" ; exit 255 ; fi
   if [ "$INP_DB" = "" ]; then echo "database must be specified" ; exit 255 ; fi
   cp $INP_FILE _data/opt/tmp.sql.gz
-  docker exec -t $APP_NAME /bin/sh -c "gunzip -c /opt/tmp.sql.gz | psql -U postgres $INP_DB"
+  docker exec -t $APP_NAME /bin/sh -c "gunzip -c /opt/tmp.sql.gz | psql -U $DB_USER $INP_DB"
   rm _data/opt/tmp.sql.gz 
 }
 
