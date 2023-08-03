@@ -19,6 +19,11 @@ interface IMenuItem {
   items?: IMenuItem[];
 }
 
+interface KeyValue<T> {
+  key: string;
+  value: T;
+}
+
 type JsonQLInput = {
   [key: string]:
     | string

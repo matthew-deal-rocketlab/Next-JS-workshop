@@ -9,25 +9,37 @@ import {
   FormLabel,
   FormRow,
   FormTitle,
+  Select,
 } from '@/components';
+import { KeyValue } from '@/types';
+
+
+
+const frequencyOptions: KeyValue<string>[] = [
+  { key: 'hourly', value: 'Hourly' },
+  { key: 'daily', value: 'Daily' },
+  { key: 'weekly', value: 'Weekly' },
+]
 
 const Container = styled.div`
   display: flex;
   justify-content: center;
 `;
 
-interface formFields {
+interface FormFields {
   frequency: string;
+  time: string;
   alertEmail: string;
 }
 
-const initialFormFields: formFields = {
+const initialFormFields: FormFields = {
   frequency: '',
+  time: '',
   alertEmail: '',
 };
 
 // Checks the form inputs.  Returns null for no errors or object with error messages for each field
-const validateInputs = (inputs: formFields): formFields | null => {
+const validateInputs = (inputs: FormFields): FormFields | null => {
   let hasErrors = false;
   let result = initialFormFields;
 
@@ -44,7 +56,7 @@ const SitesSettingsForm = () => {
 
     console.log('data', data);
 
-    const formErrorMessages = validateInputs(data as formFields);
+    const formErrorMessages = validateInputs(data as FormFields);
     console.log('formErrorMessages', formErrorMessages);
     if (formErrorMessages !== null) {
       setFormErrors(formErrorMessages);
@@ -67,12 +79,16 @@ const SitesSettingsForm = () => {
 
           <FormRow>
             <FormLabel htmlFor="frequency">Frequency</FormLabel>
+            <Select id="frequency" label="test" values={frequencyOptions} onChange={() => { }} />
+          </FormRow>
+
+          <FormRow>
+            <FormLabel htmlFor="time">Time</FormLabel>
             <FormInput
               type="text"
-              id="frequency"
-              name="frequency"
-              placeholder="hourly, daily, weekly"
-              error={formErrors.frequency}
+              id="time"
+              name="time"
+              error={formErrors.time}
             />
           </FormRow>
 

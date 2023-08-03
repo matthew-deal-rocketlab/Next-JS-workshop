@@ -7,8 +7,7 @@ import { themeStatic } from '@/theme';
 // example: <Card style={{ width: '640px' }}>
 
 const StyledCard = styled.div<ICommonProps>`
-  max-width: 300px;
-  width: 80%;
+  width: 300px;
   padding: 20px;
   border-radius: 10px;
   background-color: ${props => props.theme.colors.white};

@@ -100,23 +100,19 @@ const BillingForm = () => {
   const [formErrors, setFormErrors] = useState(initialFormFields);
 
   const onClickLogin = (event: FormEvent<HTMLFormElement>) => {
-    const data = Object.fromEntries(
-      new FormData(event.currentTarget),
-    ) as unknown;
+    const data = Object.fromEntries(new FormData(event.currentTarget)) as unknown as formFields;
 
     console.log('data', data);
 
-    const formErrorMessages = validateInputs(data as formFields);
+    const formErrorMessages = validateInputs(data);
     console.log('formErrorMessages', formErrorMessages);
     if (formErrorMessages !== null) {
-      setFormErrors(formErrorMessages);
+      setFormErrors(Object.assign({}, formErrorMessages));
+      return;
     }
 
     // Submit form data and catch errors in the response
     // push('/dashboard');
-
-    // prevent default form submission
-    event.preventDefault();
   };
 
   return (
@@ -187,24 +183,24 @@ const BillingForm = () => {
             />
           </FormRow>
           <ColumnContainer>
-          <FormRow width="45%">
-            <FormLabel htmlFor="email">State</FormLabel>
-            <FormInput
-              type="text"
-              id="state"
-              name="state"
-              error={formErrors.state}
-            />
-          </FormRow>
-          <FormRow width="45%">
-            <FormLabel htmlFor="">Postcode</FormLabel>
-            <FormInput
-              type="number"
-              id="postcode"
-              name="postcode"
-              error={formErrors.postcode}
-            />
-          </FormRow>
+            <FormRow width="45%">
+              <FormLabel htmlFor="email">State</FormLabel>
+              <FormInput
+                type="text"
+                id="state"
+                name="state"
+                error={formErrors.state}
+              />
+            </FormRow>
+            <FormRow width="45%">
+              <FormLabel htmlFor="">Postcode</FormLabel>
+              <FormInput
+                type="number"
+                id="postcode"
+                name="postcode"
+                error={formErrors.postcode}
+              />
+            </FormRow>
           </ColumnContainer>
           <FormRow>
             <FormLabel htmlFor="country">Country</FormLabel>
@@ -216,7 +212,7 @@ const BillingForm = () => {
             />
           </FormRow>
 
-          <FormRow fullwidth={false} align="center" style={{marginTop:'2em'}}>
+          <FormRow fullwidth={false} align="center" style={{ marginTop: '2em' }}>
             <Button variant="medium" type="submit">
               Update
             </Button>

@@ -1,15 +1,17 @@
+import { KeyValue } from "@/types";
+
 export const countries = [
   {
     name: 'Australia',
     code: 'AU',
     states: [
-      { name: 'New South Wales', code: 'NSW' },
-      { name: 'Queensland', code: 'QLD' },
-      { name: 'Tasmania', code: 'TAS' },
-      { name: 'Victoria', code: 'VIC' },
-      { name: 'Western Australia', code: 'WA' },
-      { name: 'South Australia', code: 'SA' },
-    ],
+      { value: 'New South Wales', key: 'NSW' },
+      { value: 'Queensland', key: 'QLD' },
+      { value: 'Tasmania', key: 'TAS' },
+      { value: 'Victoria', key: 'VIC' },
+      { value: 'Western Australia', key: 'WA' },
+      { value: 'South Australia', key: 'SA' },
+    ] as KeyValue<string>[],
   },
   {
     name: 'New Zealand',
@@ -17,5 +19,8 @@ export const countries = [
     states: [],
   },
 ];
-// Temp countries untils select alows objects
-export const countriesTemp = ['Australia', 'New Zealand'];
+// Temp countries untils select allows objects
+export const countriesTemp: KeyValue<string>[] = [
+  { key: 'AU', value: 'Australia' },
+  { key: 'NZ', value: 'New Zealand' }
+];

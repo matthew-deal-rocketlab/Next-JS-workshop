@@ -2,6 +2,14 @@ import { useState } from 'react';
 import styled, { css } from 'styled-components';
 import Icon from './icons';
 import { themeStatic } from '@/theme';
+import { KeyValue } from '@/types';
+
+interface SelectProps extends React.HTMLProps<HTMLSelectElement>{
+  label: string;
+  values: KeyValue<string>[];
+  onChangeItem?: (value: KeyValue<string>) => void;
+}
+
 
 const SelectContainer = styled.div`
   position: relative;
@@ -74,18 +82,13 @@ const StyledIcon = styled(Icon)`
   top: 30%;
 `;
 
-interface Props {
-  label: string;
-  values: string[];
-  onChange?: (value: string) => void;
-}
 
 // TODO: change values to array of objects
 // TODO: Close when clicking outside
 // TODO: Add error label
 
-const Select = ({ label, values, onChange }: Props) => {
-  const [currentValue, setCurrentValue] = useState('');
+const Select = ({ label, values, onChangeItem }: SelectProps) => {
+  const [currentValue, setCurrentValue] = useState<KeyValue<string> | null>({ key: '', value: '' });
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -93,14 +96,14 @@ const Select = ({ label, values, onChange }: Props) => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleValueChange = (value: string) => {
+  const handleValueChange = (value: KeyValue<string>) => {
     setCurrentValue(value);
   };
-  const handleChange = (value: string) => {
+  const handleChange = (value: KeyValue<string>) => {
     handleValueChange(value);
     // call method, if it exists
-    if (onChange) {
-      onChange(value);
+    if (typeof onChangeItem === 'function') {
+      onChangeItem(value);
     }
     // close, after all tasks are finished
     handleClose();
@@ -109,16 +112,16 @@ const Select = ({ label, values, onChange }: Props) => {
   return (
     <SelectContainer>
       <SelectLabelButton onClick={handleOpen}>
-        {currentValue !== '' ? currentValue : label}
+        {currentValue !== null ? currentValue.value : label}
         <StyledIcon icon="arrow-down" height={10} width={10} />
       </SelectLabelButton>
       <DropdownStyle $isVisible={open}>
-        {values.map((value, index) => (
+        {values.map((item, index) => (
           <DropdownItem
-            onClick={() => handleChange(value)}
-            $active={value === currentValue}
+            onClick={() => handleChange(item)}
+            $active={item === currentValue}
             key={index}>
-            {value}
+            {item.value}
           </DropdownItem>
         ))}
       </DropdownStyle>

@@ -49,22 +49,18 @@ const LoginPage = () => {
   const [formErrors, setFormErrors] = React.useState({ email: '', pass: '' });
 
   const onClickLogin = (event: React.FormEvent<HTMLFormElement>) => {
-    const data = Object.fromEntries(
-      new FormData(event.currentTarget),
-    ) as unknown;
+    const data = Object.fromEntries(new FormData(event.currentTarget)) as unknown as formFields;
     console.log('data', data);
 
-    const formErrorMessages = validateInputs(data as formFields);
+    const formErrorMessages = validateInputs(data);
     console.log('formErrorMessages', formErrorMessages);
     if (formErrorMessages !== null) {
-      setFormErrors(formErrorMessages);
+      setFormErrors(Object.assign({}, formErrorMessages));
+      return;
     }
 
     // Submit form data and catch errors in the response
     push('/dashboard');
-
-    // prevent default form submission
-    event.preventDefault();
   };
 
   return (

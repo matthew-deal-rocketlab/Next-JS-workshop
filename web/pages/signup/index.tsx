@@ -133,17 +133,11 @@ const SignupPage = (props: ICommonProps) => {
   };
 
   const onClickSignUp = (event: React.FormEvent<HTMLFormElement>) => {
-    // prevent default form submission
-    event.preventDefault();
-
     // clear errors when re-submitting
     setSubmitResult(Object.assign({}));
     setFormErrors(Object.assign({}));
 
-    const data = Object.fromEntries(
-      new FormData(event.currentTarget),
-    ) as unknown;
-    const formData = data as FormFields;
+    const formData = Object.fromEntries(new FormData(event.currentTarget)) as unknown as FormFields;
     console.log('data', formData);
 
     const formErrorMessages = validateInputs(formData);
@@ -234,7 +228,7 @@ const SignupPage = (props: ICommonProps) => {
 
           <FormRow align="center">
             <ColoredSpan type={submitResult.type}>
-              {submitResult.text} asdasd
+              {submitResult.text}
             </ColoredSpan>
           </FormRow>
           <FormRow

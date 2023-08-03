@@ -109,22 +109,18 @@ const UserDetailForm = () => {
   const closeAlert = () => setAlertMessage({ type: '', message: '' });
 
   const onClickLogin = (event: FormEvent<HTMLFormElement>) => {
-    const data = Object.fromEntries(
-      new FormData(event.currentTarget),
-    ) as unknown;
+    const data = Object.fromEntries(new FormData(event.currentTarget)) as unknown as formFields;
 
-    console.log('data', data);
+    const formErrorMessages = validateInputs(data);
 
-    const formErrorMessages = validateInputs(data as formFields);
-    console.log('formErrorMessages', formErrorMessages);
     if (formErrorMessages !== null) {
-      setFormErrors(formErrorMessages);
+      // Need to create new object or Reactjs will not detect a changes
+      setFormErrors(Object.assign({}, formErrorMessages));
+      return;
     }
 
     // Submit form data and catch errors in the response
     // setAlert to success or error
-    // prevent default form submission
-    event.preventDefault();
   };
 
   const onCancel = () => {
@@ -197,7 +193,7 @@ const UserDetailForm = () => {
             />
           </FormRow>
           <FormRow>
-            <FormLabel htmlFor="email">State</FormLabel>
+            <FormLabel htmlFor="state">State</FormLabel>
             <FormInput
               type="text"
               id="state"
@@ -206,7 +202,7 @@ const UserDetailForm = () => {
             />
           </FormRow>
           <FormRow>
-            <FormLabel htmlFor="">Postcode</FormLabel>
+            <FormLabel htmlFor="postcode">Postcode</FormLabel>
             <FormInput
               type="number"
               id="postcode"
@@ -217,6 +213,7 @@ const UserDetailForm = () => {
           <FormRow>
             <FormLabel htmlFor="country">Country</FormLabel>
             <Select
+              id="country"
               label="Choose country"
               values={countriesTemp}
               onChange={country => console.log(country)}
