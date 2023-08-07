@@ -4,6 +4,12 @@ import { Client, ClientConfig, QueryResult } from 'pg';
 
 const DEBUG_SQL = true
 
+interface DBResult extends QueryResult {
+  error?: string;
+}
+
+export type DBConnection = Client;
+
 
 export const dbConnect = async (): Promise<DBConnection> => {
   const dbOptions: ClientConfig = {
@@ -24,13 +30,17 @@ export const dbQuery = async (
   db: DBConnection,
   sql: string,
   values?: any[],
-): Promise<QueryResult<any>> => {
+): Promise<DBResult> => {
   if (DEBUG_SQL) console.log(sql);
-  if (values) {
-    if (DEBUG_SQL) console.log(values);
-    return await db.query(sql, values);
-  } else {
-    return await db.query(sql);
+  try {
+    if (values) {
+      if (DEBUG_SQL) console.log(values);
+      return await db.query(sql, values);
+    } else {
+      return await db.query(sql);
+    }
+  } catch (error) {
+    return <DBResult>{ error: `${error}`, rowCount: 0, rows: [], command: '', oid: 0, fields: [] }
   }
 };
 

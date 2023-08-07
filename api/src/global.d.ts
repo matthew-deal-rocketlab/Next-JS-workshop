@@ -1,8 +1,6 @@
 import { Client } from 'pg';
 
 declare global {
-  type DBConnection = Client;
-
   type JsonQLInput = {
     [key: string]:
     | string
@@ -12,10 +10,13 @@ declare global {
     | JsonQLInput;
   };
 
-  type JsonQLOutput = JsonQLInput;
+  type JsonQLOutput = {
+    error?: string;
+    result?: string | number | boolean | object | JsonQLInput | JsonQLInput[];
+  };
 
   interface ResolverContext {
-    userid: string;
+    useruid: string;
     db: DBConnection | null;
   }
 
@@ -31,5 +32,11 @@ declare global {
   }
   interface OkNumber {
     value: number;
+  }
+
+  // Site items
+  interface ISiteItem {
+    url: string;
+    timeout: number;
   }
 }

@@ -32,7 +32,7 @@ docker_start() {
     chmod a+rw $PWD/_data/sql
   fi
 
-  docker run -dt --restart=always \
+  docker run -dit --rm \
   -p $DB_PORT:5432 \
   --net $NET_NAME \
   -v "$PWD/_data/sql":/var/lib/postgresql/data \

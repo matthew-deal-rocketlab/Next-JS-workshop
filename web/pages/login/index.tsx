@@ -59,19 +59,20 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
 const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
   const payload = { authLogin: { ...data } };
   const loginResult = await apiPost('/jsonql', payload);
-
+  console.log('loginResult', loginResult);
   if (loginResult.status !== ApiStatus.OK) {
     return { text: 'Error logging in', type: SubmitResultType.error };
   }
 
+  // @ts-ignore
   const authRefreshResult = loginResult.result['authLogin'];
 
-  if (!(authRefreshResult.result && authRefreshResult.result.length === 36)) {
-    return { text: authRefreshResult, type: SubmitResultType.error };
+  if (!(authRefreshResult['token'] && authRefreshResult['token'].length > 20)) {
+    return { text: `${loginResult.result}`, type: SubmitResultType.error };
   }
 
   // Set Auth Token HERE!!
-  console.log('loginResult', loginResult);
+  // console.log('loginResult', loginResult);
 
   return {
     text: 'Welcome! You will be redirected to the dashboard shortly',
@@ -100,20 +101,16 @@ const LoginPage = () => {
       return;
     }
 
-    try {
-      const result = await submitLoginFormData(formData);
-      if (result.type === SubmitResultType.error) {
-        setAlert({ message: result.text, type: 'error' });
-        return;
-      }
-      setAlert({ message: result.text, type: 'success' });
-      await sleep(2000);
-      push('/dashboard');
-    } catch (error) {
-      // Handle error
-      console.error(error);
+    const result = await submitLoginFormData(formData);
+    if (result.type === SubmitResultType.error) {
+      setAlert({ message: result.text, type: 'error' });
+      return;
     }
+    setAlert({ message: result.text, type: 'success' });
+    await sleep(2000);
+    push('/dashboard');
   };
+
   const onAlertClose = () => {
     setAlert({ message: '', type: 'success' });
   };

@@ -28,11 +28,11 @@ set_password() {
 app_init() {
   if [ ! -d "$PWD/_data" ]; then
     echo "Initializing application"
-    mkdir -p _data/opt/app
+    mkdir -p _data/opt/app/uploads
     docker_start
     docker exec -it $CONTAINER_NAME adduser --uid $(id -u) --gecos "" --disabled-password user1
     docker exec -it $CONTAINER_NAME su - user1 -c 'echo "{\"name\":\"$CONTAINER_NAME\"}" > /opt/app/package.json'
-    docker exec -it $CONTAINER_NAME su - user1 -c 'cd /opt/app; npm init -y ; npm add directus'
+    docker exec -it $CONTAINER_NAME su - user1 -c 'cd /opt/app; npm init -y ; npm add directus pg'
     docker exec -it $CONTAINER_NAME su - user1 -c "cd /opt/app; ./node_modules/.bin/directus init"
     docker_stop
   else
@@ -56,7 +56,7 @@ docker_start() {
     echo ">> Starting existing container:"
     docker container start $CONTAINER_NAME
   else
-    docker run -dit --restart=always \
+    docker run -dit --rm \
       -p $APP_PORT:8055 \
       --network=$DOCKER_NETWORK \
       -v $PWD/_data/opt:/opt \
@@ -110,7 +110,7 @@ app_import() {
 
 # Initialize application
 if [ "$1" = "init" ]; then app_init; exit $? ; fi
-# Configur Directus
+# Configure Directus
 if [ "$1" = "config" ]; then app_config; exit $? ; fi
 
 if [ "$1" = "start" ]; then docker_start; exit $? ; fi

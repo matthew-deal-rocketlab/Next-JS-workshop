@@ -1,4 +1,4 @@
-import { dbQuery } from '../services/db';
+import { dbQuery, DBConnection } from '../services/db';
 import {
   ERROR_DB_UPDATE,
   ERROR_INVALID_CREDENTIALS,
@@ -40,18 +40,15 @@ const addUser = async (
 
   let result = null;
   const parameters = [UserStatus.Pending, email, password, firstname, lastname, verifyCode];
-  try {
-    result = await dbQuery(db, queryAddUser, parameters);
-    if (!result || result.rowCount !== 1) return 'could not add user';
-  } catch (err) {
-    return `ERROR: ${err}`;
-  }
+  result = await dbQuery(db, queryAddUser, parameters);
+  if (result.error) return result.error;
+  if (!result || result.rowCount !== 1) return 'could not add user';
 
   return { value: result.rows[0]['uid'] };
 };
 
 // Adds a user in the system
-export const authSignup = async (input: JsonQLInput, rc: ResolverContext) => {
+export const authSignup = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
 
   // get input parameters. firstname and lastname is optional
@@ -93,56 +90,46 @@ export const authSignup = async (input: JsonQLInput, rc: ResolverContext) => {
   return { result: addResult.value };
 };
 
-export const authVerify = async (input: JsonQLInput, rc: ResolverContext) => {
+export const authVerify = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
 
   // get input parameters
   const inputCode = (input['code'] as string) ?? '';
   if (!inputCode || inputCode.length !== 32) return ERROR_INVALID_INPUT;
 
-  const userInfo = await getUserBy(rc.db, 'verify_code', inputCode);
-  if (typeof userInfo === 'string') return ERROR_INVALID_INPUT;
-
-  if (userInfo['status'] !== UserStatus.Pending) return ERROR_INVALID_INPUT;
-
   // set user status to verified and clear user verify code
-  const queryVerifyUser = `UPDATE tbl_user SET status = '${UserStatus.Verified}', verify_code='' WHERE id = $1`
+  const queryVerifyUser = `UPDATE tbl_user SET status = '${UserStatus.Verified}', verify_code = null WHERE ` +
+    `verify_code = $1 AND status = '${UserStatus.Pending}' RETURNING uid`
 
   let result1 = null;
-  try {
-    result1 = await dbQuery(rc.db!, queryVerifyUser, [userInfo['id']]);
-    if (!result1 || result1.rowCount !== 1) return ERROR_DB_UPDATE;
-  } catch (err) {
-    return { error: `ERROR: ${err}` };
-  }
+  result1 = await dbQuery(rc.db!, queryVerifyUser, [inputCode]);
+  if (result1.error) return { error: result1.error };
+  if (!result1 || result1.rowCount !== 1) return ERROR_DB_UPDATE;
+
+  const useruid = result1.rows[0]['uid']
 
   // add row for user details
   const queryAddUserDetails = 'INSERT INTO tbl_user_detail (uid) VALUES ($1)'
   let result2 = null;
-  try {
-    result2 = await dbQuery(rc.db!, queryAddUserDetails, [userInfo['uid']]);
-    if (!result2 || result2.rowCount !== 1) return ERROR_DB_UPDATE;
-  } catch (err) {
-    return { error: `ERROR: ${err}` };
-  }
+  result2 = await dbQuery(rc.db!, queryAddUserDetails, [useruid]);
+  if (result2.error) return { error: result2.error };
+  if (!result2 || result2.rowCount !== 1) return ERROR_DB_UPDATE;
+
 
   return RESULT_OK;
 }
 
-const saveRefreshToken = async (db: DBConnection, userId: string, refreshToken: string): Promise<FnResult> => {
+const saveRefreshToken = async (db: DBConnection, userId: string, refreshToken: string): Promise<JsonQLOutput> => {
   const querySetSession = `UPDATE tbl_user SET session = $1 WHERE id = $2`
   let result = null;
-  try {
-    result = await dbQuery(db, querySetSession, [refreshToken, userId]);
-    if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
-  } catch (err) {
-    return { error: `ERROR: ${err}` };
-  }
+  result = await dbQuery(db, querySetSession, [refreshToken, userId]);
+  if (result.error) return { error: result.error };
+  if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
 
   return RESULT_OK;
 }
 
-export const authLogin = async (input: JsonQLInput, rc: ResolverContext) => {
+export const authLogin = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
 
   // get input parameters
@@ -172,7 +159,7 @@ export const authLogin = async (input: JsonQLInput, rc: ResolverContext) => {
 
   // Save refresh token
   const saveResult = await saveRefreshToken(rc.db!, (userInfo['id'] ?? '') as string, userRefreshToken);
-  if (saveResult.error) return saveResult.error;
+  if (saveResult.error) return { error: saveResult.error };
 
   // Get other user details
   const firstname = (userInfo['firstname'] ?? '') as string;
@@ -186,27 +173,21 @@ export const authLogin = async (input: JsonQLInput, rc: ResolverContext) => {
   };
 };
 
-export const authLogout = async (input: JsonQLInput, rc: ResolverContext) => {
+export const authLogout = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
-  const userId = rc.userid;
-  if (!userId) return ERROR_INVALID_CREDENTIALS;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
 
-  const userInfo = await getUserBy(rc.db, 'uid', userId);
-  if (typeof userInfo === 'string') return ERROR_INVALID_CREDENTIALS;
-
-  const querySetVerifyCode = `UPDATE tbl_user SET session = '' WHERE id = $1`
+  const querySetVerifyCode = `UPDATE tbl_user SET session = '' WHERE uid = $1`
   let result = null;
-  try {
-    result = await dbQuery(rc.db!, querySetVerifyCode, [userInfo['id']]);
-    if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
-  } catch (err) {
-    return { error: `ERROR: ${err}` };
-  }
+  result = await dbQuery(rc.db!, querySetVerifyCode, [useruid]);
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
 
   return RESULT_OK;
 }
 
-export const authRefresh = async (input: JsonQLInput, rc: ResolverContext) => {
+export const authRefresh = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
 
   const refreshToken = (input['refreshToken'] as string) ?? '';
@@ -237,38 +218,30 @@ export const authRefresh = async (input: JsonQLInput, rc: ResolverContext) => {
 
   // Save refresh token
   const saveResult = await saveRefreshToken(rc.db!, userId, newRefreshToken);
-  if (saveResult.error) return saveResult.error;
+  if (saveResult.error) return { error: saveResult.error };
 
   return { result: { token: userJwt, refreshToken: newRefreshToken } };
 }
 
 // Initiates sending an email to reset password
-export const authForgotPassword = async (input: JsonQLInput, rc: ResolverContext) => {
+export const authForgotPassword = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
 
   // get input parameters
   const inputEmail = (input['email'] as string) ?? '';
   if (!inputEmail || !isEmail(inputEmail)) return ERROR_INVALID_INPUT;
 
-  const userInfo = await getUserBy(rc.db, 'email', inputEmail.toLowerCase());
-  if (typeof userInfo === 'string') return RESULT_OK;
-
-  const userEmail = (userInfo['email'] ?? '') as string;
-  if (!userEmail) return RESULT_OK;
-
-  // Only verified or pending verified users can perform a password reset
-  if (!(userInfo['status'] === UserStatus.Verified || userInfo['status'] === UserStatus.Pending)) return RESULT_OK;
+  const userEmail = inputEmail.toLowerCase();
 
   // save unique code into user verify_code column
   const newCode = uuidv4(false);
-  const querySetVerifyCode = `UPDATE tbl_user SET verify_code = $1 WHERE id = $2`
+  const querySetVerifyCode = `UPDATE tbl_user SET verify_code = $1 WHERE email = $2 AND ` +
+    `(status = '${UserStatus.Verified}' OR status = '${UserStatus.Pending}')`
+
   let result = null;
-  try {
-    result = await dbQuery(rc.db!, querySetVerifyCode, [newCode, userInfo['id']]);
-    if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
-  } catch (err) {
-    return { error: `ERROR: ${err}` };
-  }
+  result = await dbQuery(rc.db!, querySetVerifyCode, [newCode, userEmail]);
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
 
   // finally send email
   await sendEmail(
@@ -281,7 +254,7 @@ export const authForgotPassword = async (input: JsonQLInput, rc: ResolverContext
 };
 
 
-export const authResetPassword = async (input: JsonQLInput, rc: ResolverContext) => {
+export const authResetPassword = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
 
   // get input parameters
@@ -302,14 +275,11 @@ export const authResetPassword = async (input: JsonQLInput, rc: ResolverContext)
   const savedPassword = `${salt}${SALT_PASS_SEPARATOR}${hashedPassword}`;
 
   // save new password and clear verification code
-  const querySetPass = `UPDATE tbl_user SET pass = $1, verify_code = '' WHERE id = $2`
+  const querySetPass = `UPDATE tbl_user SET pass = $1, verify_code = null WHERE id = $2`
   let result = null;
-  try {
-    result = await dbQuery(rc.db!, querySetPass, [savedPassword, userInfo['id']]);
-    if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
-  } catch (err) {
-    return { error: `ERROR: ${err}` };
-  }
+  result = await dbQuery(rc.db!, querySetPass, [savedPassword, userInfo['id']]);
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
 
   return RESULT_OK;
 }

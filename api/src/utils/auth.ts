@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { APP_SECRET, ERROR_TOKEN_EXPIRED, JWT_EXPIRY, JWT_REFRESH_EXPIRY, JWT_REFRESH_INTERVAL, JWT_SECRET } from '../constants';
+import { API_HEADER, API_KEY, APP_SECRET, ERROR_TOKEN_EXPIRED, JWT_EXPIRY, JWT_REFRESH_EXPIRY, JWT_REFRESH_INTERVAL, JWT_SECRET } from '../constants';
 import { btoa, atob } from './converters';
 import { uuidv4 } from './misc';
 import { Request } from 'express';
@@ -112,4 +112,11 @@ export const validateRefreshToken = (refreshToken: string): validateRefreshToken
     userId: payload.sub,
     renewDate: renewDate,
   };
+}
+
+export const validateAPIKey = (req: Request): boolean => {
+  const apikey = req.headers[API_HEADER];
+  const isValid = (apikey === API_KEY);
+  if (!isValid) req.socket.end();
+  return isValid;
 }

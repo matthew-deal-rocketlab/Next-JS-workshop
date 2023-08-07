@@ -1,12 +1,13 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 
-import { API_HEADER, API_KEY, API_PREFIX } from '../constants';
+import { API_PREFIX } from '../constants';
 import { getTime, getVersion } from '../resolvers/utils';
 import { sysCheck } from '../resolvers/syscheck';
 import { authForgotPassword, authLogin, authLogout, authRefresh, authResetPassword, authSignup, authVerify } from '../resolvers/auth';
 import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
-import { validateToken } from '../utils/auth';
+import { validateAPIKey, validateToken } from '../utils/auth';
+import { siteListRead, siteListUpdate, siteSettingsRead, siteSettingsUpdate } from '../resolvers/site';
 
 const prnt = console.log;
 
@@ -28,6 +29,13 @@ resolverMap.set('authLogout', authLogout);
 // user management
 resolverMap.set('userRead', userRead);
 resolverMap.set('userUpdate', userUpdate);
+
+// site
+resolverMap.set('siteListRead', siteListRead);
+resolverMap.set('siteListUpdate', siteListUpdate);
+resolverMap.set('siteSettingsRead', siteSettingsRead);
+resolverMap.set('siteSettingsUpdate', siteSettingsUpdate);
+
 
 
 const jsonErrorHandler = (
@@ -58,6 +66,7 @@ const funcWrapper = async (
 };
 
 const addRoutes = (app: Express) => {
+  // This should be the only API endpoint that has no API key protection
   app.get(
     `${API_PREFIX}/healthcheck`,
     (req: Request, res: Response): Response => {
@@ -65,7 +74,7 @@ const addRoutes = (app: Express) => {
       return res.json({
         status: 'ok',
         time: new Date().toISOString(),
-        version: '2023.07.10',
+        version: '2023.08.03',
       });
     },
   );
@@ -73,7 +82,9 @@ const addRoutes = (app: Express) => {
   app.get(
     `${API_PREFIX}/syscheck`,
     async (req: Request, res: Response): Promise<Response> => {
-      const rc: ResolverContext = { userid: '', db: null };
+      if (!validateAPIKey(req)) return res.end();
+
+      const rc: ResolverContext = { useruid: '', db: null };
       const result = await sysCheck({}, rc);
       return res.json(result);
     },
@@ -84,12 +95,7 @@ const addRoutes = (app: Express) => {
     express.json(),
     jsonErrorHandler,
     async (req: Request, res: Response): Promise<Response> => {
-      const apikey = req.headers[API_HEADER];
-
-      if (apikey !== API_KEY) {
-        req.socket.end();
-        return res.end();
-      }
+      if (!validateAPIKey(req)) return res.end();
 
       // check input
       const reqKeys = Object.keys(req.body);
@@ -103,7 +109,7 @@ const addRoutes = (app: Express) => {
       }
 
       const rc: ResolverContext = {
-        userid: userIdOrError.result ?? '',
+        useruid: userIdOrError.result ?? '',
         db: await dbConnect(),
       };
 

@@ -1,5 +1,5 @@
-import { ERROR_DB_UPDATE, ERROR_INVALID_CREDENTIALS, ERROR_NO_DB, RESULT_OK } from "../constants";
-import { dbQuery } from "../services/db";
+import { ERROR_DB_UPDATE, RESULT_OK } from "../constants";
+import { DBConnection, dbQuery } from "../services/db";
 
 
 export const isFieldsValid = (input: JsonQLInput, allowedFields: string[]): boolean => {
@@ -41,12 +41,9 @@ export const updateTable = async (input: JsonQLInput, rc: ResolverContext,
   const queryAddTable = `UPDATE ${tableName} SET ${setFields} WHERE ${condition}`
 
   let result = null;
-  try {
-    result = await dbQuery(rc.db!, queryAddTable, parameters);
-    if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
-  } catch (err) {
-    return { error: `ERROR: ${err}` };
-  }
+  result = await dbQuery(rc.db!, queryAddTable, parameters);
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount !== 1) return ERROR_DB_UPDATE;
 
   return RESULT_OK;
 }
@@ -55,16 +52,12 @@ export const getUserBy = async (
   db: DBConnection,
   field: string,
   value: string,
-): Promise<JsonQLOutput | string> => {
+): Promise<JsonQLInput | string> => {
   const queryUserBy = `SELECT * FROM tbl_user WHERE ${field} = $1`;
   let result = null;
-
-  try {
-    result = await dbQuery(db, queryUserBy, [value]);
-    if (!result || result.rowCount == 0) return 'no result';
-  } catch (err) {
-    return `ERROR: ${err}`;
-  }
+  result = await dbQuery(db, queryUserBy, [value]);
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return 'no result';
 
   return result.rows[0];
 };
@@ -75,13 +68,9 @@ export const getUserDetailByUid = async (
 ): Promise<JsonQLOutput | string> => {
   const queryUserDetailByUUID = 'SELECT * FROM tbl_user_detail WHERE uid = $1';
   let result = null;
-
-  try {
-    result = await dbQuery(db, queryUserDetailByUUID, [uuid]);
-    if (!result || result.rowCount == 0) return 'no result';
-  } catch (err) {
-    return `ERROR: ${err}`;
-  }
+  result = await dbQuery(db, queryUserDetailByUUID, [uuid]);
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return 'no result';
 
   return result.rows[0];
 };

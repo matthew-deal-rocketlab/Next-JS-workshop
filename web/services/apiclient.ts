@@ -1,9 +1,11 @@
 // Underlying library to retrieve remote data
 
+import { JsonQLInput } from "@/types"
+
 
 export type ApiResponse = {
   status: ApiStatus
-  result: JsonQLOutput | string | number | boolean | object
+  result: JsonQLInput | string | object
 }
 
 export enum ApiStatus {
@@ -40,27 +42,26 @@ const jsonFetch = async (
   console.log(`${new Date()} ${options.method}: ${url}`)
   console.log(fetchOptions)
 
+  let response: Response;
   try {
-    const response = await fetch(url, { ...fetchOptions })
-
-    // console.log(`${new Date()} >>> response`, response)
-
-    if (response.status === 200) {
-      const json = await response.json()
-      return { status: ApiStatus.OK, result: json }
-    }
-
-    if (response.status === 403) {
-      return { status: ApiStatus.NO_AUTH, result: { url, options } }
-    }
-
-    return { status: ApiStatus.UNKNOWN, result: response }
+    response = await fetch(url, { ...fetchOptions })
   } catch (error) {
     console.log('>>> error:', error)
     return { status: ApiStatus.UNKNOWN, result: `unknown error: ${error}` }
   }
+  // console.log(`${new Date()} >>> response`, response)
 
-  // console.log(`${new Date()} >>> done`)
+  if (response.status === 200) {
+    const json = await response.json()
+    return { status: ApiStatus.OK, result: json }
+  }
+
+  if (response.status === 403) {
+    return { status: ApiStatus.NO_AUTH, result: { url, options } }
+  }
+
+  return { status: ApiStatus.UNKNOWN, result: response }
+
 }
 
 export const jsonPost = async (

@@ -6,7 +6,7 @@ export const sendEmail = async (
   emailTo: string,
   subject: string,
   message: string,
-): Promise<void> => {
+): Promise<boolean> => {
   const data = {
     API_KEY: process.env.GAPP_EMAIL_API_KEY,
     MAILTO: emailTo,
@@ -20,6 +20,10 @@ export const sendEmail = async (
   };
   const response = await fetch(process.env.GAPP_EMAIL_URL ?? '', fetchOptions);
   const body = await response.text();
+  let result = null
+  try {
+    result = JSON.parse(body)
+  } catch(_) {}
 
-  console.log(body);
+  return result.success ?? false;
 };

@@ -44,6 +44,7 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
 };
 
 const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
+  const obscureMessage = 'If your address exists in our system, an email will be sent with further instructions';
   const payload = { authForgotPassword: { ...data } };
   const forgotPasswordResult = await apiPost('/jsonql', payload);
 
@@ -51,13 +52,16 @@ const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
     return { text: 'Error forgot password', type: SubmitResultType.error };
   }
 
-  const authRefreshResult = forgotPasswordResult.result['authForgotPassword'];
+  // @ts-ignore
+  const authForgotPassword = forgotPasswordResult.result['authForgotPassword'];
 
-  if (!(authRefreshResult.result && authRefreshResult.result.length === 36)) {
-    return { text: authRefreshResult, type: SubmitResultType.error };
+  if (!(authForgotPassword.result && authForgotPassword.result === 'ok')) {
+    // This is when email does not exists or error, for security we always return a success type message
+    return { text: `${obscureMessage}`, type: SubmitResultType.ok };
   }
+
   return {
-    text: 'Your password has been reset. Please check your email for a new password.',
+    text: obscureMessage,
     type: SubmitResultType.ok,
   };
 };
