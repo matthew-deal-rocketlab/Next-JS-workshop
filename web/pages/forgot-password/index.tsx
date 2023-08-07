@@ -12,29 +12,26 @@ import {
   FormRow,
   FormTitle,
   LinkText,
-  Text,
   PageLayoutFullPage,
+  Text,
 } from '@/components';
 import { IAlertMessage, SubmitResult, SubmitResultType } from '@/types.d';
 import { apiPost } from '@/utils/api-client';
+import styled, { useTheme } from 'styled-components';
 import { ApiStatus } from '@/services/apiclient';
-import { sleep } from '@/utils/misc';
 
 interface FormFields {
   email: string;
-  pass: string;
 }
 
 const initialFormFields: FormFields = {
   email: '',
-  pass: '',
 };
 
 // Checks the form inputs.  Returns null for no errors or object with error messages for each field
 const validateInputs = (inputs: FormFields): FormFields | null => {
   let hasErrors = false;
   let result = { ...initialFormFields };
-  console.log('inputs', inputs);
   // check email
   if (!inputs.email) {
     hasErrors = true;
@@ -43,43 +40,34 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
     hasErrors = true;
     result.email = 'Invalid Email';
   }
-
-  // Check password
-  if (!inputs.pass) {
-    hasErrors = true;
-    result.pass = 'Password can not be empty';
-  } else if (inputs.pass.length < 8) {
-    hasErrors = true;
-    result.pass = 'Password must be at least 8 characters';
-  }
-
   return hasErrors ? result : null;
 };
 
-const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
-  const payload = { authLogin: { ...data } };
-  const loginResult = await apiPost('/jsonql', payload);
+const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
+  const payload = { authForgotPassword: { ...data } };
+  const forgotPasswordResult = await apiPost('/jsonql', payload);
 
-  if (loginResult.status !== ApiStatus.OK) {
-    return { text: 'Error logging in', type: SubmitResultType.error };
+  if (forgotPasswordResult.status !== ApiStatus.OK) {
+    return { text: 'Error forgot password', type: SubmitResultType.error };
   }
 
-  const authRefreshResult = loginResult.result['authLogin'];
+  const authRefreshResult = forgotPasswordResult.result['authForgotPassword'];
 
   if (!(authRefreshResult.result && authRefreshResult.result.length === 36)) {
     return { text: authRefreshResult, type: SubmitResultType.error };
   }
-
-  // Set Auth Token HERE!!
-  console.log('loginResult', loginResult);
-
   return {
-    text: 'Welcome! You will be redirected to the dashboard shortly',
+    text: 'Your password has been reset. Please check your email for a new password.',
     type: SubmitResultType.ok,
   };
 };
 
-const LoginPage = () => {
+const TextContainer = styled.div`
+  margin: 1em 0;
+`;
+
+const ForgotPasswordPage = () => {
+  const theme = useTheme();
   const { push } = useRouter();
   const [formErrors, setFormErrors] = React.useState(initialFormFields);
   const [alert, setAlert] = React.useState<IAlertMessage>({
@@ -87,9 +75,10 @@ const LoginPage = () => {
     type: 'success',
   });
 
-  const onClickLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+  const onClickReset = async (event: React.FormEvent<HTMLFormElement>) => {
     setFormErrors(initialFormFields);
     setAlert({ message: '', type: 'success' });
+
     const formData = Object.fromEntries(
       new FormData(event.currentTarget),
     ) as unknown as FormFields;
@@ -101,14 +90,12 @@ const LoginPage = () => {
     }
 
     try {
-      const result = await submitLoginFormData(formData);
+      const result = await submitFormData(formData);
       if (result.type === SubmitResultType.error) {
         setAlert({ message: result.text, type: 'error' });
         return;
       }
       setAlert({ message: result.text, type: 'success' });
-      await sleep(2000);
-      push('/dashboard');
     } catch (error) {
       // Handle error
       console.error(error);
@@ -117,14 +104,25 @@ const LoginPage = () => {
   const onAlertClose = () => {
     setAlert({ message: '', type: 'success' });
   };
-
+  console.log('theme', theme);
   return (
     <PageLayoutFullPage>
       <Card>
-        <Form onSubmit={onClickLogin}>
-          <FormRow align="center">
-            <FormTitle>Login</FormTitle>
+        <Form onSubmit={onClickReset}>
+          <FormRow align="left">
+            <FormTitle>{`Don't remember your password?`}</FormTitle>
           </FormRow>
+          <TextContainer>
+            <Text
+              $weight={theme.fontWeights.bold}
+              $size={theme.fontSizes.normal}>
+              No worries!
+            </Text>
+            <Text>
+              {` Enter your email below and we'll send you an email with
+              instructions on how to reset your password.`}
+            </Text>
+          </TextContainer>
           <FormRow>
             <FormLabel htmlFor="email">Email</FormLabel>
             <FormInput
@@ -135,25 +133,9 @@ const LoginPage = () => {
             />
           </FormRow>
 
-          <FormRow>
-            <FormLabel htmlFor="pass">Password</FormLabel>
-            <FormInput
-              type="password"
-              id="pass"
-              name="pass"
-              required
-              error={formErrors.pass}
-            />
-          </FormRow>
           <FormRow style={{ marginTop: '1em' }}>
             <Text>
-              Do not have an account?<LinkText href="/signup">Sign up</LinkText>
-            </Text>
-          </FormRow>
-          <FormRow style={{ marginTop: '1em' }}>
-            <Text>
-              Forgot password?
-              <LinkText href="/forgot-password">Reset it</LinkText>
+              Remember Password?<LinkText href="/login">Back to login</LinkText>
             </Text>
           </FormRow>
           {alert.message && (
@@ -166,7 +148,7 @@ const LoginPage = () => {
             align="center"
             style={{ marginTop: '2em' }}>
             <Button variant="medium" type="submit">
-              Submit
+              Reset
             </Button>
           </FormRow>
         </Form>
@@ -175,4 +157,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default ForgotPasswordPage;

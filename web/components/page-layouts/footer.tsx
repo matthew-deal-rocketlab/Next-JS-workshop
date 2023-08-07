@@ -21,7 +21,7 @@ const Title = styled.div`
   font-size: ${themeStatic.fontSizes.medium};
   margin: 0;
   color: ${({ theme }) => theme.colors.primary};
-  font-weight: ${themeStatic.fontWeight.bold};
+  font-weight: ${themeStatic.fontWeights.bold};
   padding: 0 20px;
 `;
 

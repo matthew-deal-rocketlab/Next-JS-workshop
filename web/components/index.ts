@@ -15,6 +15,8 @@ import Modal from './modal';
 import Navbar from './page-layouts/header';
 import Select from './select';
 import Sidebar from './sidebar';
+import Text from './text';
+import LinkText from './link';
 
 export {
   Alert,
@@ -24,8 +26,10 @@ export {
   Drawer,
   Dropdown,
   Footer,
+  LinkText,
   Modal,
   Navbar,
   Select,
   Sidebar,
+  Text,
 };

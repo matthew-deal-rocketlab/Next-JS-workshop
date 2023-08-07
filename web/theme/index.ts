@@ -70,7 +70,7 @@ export const themeStatic = {
     large: '20px',
     xlarge: '24px',
   },
-  fontWeight: {
+  fontWeights: {
     normal: 400,
     bold: 700,
   },

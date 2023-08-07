@@ -47,6 +47,21 @@ interface SubmitResult {
 type ColorType = 'error' | 'success' | 'warning' | 'info';
 
 interface IAlertMessage {
-  type: EColorType;
+  type: ColorType;
   message: string;
+}
+
+interface IBaseText {
+  children: ReactNode;
+  $color?: string;
+  $size?: string;
+  $weight?: string;
+  $align?: string;
+  $margin?: string;
+  $padding?: string;
+}
+
+interface ILinkText extends IBaseText {
+  href: string;
+  $overColor?: string;
 }

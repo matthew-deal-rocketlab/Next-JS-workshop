@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import styled, { useTheme } from 'styled-components';
 
-import { IMenuItem } from "@/types";
+import { IMenuItem } from '@/types';
 import { themeStatic } from '@/theme';
 import { UiContext } from '@/context/ui-context';
 import { ArrowDownIcon, ArrowUpIcon, Collapsible } from '.';
@@ -24,7 +24,7 @@ const Title = styled.h1`
   text-align: left;
   color: ${({ theme }) => theme.colors.light2};
   font-size: ${themeStatic.fontSizes.xlarge};
-  font-weight: ${themeStatic.fontWeight.bold};
+  font-weight: ${themeStatic.fontWeights.bold};
   padding: 5px 20px;
   margin: 0;
   margin-top: 20px;

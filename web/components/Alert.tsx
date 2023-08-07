@@ -8,12 +8,10 @@ import styled, { useTheme } from 'styled-components';
 import Icon, { BarsIcon, XMarkIcon } from './icons';
 import { ColorType } from '@/types';
 
-// make a style for the alert
-
-const StyledAlert = styled.div<{ type: string }>`
+const StyledAlert = styled.div<{ type: string; $height?: number }>`
   width: 100%;
-  height: 30px;
   background-color: ${({ theme, type }) => theme.colors[type].light};
+  height: ${({ $height }) => `${$height}px` || '50px'};
   border-radius: 5px;
   border-left: 5px solid ${({ theme, type }) => theme.colors[type].main};
   color: ${({ theme, type }) => theme.colors[type].dark};
@@ -32,6 +30,7 @@ interface Props {
   type: ColorType;
   children: ReactNode;
   onClose?: () => void;
+  height?: number;
 }
 
 const Alert = ({ type, children, onClose }: Props) => {

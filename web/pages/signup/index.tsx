@@ -49,7 +49,7 @@ const ColoredSpan = styled.span<ColoredSpanProps>`
 // Checks the form inputs.  Returns null for no errors or object with error messages for each field
 const validateInputs = (inputs: FormFields): FormFields | null => {
   let hasErrors = false;
-  let result = initialFormFields;
+  let result = { ...initialFormFields };
 
   // check email
   if (!inputs.email) {
@@ -97,7 +97,6 @@ const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
     return { text: 'Error logging in', type: SubmitResultType.error };
   }
 
-  // @ts-ignore
   const authRefreshResult = loginResult.result['authSignup'];
 
   if (!(authRefreshResult.result && authRefreshResult.result.length === 36)) {
@@ -132,27 +131,29 @@ const SignupPage = (props: ICommonProps) => {
     push('/login');
   };
 
-  const onClickSignUp = (event: React.FormEvent<HTMLFormElement>) => {
+  const onClickSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
     // clear errors when re-submitting
-    setSubmitResult(Object.assign({}));
-    setFormErrors(Object.assign({}));
+    setFormErrors(initialFormFields);
+    setSubmitResult({ text: '', type: SubmitResultType.ok });
 
-    const formData = Object.fromEntries(new FormData(event.currentTarget)) as unknown as FormFields;
-    console.log('data', formData);
+    const formData = Object.fromEntries(
+      new FormData(event.currentTarget),
+    ) as unknown as FormFields;
 
     const formErrorMessages = validateInputs(formData);
-    console.log('formErrorMessages', formErrorMessages);
     if (formErrorMessages !== null) {
-      setFormErrors(Object.assign({}, formErrorMessages));
+      setFormErrors(formErrorMessages);
       return;
     }
-
-    // Submit form data and catch errors in the response
-    (async () => {
+    setFormErrors(initialFormFields);
+    try {
       const result = await submitFormData(formData);
       setSubmitResult(result);
       setShowContinue(result.type === SubmitResultType.ok);
-    })();
+    } catch (error) {
+      // Handle error
+      console.error(error);
+    }
   };
 
   return (
