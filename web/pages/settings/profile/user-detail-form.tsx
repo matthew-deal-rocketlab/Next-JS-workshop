@@ -106,10 +106,12 @@ const UserDetailForm = () => {
   const [formErrors, setFormErrors] = useState(initialFormFields);
   const [alertMessage, setAlertMessage] = useState(initialAlertMessage);
   const [showModal, setShowModal] = useState(false);
-  const closeAlert = () => setAlertMessage({ type: '', message: '' });
+  const closeAlert = () => setAlertMessage({ type: 'success', message: '' });
 
   const onClickLogin = (event: FormEvent<HTMLFormElement>) => {
-    const data = Object.fromEntries(new FormData(event.currentTarget)) as unknown as formFields;
+    const data = Object.fromEntries(
+      new FormData(event.currentTarget),
+    ) as unknown as formFields;
 
     const formErrorMessages = validateInputs(data);
 
@@ -235,7 +237,7 @@ const UserDetailForm = () => {
 
         <Modal
           title="Testing"
-          description='Delete all your data?'
+          description="Delete all your data?"
           showModal={showModal}
           onConfirm={onConfirm}
           onCancel={onCancel}

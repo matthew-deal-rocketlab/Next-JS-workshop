@@ -13,6 +13,7 @@ const NavbarContainer = styled.nav`
   display: flex;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.dark2};
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.7);
   color: #ffffff;
   padding: 10px 20px;
   position: sticky;

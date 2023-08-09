@@ -39,8 +39,8 @@ const Dialog = styled.dialog<{ $showModal: boolean }>`
   height: 200px;
   display: ${({ $showModal }) => (!$showModal ? 'hidden' : 'flex')};
   flex-direction: column;
-  border: 2px solid ${({ theme }) => theme.colors.tertiary};
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.05);
+  border: none;
 `;
 const Title = styled.h1`
   font-size: ${themeStatic.fontSizes.large};
@@ -83,7 +83,7 @@ const Modal = ({
         {title && <Title>{title}</Title>}
         {description && <Description>{description}</Description>}
         <ButtonContainer>
-        <Button
+          <Button
             variant="medium"
             onClick={onConfirm}
             $bgcolor={confirmButtonColor || theme.colors.primary}>

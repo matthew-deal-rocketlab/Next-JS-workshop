@@ -14,8 +14,8 @@ interface ILayout4PageProps extends ICommonProps {
 const ContentContainer = styled.div`
   width: 100%;
   min-height: calc(100vh - 150px);
+  height: 100%;
   background-color: ${({ theme }) => theme.colors.light};
-  margin: 0 auto;
   padding: 20px;
   @media (max-width: ${themeStatic.breakpoints.mobile}) {
     padding: 20px 1px;

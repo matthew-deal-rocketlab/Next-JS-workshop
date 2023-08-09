@@ -16,6 +16,7 @@ const FooterContainer = styled.nav`
   justify-content: space-between;
   align-items: center;
   background-color: ${({ theme }) => theme.colors.dark2};
+  box-shadow: 0px -5px 10px 0px rgba(0, 0, 0, 0.7);
 `;
 const Title = styled.div`
   font-size: ${themeStatic.fontSizes.medium};

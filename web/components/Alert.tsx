@@ -11,7 +11,7 @@ import { ColorType } from '@/types';
 const StyledAlert = styled.div<{ type: string; $height?: number }>`
   width: 100%;
   background-color: ${({ theme, type }) => theme.colors[type].light};
-  height: ${({ $height }) => `${$height}px` || '50px'};
+  height: ${({ $height }) => ($height ? `${$height}px` : '40px')};
   border-radius: 5px;
   border-left: 5px solid ${({ theme, type }) => theme.colors[type].main};
   color: ${({ theme, type }) => theme.colors[type].dark};

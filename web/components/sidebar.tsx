@@ -15,7 +15,7 @@ interface ISidebarProps {
 
 const SidebarContainer = styled.div`
   color: ${({ theme }) => theme.colors.light2};
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors.dark2};
   width: 100%;
   height: 100%;
   margin: 0;
@@ -37,14 +37,14 @@ const SidebarItem = styled.div<{ $isActive: boolean; $display?: string }>`
   transition: background-color 0.4s ease;
   text-align: left;
   background-color: ${({ $isActive, theme }) =>
-    $isActive ? theme.colors.secondary : theme.colors.primary};
+    $isActive ? theme.colors.dark : theme.colors.dark2};
   padding: 10px 20px;
   cursor: pointer;
   margin: 1px 0;
   border-left: ${({ $isActive, theme }) =>
     $isActive && `5px solid ${theme.colors.tertiary}`};
   &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
+    background-color: ${({ theme }) => theme.colors.dark};
   }
   &:focus {
     outline: none;

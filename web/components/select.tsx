@@ -4,12 +4,11 @@ import Icon from './icons';
 import { themeStatic } from '@/theme';
 import { KeyValue } from '@/types';
 
-interface SelectProps extends React.HTMLProps<HTMLSelectElement>{
+interface SelectProps extends React.HTMLProps<HTMLSelectElement> {
   label: string;
   values: KeyValue<string>[];
   onChangeItem?: (value: KeyValue<string>) => void;
 }
-
 
 const SelectContainer = styled.div`
   position: relative;
@@ -68,7 +67,7 @@ const DropdownItem = styled.div<{ $active: boolean }>`
     $active &&
     css`
       color: ${({ theme }) => theme.colors.primary};
-      font-weight: ${themeStatic.fontWeight.bold};
+      font-weight: ${themeStatic.fontWeights.bold};
     `}
   &:hover, :focus, :focus:hover {
     background-color: ${({ theme }) => theme.colors.primary};
@@ -82,13 +81,15 @@ const StyledIcon = styled(Icon)`
   top: 30%;
 `;
 
-
 // TODO: change values to array of objects
 // TODO: Close when clicking outside
 // TODO: Add error label
 
 const Select = ({ label, values, onChangeItem }: SelectProps) => {
-  const [currentValue, setCurrentValue] = useState<KeyValue<string> | null>({ key: '', value: '' });
+  const [currentValue, setCurrentValue] = useState<KeyValue<string> | null>({
+    key: '',
+    value: '',
+  });
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);

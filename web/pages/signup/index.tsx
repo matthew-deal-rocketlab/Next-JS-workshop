@@ -91,16 +91,15 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
 
 const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
   const payload = { authSignup: { ...data, confirmPass: undefined } };
-  const loginResult = await apiPost('/jsonql', payload);
-
-  if (loginResult.status !== ApiStatus.OK) {
+  const signupResult = await apiPost('/jsonql', payload);
+  if (signupResult.status !== ApiStatus.OK) {
     return { text: 'Error logging in', type: SubmitResultType.error };
   }
+  // @ts-ignore
+  const authSignup = signupResult.result['authSignup'];
 
-  const authRefreshResult = loginResult.result['authSignup'];
-
-  if (!(authRefreshResult.result && authRefreshResult.result.length === 36)) {
-    return { text: authRefreshResult, type: SubmitResultType.error };
+  if (!(authSignup.result && authSignup.result.length === 36)) {
+    return { text: authSignup, type: SubmitResultType.error };
   }
 
   return {
@@ -226,7 +225,7 @@ const SignupPage = (props: ICommonProps) => {
               Already have an account? <a href="/login">login</a>
             </span>
           </FormRow>
-
+          {/* add alert here */}
           <FormRow align="center">
             <ColoredSpan type={submitResult.type}>
               {submitResult.text}

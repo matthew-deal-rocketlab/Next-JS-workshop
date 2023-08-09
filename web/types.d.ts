@@ -65,3 +65,18 @@ interface ILinkText extends IBaseText {
   href: string;
   $overColor?: string;
 }
+
+interface ISubscription {
+  id: number;
+  name: string;
+  price: number;
+  features: string[];
+  description: string;
+}
+
+interface IResumeSubscription {
+  name: string;
+  price: number;
+  nextPaymentDate: string;
+  onSubscribe: () => void;
+}

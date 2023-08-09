@@ -26,6 +26,7 @@ interface Props {
   height?: number;
   width?: number;
   fill?: string;
+  stroke?: string;
 }
 
 // Icon component to render icons`

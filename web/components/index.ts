@@ -1,4 +1,4 @@
-export * from './icons';
+export * from './icons'; // TODO: remove this line
 export * from './form';
 export * from './page-layouts';
 
@@ -17,6 +17,9 @@ import Select from './select';
 import Sidebar from './sidebar';
 import Text from './text';
 import LinkText from './link';
+import ResumeSubscription from './resume-subscription';
+import SelectSubscription from './select-subscription';
+import Icon from './icons';
 
 export {
   Alert,
@@ -29,7 +32,10 @@ export {
   LinkText,
   Modal,
   Navbar,
+  SelectSubscription,
+  ResumeSubscription,
   Select,
   Sidebar,
   Text,
+  Icon,
 };

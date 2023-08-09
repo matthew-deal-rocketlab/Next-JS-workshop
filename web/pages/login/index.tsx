@@ -65,14 +65,13 @@ const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
   }
 
   // @ts-ignore
-  const authRefreshResult = loginResult.result['authLogin'];
+  const authLogin = loginResult.result['authLogin'];
 
-  if (!(authRefreshResult['token'] && authRefreshResult['token'].length > 20)) {
-    return { text: `${loginResult.result}`, type: SubmitResultType.error };
+  if (!(authLogin['token'] && authLogin['token'].length > 20)) {
+    return { text: `${authLogin}`, type: SubmitResultType.error };
   }
 
   // Set Auth Token HERE!!
-  // console.log('loginResult', loginResult);
 
   return {
     text: 'Welcome! You will be redirected to the dashboard shortly',

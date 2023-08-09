@@ -21,7 +21,7 @@ const DrawerContainer = styled.div<IDrawerProps>`
   z-index: ${themeStatic.zIndex.three};
   top: 0;
   ${({ $position }) => ($position === 'left' ? 'left: 0;' : 'right: 0;')}
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors.dark2};
   overflow: hidden;
   transform: translateX(
     ${({ $isDrawerOpen, $position }) => {
@@ -44,7 +44,7 @@ const Button = styled.button`
   padding: 10px;
   cursor: pointer;
   &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
+    background-color: ${({ theme }) => theme.colors.light};
   }
   &:focus {
     outline: none;
