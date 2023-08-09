@@ -1,16 +1,24 @@
-import { IBaseText } from '@/types';
 import React from 'react';
 import styled from 'styled-components';
 
-const StyledText = styled.p<IBaseText>`
-  color: ${({ $color, theme }) => $color || theme.colors.dark2};
-  font-size: ${({ $size, theme }) => $size || theme.fontSizes.small};
-  font-weight: ${({ $weight, theme }) => $weight || theme.fontWeights.normal};
-  text-align: ${({ $align }) => $align || 'left'};
-  margin: ${({ $margin }) => $margin || '0'};
-  padding: ${({ $padding }) => $padding || '0'};
+interface ITextElement extends React.HTMLProps<HTMLParagraphElement> {
+  color?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  align?: string;
+  margin?: string;
+  padding?: string;
+}
+
+const StyledText = styled.p<ITextElement>`
+  color: ${({ color, theme }) => color || theme.colors.dark2};
+  font-size: ${({ fontSize, theme }) => fontSize || theme.fontSizes.small};
+  font-weight: ${({ fontWeight, theme }) => fontWeight || theme.fontWeights.normal};
+  text-align: ${({ align }) => align || 'left'};
+  margin: ${({ margin }) => margin || '0'};
+  padding: ${({ padding }) => padding || '0'};
 `;
-const Text = ({ children, ...rest }: IBaseText) => {
+const Text = ({ children, ...rest }: ITextElement) => {
   return <StyledText {...rest}>{children}</StyledText>;
 };
 

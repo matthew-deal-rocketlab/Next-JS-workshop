@@ -80,32 +80,36 @@ const DropdownItem = styled.a`
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const uiData = useContext(UiContext);
-  const { navbarActive, setUiData, isDrawerOpen, cleanUpUiData } = uiData;
-  const { push } = useRouter();
+  const { setUiData, isDrawerOpen, cleanUpUiData } = uiData;
+  const router = useRouter();
+
   const handleMenuItemClick = (item: IMenuItem) => {
     if (item.label === 'Logout') {
       setShowModal(true);
       return;
     }
-    setUiData({ ...uiData, navbarActive: item.id });
-    push(item.link!);
+    router.push(item.link!);
 
     // Add any logic you want to perform when a menu item is clicked
   };
   const handleDropdownItemClick = (item: IMenuItem) => {
     // Add any logic you want to perform when a Dropdown menu item is clicked
   };
+
   const handleOpenDrawer = () => {
     setUiData({ ...uiData, isDrawerOpen: true });
   };
+
   const onConfirmModal = () => {
     setShowModal(false);
     cleanUpUiData();
-    push('/login');
+    router.push('/login');
   };
+
   const onCancelModal = () => {
     setShowModal(false);
   };
+
   return (
     <NavbarContainer>
       <Button $isDrawerOpen={isDrawerOpen} onClick={handleOpenDrawer}>
@@ -127,8 +131,8 @@ const Header = () => {
               />
             ) : (
               <MenuItem
-                key={`menu--${item.id}`}
-                $isActive={item.id === navbarActive}
+                key={`menu-${index}`}
+                $isActive={item.link.split('/')[1] === router.pathname.split('/')[1]}
                 onClick={() => handleMenuItemClick(item)}>
                 {item.label}
               </MenuItem>

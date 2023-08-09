@@ -16,14 +16,23 @@ declare global {
   };
 
   interface ResolverContext {
+    userid: number;
     useruid: string;
     db: DBConnection | null;
   }
 
-  // Generic type that returns a string for an error or a string as a result
+  interface StringMap {
+    [key: string]: string | number;
+  }
+
+  interface StringStringMap {
+    [key: string]: string | StringMap
+  }
+
+  // Generic type that returns a string/string map for an error or a string as a result
   interface FnResult {
     error?: string;
-    result?: string;
+    result?: string | StringMap;
   }
 
   // interface for returning simple success values

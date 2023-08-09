@@ -4,8 +4,9 @@ import {
   Sidebar,
   ResumeSubscription,
 } from '@/components';
-import { IPlan, IResumeSubscription } from '@/types.d';
-import { menuTitle, menu } from '../menu';
+import { menuTitle, menu } from '../_menu';
+import { ISubscription } from '@/components/select-subscription';
+import { IResumeSubscription } from '@/components/resume-subscription';
 
 const ManageSubscriptionPage = () => {
   return (
@@ -20,7 +21,7 @@ const ManageSubscriptionPage = () => {
 export default ManageSubscriptionPage;
 
 // Mock Data
-const plans: IPlan[] = [
+const plans: ISubscription[] = [
   {
     id: 1,
     name: 'Starter',

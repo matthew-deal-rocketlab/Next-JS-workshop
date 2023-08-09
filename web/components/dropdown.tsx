@@ -45,7 +45,7 @@ const Dropdown = ({
       <DropdownContent>
         {items.map((item, index) => (
           <Item
-            key={`dropdownItem-${index}-${item.id}`}
+            key={`dropdownItem-${index}`}
             onClick={() => handleDropdownItemClick(item)}>
             {item.label}
           </Item>

@@ -1,3 +1,5 @@
+export const IS_DEBUG = true;
+
 export const JWT_SECRET =
   process.env.JWT_SECRET || '1fef2b04-ce17-4365-bfa4-0394c7441dfd';
 

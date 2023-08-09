@@ -1,11 +1,10 @@
-import styled, { StyleSheetManager } from 'styled-components';
 
-import { ICommonProps } from '@/types';
+import styled, { DefaultTheme, StyleSheetManager } from 'styled-components';
 
-interface ButtonProps extends ICommonProps {
-  children: React.ReactNode;
+interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
+  theme?: DefaultTheme;
   variant: 'small' | 'medium' | 'large';
-  $bgcolor?: string;
+  bgColor?: string;
   type?: 'submit' | 'reset' | 'button';
   onClick?: (e?: any) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
@@ -35,8 +34,8 @@ const StyledButton = styled.button<ButtonProps>`
     return `${py} ${px}`;
   }};
   color: white;
-  background-color: ${({ $bgcolor, theme }: ButtonProps) =>
-    $bgcolor || theme.colors.primary};
+  background-color: ${({ bgColor, theme }: ButtonProps) =>
+    bgColor || theme!.colors.primary};
   border: none;
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.5);
   &:hover {
@@ -54,6 +53,7 @@ const StyledButton = styled.button<ButtonProps>`
 const Button = ({
   variant = 'medium',
   type = 'button',
+  bgColor = '',
   ...restProps
 }: ButtonProps) => {
   return (

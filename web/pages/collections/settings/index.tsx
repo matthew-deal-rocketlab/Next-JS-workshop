@@ -1,6 +1,6 @@
 import { PageLayout4Part, Sidebar } from '@/components';
 
-import { menu, menuTitle } from '../menu';
+import { menu, menuTitle } from '../_menu';
 import SitesSettingsForm from './site-settings-form';
 
 const SitesSettingsPage = () => {

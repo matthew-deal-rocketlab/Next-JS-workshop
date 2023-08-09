@@ -15,10 +15,11 @@ import {
   PageLayoutFullPage,
   Text,
 } from '@/components';
-import { IAlertMessage, SubmitResult, SubmitResultType } from '@/types.d';
+import { SubmitResult, SubmitResultType } from '@/types.d';
 import { apiPost } from '@/utils/api-client';
 import styled, { useTheme } from 'styled-components';
 import { ApiStatus } from '@/services/apiclient';
+import { IAlertMessage } from '@/components/alert';
 
 interface FormFields {
   email: string;
@@ -118,8 +119,8 @@ const ForgotPasswordPage = () => {
           </FormRow>
           <TextContainer>
             <Text
-              $weight={theme.fontWeights.bold}
-              $size={theme.fontSizes.normal}>
+              fontWeight={theme.fontWeights.bold}
+              fontSize={theme.fontSizes.normal}>
               No worries!
             </Text>
             <Text>

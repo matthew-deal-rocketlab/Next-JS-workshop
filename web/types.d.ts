@@ -13,9 +13,9 @@ interface ICommonProps {
 }
 
 interface IMenuItem {
-  id: string;
+  // link must be unique
+  link: string;
   label: string;
-  link?: string;
   items?: IMenuItem[];
 }
 
@@ -39,44 +39,10 @@ export enum SubmitResultType {
   ok,
   error,
 }
+
 interface SubmitResult {
   text: string;
   type: SubmitResultType;
 }
 
 type ColorType = 'error' | 'success' | 'warning' | 'info';
-
-interface IAlertMessage {
-  type: ColorType;
-  message: string;
-}
-
-interface IBaseText {
-  children: ReactNode;
-  $color?: string;
-  $size?: string;
-  $weight?: string;
-  $align?: string;
-  $margin?: string;
-  $padding?: string;
-}
-
-interface ILinkText extends IBaseText {
-  href: string;
-  $overColor?: string;
-}
-
-interface ISubscription {
-  id: number;
-  name: string;
-  price: number;
-  features: string[];
-  description: string;
-}
-
-interface IResumeSubscription {
-  name: string;
-  price: number;
-  nextPaymentDate: string;
-  onSubscribe: () => void;
-}

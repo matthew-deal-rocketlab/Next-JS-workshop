@@ -5,6 +5,18 @@ import { btoa, atob } from './converters';
 import { uuidv4 } from './misc';
 import { Request } from 'express';
 
+
+const encryptUserId = (userId: number): string => {
+  const rando1 = Math.floor(Math.random() * 100000);
+  const rando2 = Math.floor(Math.random() * 100000);
+
+  return `1${rando1}e${userId}e${rando2}`;
+}
+
+const decryptUserId = (encryptedUserId: string): number => {
+  return parseInt(encryptedUserId.split('e')[1] ?? '');
+}
+
 export const hashPassword = (pass: string, salt: string): string => {
   const hash = crypto.createHash('sha256');
   hash.update(salt + pass + APP_SECRET);
@@ -30,10 +42,12 @@ export const generateJWT = (payload: object, secret: string): string => {
   return jwt;
 };
 
-export const getUserJWT = (userID: string): string => {
+export const getUserJWT = (userid: number, userUid: string): string => {
   var payload = {
-    sub: userID,
-    rnd: Math.floor(Math.random() * 100000),
+    sub: userUid,
+    // Sticking the user id in between two random numbers should obsecure it from the casual observer
+    // having this in the JWT will save a database query
+    rnd: encryptUserId(userid),
     iat: Math.floor(Date.now() / 1000),
   };
 
@@ -73,7 +87,12 @@ export const validateToken = (req: Request): FnResult => {
   const calculated = generateJWT(payload, JWT_SECRET);
   if (calculated !== jwtRaw) return { error: 'error: token invalid(3)' };
 
-  return { result: payload.sub };
+  return {
+    result: {
+      uid: payload.sub,
+      id: decryptUserId(payload.rnd)
+    }
+  };
 }
 
 interface validateRefreshTokenResult {

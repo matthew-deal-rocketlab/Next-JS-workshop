@@ -1,0 +1,148 @@
+import { ERROR_INVALID_CREDENTIALS, ERROR_INVALID_INPUT, ERROR_NO_DB } from "../constants";
+import { CRUD_TABLE_FIELDS } from "../models/database";
+import { dbQuery } from "../services/db";
+// import { getUserBy } from "../utils/db";
+
+const MAX_ALLOWED_FIELDS = 30;
+
+const isTableValid = (tableName: string): boolean => {
+  return Object.keys(CRUD_TABLE_FIELDS).indexOf(tableName) >= 0;
+}
+
+const isFieldsValid = (tableName: string, fields: string[]): boolean => {
+  if (!CRUD_TABLE_FIELDS[tableName]) return false;
+
+  const tableFields = Object.keys(CRUD_TABLE_FIELDS[tableName] as object);
+
+  for (var i = 0; i < fields.length && i < MAX_ALLOWED_FIELDS; i++) {
+    const field = fields[i] ?? '';
+    if (tableFields.indexOf(field) < 0) return false;
+  };
+
+  return true;
+}
+
+export const crudCreate = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  const inputTable = (input['table'] ?? '') as string;
+  const inputFields = (input['fields'] ?? {}) as StringMap;
+
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+  const userId = rc.userid;
+  if (userId <= 0) return ERROR_INVALID_CREDENTIALS;
+
+  const inputFieldNames = Object.keys(inputFields);
+  if (inputFieldNames.length === 0) return ERROR_INVALID_INPUT;
+  if (!isTableValid(inputTable)) return ERROR_INVALID_INPUT;
+  if (!isFieldsValid(inputTable, inputFieldNames)) return ERROR_INVALID_INPUT;
+
+  // const userInfo = await getUserBy(rc.db, 'uid', rc.useruid);
+  // if (typeof userInfo === 'string') return ERROR_INVALID_CREDENTIALS;
+  // const userId = userInfo['id'];
+
+  // automatically add user id into input fields (must be last to prevent injection)
+  const allFields = Object.assign(inputFields, { 'user_id': userId });
+  const allFieldNames = Object.keys(allFields);
+
+  // construct parameterized SQL statement and parameter values
+  let paramList: string[] = [];
+  let paramValues: unknown[] = [];
+  let p = 0;
+  for (const fieldName in allFields) {
+    paramList.push(`$${++p}`)
+    paramValues = paramValues.concat(allFields[fieldName]);
+  };
+
+  // execute insert query
+  let insertQuery = `INSERT INTO ${inputTable} (${allFieldNames.join(', ')}) VALUES (${paramList.join(', ')}) RETURNING id;`;
+  const tableResult = await dbQuery(rc.db, insertQuery, paramValues);
+  if (tableResult.error) return { error: tableResult.error }
+
+  return { result: tableResult.rows[0] ?? { id: 0 } }
+}
+
+export const crudRead = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  const inputTable = (input['table'] ?? '') as string;
+
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+  const userId = rc.userid;
+  if (userId <= 0) return ERROR_INVALID_CREDENTIALS;
+
+  if (!isTableValid(inputTable)) return ERROR_INVALID_INPUT;
+
+  // let selectQuery = `SELECT * FROM ${inputTable} WHERE user_id = (SELECT id FROM tbl_user WHERE uid = '${rc.useruid}');`;
+  let selectQuery = `SELECT * FROM ${inputTable} WHERE user_id = ${userId};`;
+  const tableResult = await dbQuery(rc.db, selectQuery);
+  if (tableResult.error) return { error: tableResult.error }
+
+  return { result: tableResult.rows ?? [] }
+}
+
+export const crudUpdate = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  const inputTable = (input['table'] ?? '') as string;
+  const inputRowId = (input['id'] ?? '') as string;
+  const inputFields = (input['fields'] ?? {}) as StringMap;
+
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+  const userId = rc.userid;
+  if (userId <= 0) return ERROR_INVALID_CREDENTIALS;
+
+  const rowId = parseInt(inputRowId, 10);
+  if (isNaN(rowId)) return ERROR_INVALID_INPUT;
+
+  const inputFieldNames = Object.keys(inputFields);
+  if (inputFieldNames.length === 0) return ERROR_INVALID_INPUT;
+  if (!isTableValid(inputTable)) return ERROR_INVALID_INPUT;
+  if (!isFieldsValid(inputTable, inputFieldNames)) return ERROR_INVALID_INPUT;
+
+  // const userInfo = await getUserBy(rc.db, 'uid', rc.useruid);
+  // if (typeof userInfo === 'string') return ERROR_INVALID_CREDENTIALS;
+  // const userId = userInfo['id'];
+
+  // construct parameterized SQL statement and parameter values
+  let paramList: string[] = [];
+  let paramValues: unknown[] = [];
+  let p = 0;
+  for (const fieldName in inputFields) {
+    // client can update any field except the id and user_id of the row.  These will just be ignored
+    if (['id', 'user_id'].indexOf(fieldName) < 0) {
+      paramList.push(`${fieldName} = $${++p}`)
+      paramValues = paramValues.concat(inputFields[fieldName]);
+    }
+  };
+
+  // execute update query
+  let updateQuery = `UPDATE ${inputTable} SET ${paramList.join(',')} WHERE id = ${rowId} AND user_id = ${userId} RETURNING id;`;
+  const tableResult = await dbQuery(rc.db, updateQuery, paramValues);
+  if (tableResult.error) return { error: tableResult.error }
+
+  return { result: tableResult.rows[0] ?? { id: 0 } }
+}
+
+export const crudDelete = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  const inputTable = (input['table'] ?? '') as string;
+  const inputRowId = (input['id'] ?? '') as string;
+
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+  const userId = rc.userid;
+  if (userId <= 0) return ERROR_INVALID_CREDENTIALS;
+
+  const rowId = parseInt(inputRowId, 10);
+  if (isNaN(rowId)) return ERROR_INVALID_INPUT;
+
+  if (!isTableValid(inputTable)) return ERROR_INVALID_INPUT;
+
+  // let insertQuery = `DELETE FROM ${inputTable} WHERE id = ${rowId} AND user_id = (SELECT id FROM tbl_user WHERE uid = '${rc.useruid}') RETURNING id;`;
+  let insertQuery = `DELETE FROM ${inputTable} WHERE id = ${rowId} AND user_id = ${userId} RETURNING id;`;
+  const tableResult = await dbQuery(rc.db, insertQuery);
+  if (tableResult.error) return { error: tableResult.error }
+
+  return { result: tableResult.rows[0] ?? { id: 0 } }
+}

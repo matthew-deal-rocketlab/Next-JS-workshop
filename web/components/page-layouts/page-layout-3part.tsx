@@ -1,6 +1,6 @@
 // TODO
 
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { themeStatic } from '@/theme';
@@ -8,6 +8,11 @@ import { UiContext } from '@/context/ui-context';
 import { ICommonProps } from '@/types';
 import { Drawer, Footer, Navbar } from '..';
 import { GlobalContainer } from './common';
+
+
+interface ILayout3PageProps extends ICommonProps {
+  onPageEnter?: Function;
+}
 
 // write a container for the content of the page that will be passed in as a prop to this component with max widf of 1440 and min height of 100vh
 const ContentContainer = styled.div`
@@ -29,12 +34,17 @@ const OverlayContainer = styled.div`
   transition: opacity 0.5s;
 `;
 
-const PageLayout3Part = ({ children }: ICommonProps) => {
+const PageLayout3Part = ({ onPageEnter , children }: ILayout3PageProps) => {
   const uiData = useContext(UiContext);
   const { isDrawerOpen, setUiData } = uiData;
   const handleOverlayClick = () => {
     setUiData({ ...uiData, isDrawerOpen: false });
   };
+
+  useEffect(() => {
+    if (typeof onPageEnter === 'function') onPageEnter();
+  }, [onPageEnter])
+
   return (
     <GlobalContainer>
       {isDrawerOpen && <OverlayContainer onClick={handleOverlayClick} />}

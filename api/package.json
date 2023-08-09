@@ -5,6 +5,7 @@
     "start": "",
     "dev": "",
     "type-check": "tsc --noEmit",
+    "build:dev": "esbuild src/index.ts --platform=node --bundle --outfile=build/index.js",
     "build": "esbuild src/index.ts --platform=node --bundle --minify --outfile=build/index.js"
 
   },

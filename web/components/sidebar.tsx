@@ -1,16 +1,18 @@
-import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import styled, { useTheme } from 'styled-components';
 
 import { IMenuItem } from '@/types';
 import { themeStatic } from '@/theme';
-import { UiContext } from '@/context/ui-context';
-import { ArrowDownIcon, ArrowUpIcon, Collapsible } from '.';
-import { ICommonProps } from '@/types';
+import { ArrowDownIcon, Collapsible } from '.';
 
-interface ISidebarProps {
+interface ISidebarProps extends React.HTMLProps<HTMLDivElement> {
   title: string;
   menuItems: IMenuItem[];
+}
+
+interface ISidebarItemProps extends React.HTMLProps<HTMLDivElement> {
+  $isActive: boolean;
+  display?: string
 }
 
 const SidebarContainer = styled.div`
@@ -30,8 +32,8 @@ const Title = styled.h1`
   margin-top: 20px;
 `;
 
-const SidebarItem = styled.div<{ $isActive: boolean; $display?: string }>`
-  display: ${({ $display }) => $display || 'block'};
+const SidebarItem = styled.div<ISidebarItemProps>`
+  display: ${({ display }) => display || 'block'};
   justify-content: space-between;
   align-items: center;
   transition: background-color 0.4s ease;
@@ -56,24 +58,14 @@ const SidebarItem = styled.div<{ $isActive: boolean; $display?: string }>`
 
 const Sidebar = ({ title, menuItems }: ISidebarProps) => {
   const theme = useTheme();
-  const { push } = useRouter();
-  const uiData = useContext(UiContext);
-  const { sidebarActive, subSidebarActive, setUiData } = uiData;
+  const router = useRouter();
+
   const handleSidebarItemClick = (item: IMenuItem) => {
-    setUiData({
-      ...uiData,
-      sidebarActive: item.id,
-    });
-    if (item.link) {
-      push(item.link!);
-    }
+    if (item.link) router.push(item.link!);
   };
+
   const handleSidebarSubItemClick = (item: IMenuItem, subItem: IMenuItem) => {
-    setUiData({
-      ...uiData,
-      sidebarActive: item.id,
-      subSidebarActive: subItem.id,
-    });
+    if (subItem.link) router.push(subItem.link!);
   };
 
   return (
@@ -86,8 +78,8 @@ const Sidebar = ({ title, menuItems }: ISidebarProps) => {
             key={index}
             title={
               <SidebarItem
-                $display="flex"
-                $isActive={sidebarActive === item.id}
+                display="flex"
+                $isActive={router.pathname === item.link}
                 onClick={() => handleSidebarItemClick(item)}>
                 {item.label}
                 <ArrowDownIcon
@@ -100,7 +92,7 @@ const Sidebar = ({ title, menuItems }: ISidebarProps) => {
             {item.items.map((subItem, index) => (
               <SidebarItem
                 key={index}
-                $isActive={subSidebarActive === subItem.id}
+                $isActive={router.pathname === subItem.link}
                 onClick={() => handleSidebarSubItemClick(item, subItem)}>
                 {subItem.label}
               </SidebarItem>
@@ -109,7 +101,7 @@ const Sidebar = ({ title, menuItems }: ISidebarProps) => {
         ) : (
           <SidebarItem
             key={index}
-            $isActive={sidebarActive === item.id}
+            $isActive={router.pathname === item.link}
             onClick={() => handleSidebarItemClick(item)}>
             {item.label}
           </SidebarItem>

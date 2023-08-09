@@ -138,15 +138,9 @@ const UrlInputForm = () => {
             <TableInput id={`timeout_new`} type="number" defaultValue={30}/>
           </ListCol>
           <ListCol>
-            <ActionButton type="button" onClick={() => onClickAdd()}>&#x2795;</ActionButton>
+            <ActionButton type="button" onClick={onClickAdd}>&#x2795;</ActionButton>
           </ListCol>
         </ListRow>
-
-        <FormRow align="center">
-          <div>
-            <Button type="submit" variant="medium">Update</Button>
-          </div>
-        </FormRow>
       </Form >
     </Card>
   </Container>

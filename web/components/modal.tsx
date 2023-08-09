@@ -86,13 +86,13 @@ const Modal = ({
           <Button
             variant="medium"
             onClick={onConfirm}
-            $bgcolor={confirmButtonColor || theme.colors.primary}>
+            bgColor={confirmButtonColor || theme.colors.primary}>
             {successText ? successText : 'Confirm'}
           </Button>
           <Button
             variant="medium"
             onClick={onCancel}
-            $bgcolor={cancelButtonColor || theme.colors.dark}>
+            bgColor={cancelButtonColor || theme.colors.dark}>
             {cancelText ? cancelText : 'Cancel'}
           </Button>
         </ButtonContainer>

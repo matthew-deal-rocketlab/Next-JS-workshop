@@ -10,6 +10,7 @@ import {
   FormLabel,
   FormRow,
   FormTitle,
+  LinkText,
   PageLayoutFullPage,
 } from '@/components';
 import { apiPost } from '@/utils/api-client';
@@ -91,15 +92,17 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
 
 const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
   const payload = { authSignup: { ...data, confirmPass: undefined } };
-  const signupResult = await apiPost('/jsonql', payload);
-  if (signupResult.status !== ApiStatus.OK) {
+  const loginResult = await apiPost('/jsonql', payload);
+
+  if (loginResult.status !== ApiStatus.OK) {
     return { text: 'Error logging in', type: SubmitResultType.error };
   }
-  // @ts-ignore
-  const authSignup = signupResult.result['authSignup'];
 
-  if (!(authSignup.result && authSignup.result.length === 36)) {
-    return { text: authSignup, type: SubmitResultType.error };
+  // @ts-ignore
+  const authRefreshResult = loginResult.result['authSignup'];
+
+  if (!(authRefreshResult.result && authRefreshResult.result.length === 36)) {
+    return { text: authRefreshResult, type: SubmitResultType.error };
   }
 
   return {
@@ -222,10 +225,10 @@ const SignupPage = (props: ICommonProps) => {
 
           <FormRow>
             <span>
-              Already have an account? <a href="/login">login</a>
+              Already have an account? <LinkText href="/login">login</LinkText>
             </span>
           </FormRow>
-          {/* add alert here */}
+
           <FormRow align="center">
             <ColoredSpan type={submitResult.type}>
               {submitResult.text}

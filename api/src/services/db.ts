@@ -1,8 +1,7 @@
 // Database connectivity service
 
 import { Client, ClientConfig, QueryResult } from 'pg';
-
-const DEBUG_SQL = true
+import { IS_DEBUG } from '../constants';
 
 interface DBResult extends QueryResult {
   error?: string;
@@ -31,10 +30,10 @@ export const dbQuery = async (
   sql: string,
   values?: any[],
 ): Promise<DBResult> => {
-  if (DEBUG_SQL) console.log(sql);
+  if (IS_DEBUG) console.log(sql);
   try {
     if (values) {
-      if (DEBUG_SQL) console.log(values);
+      if (IS_DEBUG) console.log(values);
       return await db.query(sql, values);
     } else {
       return await db.query(sql);

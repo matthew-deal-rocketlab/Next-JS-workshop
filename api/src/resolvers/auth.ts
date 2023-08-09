@@ -106,12 +106,12 @@ export const authVerify = async (input: JsonQLInput, rc: ResolverContext): Promi
   if (result1.error) return { error: result1.error };
   if (!result1 || result1.rowCount !== 1) return ERROR_DB_UPDATE;
 
-  const useruid = result1.rows[0]['uid']
+  const userId = result1.rows[0]['id']
 
   // add row for user details
-  const queryAddUserDetails = 'INSERT INTO tbl_user_detail (uid) VALUES ($1)'
+  const queryAddUserDetails = 'INSERT INTO tbl_user_detail (user_id) VALUES ($1)'
   let result2 = null;
-  result2 = await dbQuery(rc.db!, queryAddUserDetails, [useruid]);
+  result2 = await dbQuery(rc.db!, queryAddUserDetails, [userId]);
   if (result2.error) return { error: result2.error };
   if (!result2 || result2.rowCount !== 1) return ERROR_DB_UPDATE;
 
@@ -153,8 +153,9 @@ export const authLogin = async (input: JsonQLInput, rc: ResolverContext): Promis
   if (userInfo['status'] !== UserStatus.Verified) return ERROR_USER_UNVERIFIED;
 
   // Generate JWT and refreshToken for user
+  const userId = (userInfo['id'] ?? 0) as number
   const userUid = ((userInfo['uid'] ?? '') as string).replaceAll('-', '');
-  const userJwt = getUserJWT(userUid);
+  const userJwt = getUserJWT(userId, userUid);
   const userRefreshToken = getUserRefreshToken(userUid);
 
   // Save refresh token
@@ -207,17 +208,18 @@ export const authRefresh = async (input: JsonQLInput, rc: ResolverContext): Prom
   if (!isTokenGood) return ERROR_INVALID_CREDENTIALS;
 
   // Generate JWT and refreshToken for user
-  const userId = ((userInfo['uid'] ?? '') as string).replaceAll('-', '');
-  const userJwt = getUserJWT(userId);
+  const userId = (userInfo['id'] ?? 0) as number
+  const userUid = ((userInfo['uid'] ?? '') as string).replaceAll('-', '');
+  const userJwt = getUserJWT(userId, userUid);
   const now = new Date();
   if (now < rtResult.renewDate!) {
     return { result: { token: userJwt, refreshToken: refreshToken } };
   }
 
-  const newRefreshToken = getUserRefreshToken(userId);
+  const newRefreshToken = getUserRefreshToken(userUid);
 
   // Save refresh token
-  const saveResult = await saveRefreshToken(rc.db!, userId, newRefreshToken);
+  const saveResult = await saveRefreshToken(rc.db!, userUid, newRefreshToken);
   if (saveResult.error) return { error: saveResult.error };
 
   return { result: { token: userJwt, refreshToken: newRefreshToken } };

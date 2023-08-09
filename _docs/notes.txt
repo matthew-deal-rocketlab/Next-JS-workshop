@@ -2,3 +2,16 @@ rlwm.rokt.io - main site
 cms.rlwm.rokt.io - directus
 
 mkdir rlwm-api-staging mkdir rlwm-directus-staging
+
+
+## Performance comparison
+
+EXPLAIN ANALYZE 
+SELECT * FROM tbl_site WHERE user_id = (SELECT id FROM tbl_user WHERE uid = '637f386f47a44c638c5a04ea7f211a4c');
+
+
+EXPLAIN ANALYZE
+SELECT s.* FROM tbl_site AS s
+LEFT JOIN tbl_user AS u ON u.id = s.user_id
+WHERE u.uid = '637f386f47a44c638c5a04ea7f211a4c';
+

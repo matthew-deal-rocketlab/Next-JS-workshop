@@ -8,6 +8,11 @@ import styled, { useTheme } from 'styled-components';
 import Icon, { BarsIcon, XMarkIcon } from './icons';
 import { ColorType } from '@/types';
 
+export interface IAlertMessage {
+  type: ColorType;
+  message: string;
+}
+
 const StyledAlert = styled.div<{ type: string; $height?: number }>`
   width: 100%;
   background-color: ${({ theme, type }) => theme.colors[type].light};

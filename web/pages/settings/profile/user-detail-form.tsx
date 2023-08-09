@@ -15,8 +15,8 @@ import {
 } from '@/components';
 import { isEmail } from '@/utils/validators';
 import { themeStatic } from '@/theme';
-import { IAlertMessage } from '@/types';
-import { countries, countriesTemp } from '@/utils/countries';
+import { countriesTemp } from '@/utils/countries';
+import { IAlertMessage } from '@/components/alert';
 
 const NameContainer = styled.div`
   display: flex;
@@ -53,10 +53,12 @@ const initialFormFields: formFields = {
   postcode: '',
   country: '',
 };
+
 const initialAlertMessage: IAlertMessage = {
   type: 'error',
   message: '',
 };
+
 // Checks the form inputs.  Returns null for no errors or object with error messages for each field
 const validateInputs = (inputs: formFields): formFields | null => {
   let hasErrors = false;
@@ -129,10 +131,12 @@ const UserDetailForm = () => {
     setShowModal(false);
     console.log('cancel');
   };
+
   const onConfirm = () => {
     setShowModal(false);
     console.log('confirm');
   };
+
   return (
     <Container>
       <Card>

@@ -8,6 +8,7 @@ import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateAPIKey, validateToken } from '../utils/auth';
 import { siteListRead, siteListUpdate, siteSettingsRead, siteSettingsUpdate } from '../resolvers/site';
+import { crudCreate, crudDelete, crudRead, crudUpdate } from '../resolvers/crud';
 
 const prnt = console.log;
 
@@ -30,7 +31,12 @@ resolverMap.set('authLogout', authLogout);
 resolverMap.set('userRead', userRead);
 resolverMap.set('userUpdate', userUpdate);
 
-// site
+// crud operations
+resolverMap.set('crudCreate', crudCreate);
+resolverMap.set('crudRead', crudRead);
+resolverMap.set('crudUpdate', crudUpdate);
+resolverMap.set('crudDelete', crudDelete);
+
 resolverMap.set('siteListRead', siteListRead);
 resolverMap.set('siteListUpdate', siteListUpdate);
 resolverMap.set('siteSettingsRead', siteSettingsRead);
@@ -84,7 +90,7 @@ const addRoutes = (app: Express) => {
     async (req: Request, res: Response): Promise<Response> => {
       if (!validateAPIKey(req)) return res.end();
 
-      const rc: ResolverContext = { useruid: '', db: null };
+      const rc: ResolverContext = { userid: 0, useruid: '', db: null };
       const result = await sysCheck({}, rc);
       return res.json(result);
     },
@@ -103,13 +109,15 @@ const addRoutes = (app: Express) => {
         return res.status(400).send({ error: 'invalid request' });
 
       // builder resolver context
-      const userIdOrError = validateToken(req);
-      if (req.headers['authorization'] && userIdOrError.error) {
-        return res.status(400).send({ error: userIdOrError.error });
+      const userOrError = validateToken(req);
+      if (req.headers['authorization'] && userOrError.error) {
+        return res.status(400).send({ error: userOrError.error });
       }
 
+      const userIdentified = userOrError.result as StringMap ?? { id: 0, uid: '' };
       const rc: ResolverContext = {
-        useruid: userIdOrError.result ?? '',
+        userid: (userIdentified['id'] ?? 0) as number,
+        useruid: (userIdentified['uid'] ?? '') as string,
         db: await dbConnect(),
       };
 

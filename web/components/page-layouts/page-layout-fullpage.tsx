@@ -1,5 +1,10 @@
 import styled from 'styled-components';
 import { ICommonProps } from '@/types.d';
+import { useEffect } from 'react';
+
+interface IFullPageProps extends ICommonProps {
+  onPageEnter?: Function;
+}
 
 // it is possible here add a aprop to change the background
 const StyledPageFull = styled.div`
@@ -22,8 +27,12 @@ const StyledPageFull = styled.div`
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 `;
 
-const PageLayoutFullPage = (props: ICommonProps) => {
-  return <StyledPageFull>{props.children}</StyledPageFull>;
+const PageLayoutFullPage = ({onPageEnter, children}: IFullPageProps) => {
+  useEffect(() => {
+    if (typeof onPageEnter === 'function') onPageEnter();
+  }, [onPageEnter])
+
+  return <StyledPageFull>{children}</StyledPageFull>;
 };
 
 export default PageLayoutFullPage;

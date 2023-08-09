@@ -8,8 +8,8 @@ interface CollapsibleProps extends ICommonProps {
 };
 
 interface ContentProps {
-  $expanded: boolean;
-  $height: number;
+  expanded: boolean;
+  height: number;
 };
 
 const CollapsibleContainer = styled.div`
@@ -27,7 +27,7 @@ const CollapsibleContainer = styled.div`
 
 const Content = styled.div<ContentProps>`
   padding: 0 18px;
-  max-height: ${({ $expanded, $height }) => ($expanded ? `${$height}px` : '0')};
+  max-height: ${({ expanded, height }) => (expanded ? `${height}px` : '0')};
   overflow: hidden;
   transition: max-height 0.6s ease;
 `;
@@ -52,7 +52,7 @@ const Collapsible = ({ title, children }: CollapsibleProps) => {
       <CollapsibleContainer onClick={handleToggle}>
         {title}
       </CollapsibleContainer>
-      <Content $expanded={expanded} $height={height} ref={contentRef}>
+      <Content expanded={expanded} height={height} ref={contentRef}>
         {children}
       </Content>
     </>

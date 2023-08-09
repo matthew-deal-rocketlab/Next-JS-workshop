@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { Footer, Navbar, Sidebar } from '..';
@@ -8,6 +8,7 @@ import { ICommonProps } from '@/types';
 
 interface ILayout4PageProps extends ICommonProps {
   sidebar: ReactElement<typeof Sidebar>;
+  onPageEnter?: VoidFunction;
 }
 
 // write a container for the content of the page that will be passed in as a prop to this component with max widf of 1440 and min height of 100vh
@@ -33,7 +34,11 @@ const Grid = styled.div`
   }
 `;
 
-const PageLayout4Part = ({ sidebar, children }: ILayout4PageProps) => {
+const PageLayout4Part = ({ sidebar, onPageEnter, children }: ILayout4PageProps) => {
+  useEffect(() => {
+    if (typeof onPageEnter === 'function') onPageEnter();
+  }, [onPageEnter])
+
   return (
     <GlobalContainer>
       <Navbar />

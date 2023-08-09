@@ -91,15 +91,19 @@ const Select = ({ label, values, onChangeItem }: SelectProps) => {
     value: '',
   });
   const [open, setOpen] = useState(false);
+
   const handleOpen = () => {
     setOpen(true);
   };
+
   const handleClose = () => {
     setOpen(false);
   };
+
   const handleValueChange = (value: KeyValue<string>) => {
     setCurrentValue(value);
   };
+
   const handleChange = (value: KeyValue<string>) => {
     handleValueChange(value);
     // call method, if it exists

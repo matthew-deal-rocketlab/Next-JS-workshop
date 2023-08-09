@@ -1,11 +1,21 @@
-import { ISubscription } from '@/types';
 import React from 'react';
 import styled, { useTheme } from 'styled-components';
+
 import { Button, Card, Text, Icon } from '.';
 
 interface Props {
   plans: ISubscription[];
 }
+
+export interface ISubscription {
+  id: number;
+  name: string;
+  price: number;
+  features: string[];
+  description: string;
+}
+
+
 const Container = styled.div`
   width: 100%;
   display: flex;
@@ -58,7 +68,7 @@ const SelectPlan = ({ plans }: Props) => {
 
   return (
     <Container>
-      <Text $size={theme.fontSizes.large} $weight={theme.fontWeights.bold}>
+      <Text fontSize={theme.fontSizes.large} fontWeight={theme.fontWeights.bold}>
         All plans
       </Text>
 
@@ -66,16 +76,16 @@ const SelectPlan = ({ plans }: Props) => {
         {plans.map(plan => {
           return (
             <SubscriptionCard key={plan.id}>
-              <Text $size="16px" $weight="700" $margin="5px 0">
+              <Text fontSize="16px" fontWeight="700" margin="5px 0">
                 {plan.name}
               </Text>
-              <Text $size="30px" $weight="700" $margin="10px 0">
+              <Text fontSize="30px" fontWeight="700" margin="10px 0">
                 ${plan.price}/mth
               </Text>
               <Text
-                $size="12px"
-                $color={theme.colors.dark2}
-                $margin="10px 0 20px 0">
+                fontSize="12px"
+                color={theme.colors.dark2}
+                margin="10px 0 20px 0">
                 {plan.description}
               </Text>
 
@@ -87,19 +97,19 @@ const SelectPlan = ({ plans }: Props) => {
                     width={24}
                     stroke={theme.colors.primary}
                   />
-                  <Text key={feature} $margin="0 5px">
+                  <Text key={feature} margin="0 5px">
                     {feature}
                   </Text>
                 </FeatureContainer>
               ))}
               <Hr />
               <Text
-                $size={theme.fontSizes.small}
-                $color={theme.colors.dark2}
-                $weight="700">
+                fontSize={theme.fontSizes.small}
+                color={theme.colors.dark2}
+                fontWeight="700">
                 Aditional features
               </Text>
-              <Text $size={theme.fontSizes.mini} $color={theme.colors.dark2}>
+              <Text fontSize={theme.fontSizes.mini} color={theme.colors.dark2}>
                 Something else
               </Text>
               <SubscribeButton variant="medium">Subscribe</SubscribeButton>

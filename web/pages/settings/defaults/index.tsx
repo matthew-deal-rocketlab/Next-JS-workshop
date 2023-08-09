@@ -1,6 +1,6 @@
 import { PageLayout4Part, Sidebar } from '@/components';
 import SettingsForm from './settings-form';
-import { menuTitle, menu } from '../menu';
+import { menuTitle, menu } from '../_menu';
 
 const ProfileSettingsPage = () => {
   return (

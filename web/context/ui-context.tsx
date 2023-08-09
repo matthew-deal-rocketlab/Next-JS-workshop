@@ -8,17 +8,14 @@ import React, {
 
 interface UiContextProps {
   isMenuOpen: boolean;
-  navbarActive: string;
-  sidebarActive: string;
-  subSidebarActive: string;
+  // navbarActive: string;
+  // sidebarActive: string;
+  // subSidebarActive: string;
   isDrawerOpen: boolean;
 }
 
 const initialState: UiContextProps = {
   isMenuOpen: false,
-  navbarActive: headerMenuItems[0].id,
-  sidebarActive: '',
-  subSidebarActive: '',
   isDrawerOpen: false,
 };
 

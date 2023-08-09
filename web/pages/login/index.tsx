@@ -15,10 +15,11 @@ import {
   Text,
   PageLayoutFullPage,
 } from '@/components';
-import { IAlertMessage, SubmitResult, SubmitResultType } from '@/types.d';
+import { SubmitResult, SubmitResultType } from '@/types.d';
 import { apiPost } from '@/utils/api-client';
 import { ApiStatus } from '@/services/apiclient';
 import { sleep } from '@/utils/misc';
+import { IAlertMessage } from '@/components/alert';
 
 interface FormFields {
   email: string;

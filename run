@@ -12,6 +12,50 @@ export DB_HOST=$DB_HOST
 export GAPP_EMAIL_URL=$GAPP_EMAIL_URL
 export GAPP_EMAIL_API_KEY=$GAPP_EMAIL_API_KEY
 
+get_table_ddl() {
+  TABLE_NAME="$1"
+  SQL_GETMODEL="SELECT '    \"' || column_name || '\": \"' || udt_name || '\",'
+  FROM information_schema.columns
+  WHERE table_name = '$TABLE_NAME';"
+
+  docker exec -t rlwm-db psql -t -P footer=off -c "$SQL_GETMODEL" "$DB_DATABASE" $DB_USER
+}
+
+api_get_system_tables() {
+  echo "// DO NOT EDIT.  This is a generated file created with ./run api-update-models
+export const SYSTEM_TABLE_FIELDS: StringStringMap = {
+  'tbl_user': {"
+  get_table_ddl tbl_user
+  echo "  },"
+
+  echo "  'tbl_user_detail': {"
+  get_table_ddl tbl_user_detail
+  echo "  }"
+  echo "};\n\n"
+}
+
+api_get_crud_tables() {
+  echo "// All CRUD tables must have an auto incrementing id and be linked to a user through a user_id
+// CRUD tables can be managed with the crud resolvers: crudCreate, crudRead, crudUpdate, crudDelete
+export const CRUD_TABLE_FIELDS: StringStringMap = {
+  'tbl_collection': {"
+  get_table_ddl tbl_collection
+  echo "  },"
+
+  echo "  'tbl_site': {"
+  get_table_ddl tbl_site
+  echo "  }"
+  echo "};"
+}
+
+api_update_models() {
+  if [ -f ./.env ]; then . ./.env ; fi
+  MODELS_FILE="src/models/database.ts"
+
+  api_get_system_tables > $MODELS_FILE
+  api_get_crud_tables >> $MODELS_FILE
+}
+
 setLAUNCH_IN_TAB() {
   COLOR="$1"
   SCRIPT="$2"
@@ -26,33 +70,49 @@ setLAUNCH_IN_TAB() {
     end tell"
 }
 
+# API commands
 if [ "$1" = "api-dev" ]; then cd api; PORT=$API_PORT node dev-watch.js ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "api-check" ]; then cd api; yarn type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "api-build" ]; then cd api; yarn build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "api-update-models" ]; then cd api; api_update_models ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "api-check" ]; then cd api; yarn type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
+# Directus commands
 if [ "$1" = "dt-start" ]; then cd directus; ./run start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "dt-stop" ]; then cd directus; ./run stop ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "dt-export" ]; then cd directus; ./run export ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "dt-import" ]; then cd directus; ./run import "$2" ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
-
+# Web dashboard commands
 if [ "$1" = "web-dev" ]; then cd web; PORT=$WEB_PORT yarn dev ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "web-build" ]; then cd web; yarn build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "web-start" ]; then cd web; PORT=$WEB_PORT yarn start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "web-check" ]; then cd web; yarn next lint ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
+# Start / stop all components
 if [ "$1" = "start-all" ]; then
   # Start database
   ./db start
-
+  sleep 1
+  # start directus
+  ./run dt-start
   # start Web dashboard
   setLAUNCH_IN_TAB Grass "cd $PWD ; ./run web-dev"
   osascript -e "$LAUNCH_IN_TAB"
-
-  sleep 1
-
   # start API
+  sleep 1
   setLAUNCH_IN_TAB Ocean "cd $PWD ; ./run api-dev"
   osascript -e "$LAUNCH_IN_TAB"
+  # open web browser tabs
+  sleep 3
+  open http://localhost:5000 http://localhost:5002
+  exit
+fi
+
+if [ "$1" = "stop-all" ]; then
+  ./run dt-stop
+  ./db stop
+  exit
 fi
 
 echo "Command not found"

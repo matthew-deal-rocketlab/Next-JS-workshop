@@ -1,6 +1,13 @@
 import styled, { useTheme } from 'styled-components';
+
 import { Button, Card, Text } from './';
-import { IResumeSubscription } from '@/types';
+
+export interface IResumeSubscription {
+  name: string;
+  price: number;
+  nextPaymentDate: string;
+  onSubscribe: () => void;
+}
 
 const Container = styled.div`
   width: 100%;
@@ -55,38 +62,38 @@ const ResumeSubscription = ({
   return (
     <Container>
       <Text
-        $size={theme.fontSizes.large}
-        $weight={theme.fontWeights.bold}
-        $align="center">
+        fontSize={theme.fontSizes.large}
+        fontWeight={theme.fontWeights.bold}
+        align="center">
         My current plan
       </Text>
       <ResumeCard>
         <Column>
           <Text
-            $size={theme.fontSizes.medium}
-            $weight={theme.fontWeights.bold}
-            $color={theme.colors.primary}>
+            fontSize={theme.fontSizes.medium}
+            fontWeight={theme.fontWeights.bold}
+            color={theme.colors.primary}>
             Subscription type
           </Text>
-          <Text $size={theme.fontSizes.normal}>{name}</Text>
+          <Text fontSize={theme.fontSizes.normal}>{name}</Text>
         </Column>
         <Column>
           <Text
-            $size={theme.fontSizes.medium}
-            $weight={theme.fontWeights.bold}
-            $color={theme.colors.primary}>
+            fontSize={theme.fontSizes.medium}
+            fontWeight={theme.fontWeights.bold}
+            color={theme.colors.primary}>
             Subscription price
           </Text>
-          <Text $size={theme.fontSizes.normal}>{`$${price}/mth`}</Text>
+          <Text fontSize={theme.fontSizes.normal}>{`$${price}/mth`}</Text>
         </Column>
         <Column>
           <Text
-            $size={theme.fontSizes.medium}
-            $weight={theme.fontWeights.bold}
-            $color={theme.colors.primary}>
+            fontSize={theme.fontSizes.medium}
+            fontWeight={theme.fontWeights.bold}
+            color={theme.colors.primary}>
             Next payment date
           </Text>
-          <Text $size={theme.fontSizes.normal}>{nextPaymentDate}</Text>
+          <Text fontSize={theme.fontSizes.normal}>{nextPaymentDate}</Text>
         </Column>
         <StyledButton variant="medium" onClick={onSubscribe}>
           Some action
