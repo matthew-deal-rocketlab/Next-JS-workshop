@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 import styled from 'styled-components';
 
-import { themeStatic } from '@/theme';
-import { Sidebar, XMarkIcon } from '@/components';
+import { Sidebar, Icon, IconType } from '@/components';
 import { UiContext } from '@/context/ui-context';
 import { headerMenuItems } from '@/utils/mainmenu';
-import { ICommonProps } from '@/types';
+import { ICommonProps } from '@/types.d';
 import { useIsFirstRender } from '@/hooks/isFirstRender';
+import { themeStatic } from '@/theme';
 
 interface IDrawerProps extends ICommonProps {
   $isDrawerOpen: boolean;
@@ -65,7 +65,7 @@ const Drawer = ({ position = 'right' }: Props) => {
   return (
     <DrawerContainer $isDrawerOpen={isDrawerOpen} $position={position}>
       <Button onClick={handleDrawerClose}>
-        <XMarkIcon height={15} width={15} fill="white" />
+        <Icon icon={IconType.XMark} height={15} width={15} fill="white" />
       </Button>
       <Sidebar title="" menuItems={headerMenuItems} />
     </DrawerContainer>

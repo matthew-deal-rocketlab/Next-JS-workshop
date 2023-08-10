@@ -1,10 +1,11 @@
+import { themeStatic } from '@/theme';
 import React from 'react';
 import styled from 'styled-components';
 
 interface ITextElement extends React.HTMLProps<HTMLParagraphElement> {
   color?: string;
   fontSize?: string;
-  fontWeight?: string;
+  fontWeight?: string | number;
   align?: string;
   margin?: string;
   padding?: string;
@@ -12,8 +13,9 @@ interface ITextElement extends React.HTMLProps<HTMLParagraphElement> {
 
 const StyledText = styled.p<ITextElement>`
   color: ${({ color, theme }) => color || theme.colors.dark2};
-  font-size: ${({ fontSize, theme }) => fontSize || theme.fontSizes.small};
-  font-weight: ${({ fontWeight, theme }) => fontWeight || theme.fontWeights.normal};
+  font-size: ${({ fontSize }) => fontSize || themeStatic.fontSizes.small};
+  font-weight: ${({ fontWeight }) =>
+    fontWeight || themeStatic.fontWeights.normal};
   text-align: ${({ align }) => align || 'left'};
   margin: ${({ margin }) => margin || '0'};
   padding: ${({ padding }) => padding || '0'};

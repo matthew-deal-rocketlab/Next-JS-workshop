@@ -1,6 +1,5 @@
-import styled from 'styled-components';
-
 import { themeStatic } from '@/theme';
+import styled from 'styled-components';
 
 interface InputProps extends React.HTMLProps<HTMLInputElement> {
   id: string;

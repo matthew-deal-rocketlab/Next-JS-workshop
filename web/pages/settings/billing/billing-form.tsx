@@ -100,7 +100,9 @@ const BillingForm = () => {
   const [formErrors, setFormErrors] = useState(initialFormFields);
 
   const onClickLogin = (event: FormEvent<HTMLFormElement>) => {
-    const data = Object.fromEntries(new FormData(event.currentTarget)) as unknown as formFields;
+    const data = Object.fromEntries(
+      new FormData(event.currentTarget),
+    ) as unknown as formFields;
 
     console.log('data', data);
 
@@ -212,7 +214,10 @@ const BillingForm = () => {
             />
           </FormRow>
 
-          <FormRow fullwidth={false} align="center" style={{ marginTop: '2em' }}>
+          <FormRow
+            fullwidth={false}
+            align="center"
+            style={{ marginTop: '2em' }}>
             <Button variant="medium" type="submit">
               Update
             </Button>

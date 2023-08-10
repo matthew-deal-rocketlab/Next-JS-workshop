@@ -1,9 +1,9 @@
 import React, { ReactNode, useState } from 'react';
 import Button from './button';
 import styled, { useTheme } from 'styled-components';
-import { themeStatic } from '@/theme';
 import { ColorType } from '@/types';
 import { useIsFirstRender } from '@/hooks/isFirstRender';
+import { themeStatic } from '@/theme';
 
 interface Props {
   showModal: boolean;

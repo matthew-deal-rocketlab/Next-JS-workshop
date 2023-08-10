@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { themeStatic } from '@/theme';
 import { IMenuItem } from '@/types';
+import { themeStatic } from '@/theme';
 
 // ** This dropdown requires a title component and an item component **
 

@@ -14,9 +14,9 @@ import {
   Select,
 } from '@/components';
 import { isEmail } from '@/utils/validators';
-import { themeStatic } from '@/theme';
 import { countriesTemp } from '@/utils/countries';
 import { IAlertMessage } from '@/components/alert';
+import { themeStatic } from '@/theme';
 
 const NameContainer = styled.div`
   display: flex;
@@ -220,7 +220,7 @@ const UserDetailForm = () => {
             <FormLabel htmlFor="country">Country</FormLabel>
             <Select
               id="country"
-              label="Choose country"
+              placeholder="Choose country"
               values={countriesTemp}
               onChange={country => console.log(country)}
             />
@@ -238,7 +238,6 @@ const UserDetailForm = () => {
         <Button variant="medium" onClick={() => setShowModal(true)}>
           Show Modal
         </Button>
-
         <Modal
           title="Testing"
           description="Delete all your data?"

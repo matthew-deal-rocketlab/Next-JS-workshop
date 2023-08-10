@@ -13,7 +13,7 @@ const StyledCard = styled.div<ICommonProps>`
   }
   padding: 20px;
   border-radius: 5px;
-  background-color: ${props => props.theme.colors.white};
+  background-color: ${({ theme }) => theme.colors.white};
   display: flex;
   flex-direction: column;
   box-shadow: 5px 5px rgba(0, 0, 0, 0.05);

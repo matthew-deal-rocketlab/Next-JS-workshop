@@ -21,32 +21,44 @@ export {
   InfoIcon,
   WarningIcon,
 };
+export enum IconType {
+  Bars = 'bars',
+  XMark = 'xmark',
+  Success = 'success',
+  Error = 'error',
+  Info = 'info',
+  Warning = 'warning',
+  ArrowDown = 'arrow-down',
+  ArrowUp = 'arrow-up',
+}
+
 interface Props {
-  icon: string;
+  icon: IconType;
   height?: number;
   width?: number;
   fill?: string;
   stroke?: string;
+  onClick?: () => void;
 }
 
 // Icon component to render icons`
 const Icon = ({ icon, ...props }: Props) => {
   switch (icon) {
-    case 'bars':
+    case IconType.Bars:
       return <BarsIcon {...props} />;
-    case 'xmark':
+    case IconType.XMark:
       return <XMarkIcon {...props} />;
-    case 'success':
+    case IconType.Success:
       return <CheckCircleIcon {...props} />;
-    case 'error':
+    case IconType.Error:
       return <ErrorIcon {...props} />;
-    case 'info':
+    case IconType.Info:
       return <InfoIcon {...props} />;
-    case 'warning':
+    case IconType.Warning:
       return <WarningIcon {...props} />;
-    case 'arrow-down':
+    case IconType.ArrowDown:
       return <ArrowDownIcon {...props} />;
-    case 'arrow-up':
+    case IconType.ArrowUp:
       return <ArrowUpIcon {...props} />;
     default:
       return null;

@@ -20,6 +20,7 @@ import { apiPost } from '@/utils/api-client';
 import styled, { useTheme } from 'styled-components';
 import { ApiStatus } from '@/services/apiclient';
 import { IAlertMessage } from '@/components/alert';
+import { themeStatic } from '@/theme';
 
 interface FormFields {
   email: string;
@@ -45,7 +46,8 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
 };
 
 const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
-  const obscureMessage = 'If your address exists in our system, an email will be sent with further instructions';
+  const obscureMessage =
+    'If your address exists in our system, an email will be sent with further instructions';
   const payload = { authForgotPassword: { ...data } };
   const forgotPasswordResult = await apiPost('/jsonql', payload);
 
@@ -109,7 +111,6 @@ const ForgotPasswordPage = () => {
   const onAlertClose = () => {
     setAlert({ message: '', type: 'success' });
   };
-  console.log('theme', theme);
   return (
     <PageLayoutFullPage>
       <Card>
@@ -119,8 +120,8 @@ const ForgotPasswordPage = () => {
           </FormRow>
           <TextContainer>
             <Text
-              fontWeight={theme.fontWeights.bold}
-              fontSize={theme.fontSizes.normal}>
+              fontWeight={themeStatic.fontWeights.bold}
+              fontSize={themeStatic.fontSizes.normal}>
               No worries!
             </Text>
             <Text>

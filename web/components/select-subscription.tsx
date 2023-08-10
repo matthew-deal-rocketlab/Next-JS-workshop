@@ -1,7 +1,8 @@
 import React from 'react';
 import styled, { useTheme } from 'styled-components';
 
-import { Button, Card, Text, Icon } from '.';
+import { Button, Card, Text, Icon, IconType } from '.';
+import { themeStatic } from '@/theme';
 
 interface Props {
   plans: ISubscription[];
@@ -15,7 +16,6 @@ export interface ISubscription {
   description: string;
 }
 
-
 const Container = styled.div`
   width: 100%;
   display: flex;
@@ -27,7 +27,7 @@ const Container = styled.div`
 const SelectSubscriptionContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+  @media (max-width: ${themeStatic.breakpoints.tablet}) {
     grid-template-columns: 1fr;
     align-items: center;
     justify-content: center;
@@ -40,14 +40,14 @@ const SubscriptionCard = styled(Card)`
   height: 400px;
   width: 250px;
   margin: 10px;
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+  @media (max-width: ${themeStatic.breakpoints.tablet}) {
     width: 80%;
     height: auto;
   }
 `;
 const SubscribeButton = styled(Button)`
   margin-top: auto;
-  @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
+  @media (max-width: ${themeStatic.breakpoints.tablet}) {
     margin-top: 10px;
   }
 `;
@@ -68,7 +68,9 @@ const SelectPlan = ({ plans }: Props) => {
 
   return (
     <Container>
-      <Text fontSize={theme.fontSizes.large} fontWeight={theme.fontWeights.bold}>
+      <Text
+        fontSize={themeStatic.fontSizes.large}
+        fontWeight={themeStatic.fontWeights.bold}>
         All plans
       </Text>
 
@@ -92,7 +94,7 @@ const SelectPlan = ({ plans }: Props) => {
               {plan.features.map(feature => (
                 <FeatureContainer key={feature}>
                   <Icon
-                    icon="success"
+                    icon={IconType.Success}
                     height={24}
                     width={24}
                     stroke={theme.colors.primary}
@@ -104,12 +106,14 @@ const SelectPlan = ({ plans }: Props) => {
               ))}
               <Hr />
               <Text
-                fontSize={theme.fontSizes.small}
+                fontSize={themeStatic.fontSizes.small}
                 color={theme.colors.dark2}
                 fontWeight="700">
                 Aditional features
               </Text>
-              <Text fontSize={theme.fontSizes.mini} color={theme.colors.dark2}>
+              <Text
+                fontSize={themeStatic.fontSizes.mini}
+                color={theme.colors.dark2}>
                 Something else
               </Text>
               <SubscribeButton variant="medium">Subscribe</SubscribeButton>

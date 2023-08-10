@@ -3,10 +3,10 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 
 import { headerMenuItems } from '@/utils/mainmenu';
-import { themeStatic } from '@/theme';
 import { UiContext } from '@/context/ui-context';
 import { IMenuItem } from '@/types.d';
-import { BarsIcon, Dropdown, Modal } from '@/components';
+import { Icon, Dropdown, Modal, IconType } from '@/components';
+import { themeStatic } from '@/theme';
 
 const NavbarContainer = styled.nav`
   height: 60px;
@@ -113,7 +113,7 @@ const Header = () => {
   return (
     <NavbarContainer>
       <Button $isDrawerOpen={isDrawerOpen} onClick={handleOpenDrawer}>
-        <BarsIcon height={20} width={20} />
+        <Icon icon={IconType.Bars} height={20} width={20} />
       </Button>
       <Title>&#x1F441; Sauron</Title>
       <>
@@ -132,7 +132,9 @@ const Header = () => {
             ) : (
               <MenuItem
                 key={`menu-${index}`}
-                $isActive={item.link.split('/')[1] === router.pathname.split('/')[1]}
+                $isActive={
+                  item.link.split('/')[1] === router.pathname.split('/')[1]
+                }
                 onClick={() => handleMenuItemClick(item)}>
                 {item.label}
               </MenuItem>

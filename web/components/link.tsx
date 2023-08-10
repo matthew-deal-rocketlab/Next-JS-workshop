@@ -1,3 +1,4 @@
+import { themeStatic } from '@/theme';
 import Link from 'next/link';
 import styled from 'styled-components';
 
@@ -11,11 +12,10 @@ interface ILinkElement extends React.HTMLProps<typeof Link> {
   weight?: string;
 }
 
-
-const StyledLink = styled(Link) <ILinkElement>`
+const StyledLink = styled(Link)<ILinkElement>`
   color: ${({ color, theme }) => color || theme.colors.info.dark};
-  font-size: ${({ fontSize, theme }) => fontSize || theme.fontSizes.small};
-  font-weight: ${({ weight, theme }) => weight || theme.fontWeights.normal};
+  font-size: ${({ fontSize }) => fontSize || themeStatic.fontSizes.small};
+  font-weight: ${({ weight }) => weight || themeStatic.fontWeights.normal};
   text-align: ${({ align }) => align || 'left'};
   margin: ${({ margin }) => margin || '0 0 0 5px'};
   padding: ${({ padding }) => padding || '0'};

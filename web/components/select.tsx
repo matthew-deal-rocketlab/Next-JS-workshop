@@ -1,11 +1,19 @@
-import { useState } from 'react';
-import styled, { css } from 'styled-components';
-import Icon from './icons';
+import {
+  MouseEventHandler,
+  FormEvent,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import styled, { css, useTheme } from 'styled-components';
+import { Icon, IconType, Text } from './';
+import { KeyValue } from '@/types.d';
 import { themeStatic } from '@/theme';
-import { KeyValue } from '@/types';
 
 interface SelectProps extends React.HTMLProps<HTMLSelectElement> {
-  label: string;
+  placeholder: string;
+  error?: string;
   values: KeyValue<string>[];
   onChangeItem?: (value: KeyValue<string>) => void;
 }
@@ -80,19 +88,22 @@ const StyledIcon = styled(Icon)`
   right: 0.5rem;
   top: 30%;
 `;
+const StyledError = styled.div`
+  color: ${props => props.theme!.colors.error.main};
+  font-family: ${themeStatic.font.inter};
+  font-size: ${themeStatic.fontSizes.mini};
+`;
 
-// TODO: change values to array of objects
-// TODO: Close when clicking outside
-// TODO: Add error label
-
-const Select = ({ label, values, onChangeItem }: SelectProps) => {
-  const [currentValue, setCurrentValue] = useState<KeyValue<string> | null>({
-    key: '',
-    value: '',
-  });
+const Select = ({ placeholder, values, error, onChangeItem }: SelectProps) => {
+  const [currentValue, setCurrentValue] = useState<KeyValue<string> | null>(
+    null,
+  );
   const [open, setOpen] = useState(false);
+  const dropdown = useRef<HTMLDivElement>(null);
+  useOutsideAlerter(dropdown);
 
-  const handleOpen = () => {
+  const handleOpen = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setOpen(true);
   };
 
@@ -113,14 +124,46 @@ const Select = ({ label, values, onChangeItem }: SelectProps) => {
     // close, after all tasks are finished
     handleClose();
   };
+  // capture click outside of dropdown
+  function useOutsideAlerter(ref: RefObject<HTMLDivElement>) {
+    useEffect(() => {
+      function handleClickOutside(event: MouseEvent) {
+        event.preventDefault();
+        if (
+          open &&
+          ref.current &&
+          !ref.current.contains(event.target as Node)
+        ) {
+          handleClose();
+        }
+      }
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        // Unbind the event listener on clean up
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ref, open]);
+  }
+  const Placeholder = () => {
+    const theme = useTheme();
+    const size = themeStatic.fontSizes.small;
+    const color = theme.colors.tertiary;
+    return (
+      <Text fontSize={size} color={color}>
+        {placeholder}
+      </Text>
+    );
+  };
 
   return (
     <SelectContainer>
-      <SelectLabelButton onClick={handleOpen}>
-        {currentValue !== null ? currentValue.value : label}
-        <StyledIcon icon="arrow-down" height={10} width={10} />
+      <SelectLabelButton onClick={handleOpen as unknown as MouseEventHandler}>
+        {!currentValue && <Placeholder />}
+        {currentValue && currentValue.value}
+        <StyledIcon icon={IconType.ArrowDown} height={10} width={10} />
       </SelectLabelButton>
-      <DropdownStyle $isVisible={open}>
+      <DropdownStyle $isVisible={open} ref={dropdown}>
         {values.map((item, index) => (
           <DropdownItem
             onClick={() => handleChange(item)}
@@ -130,6 +173,7 @@ const Select = ({ label, values, onChangeItem }: SelectProps) => {
           </DropdownItem>
         ))}
       </DropdownStyle>
+      {error && <StyledError>{error}</StyledError>}
     </SelectContainer>
   );
 };

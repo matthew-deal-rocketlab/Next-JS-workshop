@@ -2,11 +2,11 @@
 //similar to alert from material ui
 //should accept a type prop that will determine the color of the alert
 
-import { themeStatic } from '@/theme';
 import { ReactNode } from 'react';
 import styled, { useTheme } from 'styled-components';
-import Icon, { BarsIcon, XMarkIcon } from './icons';
-import { ColorType } from '@/types';
+import { Icon, IconType } from './';
+import { ColorType } from '@/types.d';
+import { themeStatic } from '@/theme';
 
 export interface IAlertMessage {
   type: ColorType;
@@ -21,7 +21,7 @@ const StyledAlert = styled.div<{ type: string; $height?: number }>`
   border-left: 5px solid ${({ theme, type }) => theme.colors[type].main};
   color: ${({ theme, type }) => theme.colors[type].dark};
   margin: 0;
-  font-size: ${({ theme }) => themeStatic.fontSizes.small};
+  font-size: ${themeStatic.fontSizes.small};
   display: grid;
 `;
 const Container = styled.div`
@@ -44,13 +44,14 @@ const Alert = ({ type, children, onClose }: Props) => {
     <StyledAlert type={type}>
       <Container>
         <Icon
-          icon={type}
-          height={18}
-          width={18}
-          fill={theme.colors[type].dark}
+          icon={type as IconType}
+          height={24}
+          width={24}
+          stroke={theme.colors[type].dark}
         />
         {children}
-        <XMarkIcon
+        <Icon
+          icon={IconType.XMark}
           height={10}
           width={10}
           fill={theme.colors[type].dark}

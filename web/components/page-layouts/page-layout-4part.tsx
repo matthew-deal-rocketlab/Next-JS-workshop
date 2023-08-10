@@ -2,9 +2,9 @@ import { ReactElement, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { Footer, Navbar, Sidebar } from '..';
-import { themeStatic } from '@/theme';
 import { GlobalContainer } from './common';
 import { ICommonProps } from '@/types';
+import { themeStatic } from '@/theme';
 
 interface ILayout4PageProps extends ICommonProps {
   sidebar: ReactElement<typeof Sidebar>;
@@ -34,10 +34,14 @@ const Grid = styled.div`
   }
 `;
 
-const PageLayout4Part = ({ sidebar, onPageEnter, children }: ILayout4PageProps) => {
+const PageLayout4Part = ({
+  sidebar,
+  onPageEnter,
+  children,
+}: ILayout4PageProps) => {
   useEffect(() => {
     if (typeof onPageEnter === 'function') onPageEnter();
-  }, [onPageEnter])
+  }, [onPageEnter]);
 
   return (
     <GlobalContainer>

@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { themeStatic } from '@/theme';
+import styled from 'styled-components';
 
 const Label = styled.div`
   font-size: ${themeStatic.fontSizes.medium};

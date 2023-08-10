@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import styled, { useTheme } from 'styled-components';
 
-import { IMenuItem } from '@/types';
+import { IMenuItem } from '@/types.d';
+import { Icon, Collapsible, IconType } from '.';
 import { themeStatic } from '@/theme';
-import { ArrowDownIcon, Collapsible } from '.';
 
 interface ISidebarProps extends React.HTMLProps<HTMLDivElement> {
   title: string;
@@ -12,7 +12,7 @@ interface ISidebarProps extends React.HTMLProps<HTMLDivElement> {
 
 interface ISidebarItemProps extends React.HTMLProps<HTMLDivElement> {
   $isActive: boolean;
-  display?: string
+  display?: string;
 }
 
 const SidebarContainer = styled.div`
@@ -82,10 +82,11 @@ const Sidebar = ({ title, menuItems }: ISidebarProps) => {
                 $isActive={router.pathname === item.link}
                 onClick={() => handleSidebarItemClick(item)}>
                 {item.label}
-                <ArrowDownIcon
+                <Icon
+                  icon={IconType.ArrowDown}
                   height={10}
                   width={10}
-                  fill={theme.colors.light2}
+                  stroke={theme.colors.light2}
                 />
               </SidebarItem>
             }>

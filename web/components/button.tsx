@@ -1,4 +1,3 @@
-
 import styled, { DefaultTheme, StyleSheetManager } from 'styled-components';
 
 interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
@@ -15,14 +14,12 @@ const buttonPadX = {
   small: '2px',
   medium: '4px',
   large: '6px',
-  icon: '20px',
 };
 
 const buttonPadY = {
   small: '4px',
   medium: '8px',
   large: '10px',
-  icon: '10px',
 };
 
 const StyledButton = styled.button<ButtonProps>`

@@ -3,12 +3,11 @@
 import { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { themeStatic } from '@/theme';
 import { UiContext } from '@/context/ui-context';
 import { ICommonProps } from '@/types';
 import { Drawer, Footer, Navbar } from '..';
 import { GlobalContainer } from './common';
-
+import { themeStatic } from '@/theme';
 
 interface ILayout3PageProps extends ICommonProps {
   onPageEnter?: Function;
@@ -26,7 +25,7 @@ const OverlayContainer = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: ${themeStatic.zIndex.three};
+  z-index: ${({ theme }) => themeStatic.zIndex.three};
   width: 100%;
   height: 100%;
   background-color: ${({ theme }) => theme.colors.black};
@@ -34,7 +33,7 @@ const OverlayContainer = styled.div`
   transition: opacity 0.5s;
 `;
 
-const PageLayout3Part = ({ onPageEnter , children }: ILayout3PageProps) => {
+const PageLayout3Part = ({ onPageEnter, children }: ILayout3PageProps) => {
   const uiData = useContext(UiContext);
   const { isDrawerOpen, setUiData } = uiData;
   const handleOverlayClick = () => {
@@ -43,7 +42,7 @@ const PageLayout3Part = ({ onPageEnter , children }: ILayout3PageProps) => {
 
   useEffect(() => {
     if (typeof onPageEnter === 'function') onPageEnter();
-  }, [onPageEnter])
+  }, [onPageEnter]);
 
   return (
     <GlobalContainer>
