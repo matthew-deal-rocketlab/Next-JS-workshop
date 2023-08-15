@@ -1,9 +1,12 @@
+// This is a generic resolver for CRUD operations on tables linked to users.
+// All CRUD tables must have an incrementing id and must be linked to a user through a user_id
+// The database schema must be defined in CRUD_TABLE_FIELDS in models/database.ts (this is a generated file)
+
 import { ERROR_INVALID_CREDENTIALS, ERROR_INVALID_INPUT, ERROR_NO_DB } from "../constants";
 import { CRUD_TABLE_FIELDS } from "../models/database";
 import { dbQuery } from "../services/db";
-// import { getUserBy } from "../utils/db";
 
-const MAX_ALLOWED_FIELDS = 30;
+const MAX_ALLOWED_FIELDS = 50;
 
 const isTableValid = (tableName: string): boolean => {
   return Object.keys(CRUD_TABLE_FIELDS).indexOf(tableName) >= 0;
@@ -37,10 +40,6 @@ export const crudCreate = async (input: JsonQLInput, rc: ResolverContext): Promi
   if (!isTableValid(inputTable)) return ERROR_INVALID_INPUT;
   if (!isFieldsValid(inputTable, inputFieldNames)) return ERROR_INVALID_INPUT;
 
-  // const userInfo = await getUserBy(rc.db, 'uid', rc.useruid);
-  // if (typeof userInfo === 'string') return ERROR_INVALID_CREDENTIALS;
-  // const userId = userInfo['id'];
-
   // automatically add user id into input fields (must be last to prevent injection)
   const allFields = Object.assign(inputFields, { 'user_id': userId });
   const allFieldNames = Object.keys(allFields);
@@ -73,7 +72,6 @@ export const crudRead = async (input: JsonQLInput, rc: ResolverContext): Promise
 
   if (!isTableValid(inputTable)) return ERROR_INVALID_INPUT;
 
-  // let selectQuery = `SELECT * FROM ${inputTable} WHERE user_id = (SELECT id FROM tbl_user WHERE uid = '${rc.useruid}');`;
   let selectQuery = `SELECT * FROM ${inputTable} WHERE user_id = ${userId};`;
   const tableResult = await dbQuery(rc.db, selectQuery);
   if (tableResult.error) return { error: tableResult.error }
@@ -99,10 +97,6 @@ export const crudUpdate = async (input: JsonQLInput, rc: ResolverContext): Promi
   if (inputFieldNames.length === 0) return ERROR_INVALID_INPUT;
   if (!isTableValid(inputTable)) return ERROR_INVALID_INPUT;
   if (!isFieldsValid(inputTable, inputFieldNames)) return ERROR_INVALID_INPUT;
-
-  // const userInfo = await getUserBy(rc.db, 'uid', rc.useruid);
-  // if (typeof userInfo === 'string') return ERROR_INVALID_CREDENTIALS;
-  // const userId = userInfo['id'];
 
   // construct parameterized SQL statement and parameter values
   let paramList: string[] = [];
@@ -139,7 +133,6 @@ export const crudDelete = async (input: JsonQLInput, rc: ResolverContext): Promi
 
   if (!isTableValid(inputTable)) return ERROR_INVALID_INPUT;
 
-  // let insertQuery = `DELETE FROM ${inputTable} WHERE id = ${rowId} AND user_id = (SELECT id FROM tbl_user WHERE uid = '${rc.useruid}') RETURNING id;`;
   let insertQuery = `DELETE FROM ${inputTable} WHERE id = ${rowId} AND user_id = ${userId} RETURNING id;`;
   const tableResult = await dbQuery(rc.db, insertQuery);
   if (tableResult.error) return { error: tableResult.error }

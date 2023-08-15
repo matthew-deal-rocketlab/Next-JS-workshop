@@ -7,7 +7,6 @@ import { authForgotPassword, authLogin, authLogout, authRefresh, authResetPasswo
 import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateAPIKey, validateToken } from '../utils/auth';
-import { siteListRead, siteListUpdate, siteSettingsRead, siteSettingsUpdate } from '../resolvers/site';
 import { crudCreate, crudDelete, crudRead, crudUpdate } from '../resolvers/crud';
 
 const prnt = console.log;
@@ -36,12 +35,6 @@ resolverMap.set('crudCreate', crudCreate);
 resolverMap.set('crudRead', crudRead);
 resolverMap.set('crudUpdate', crudUpdate);
 resolverMap.set('crudDelete', crudDelete);
-
-resolverMap.set('siteListRead', siteListRead);
-resolverMap.set('siteListUpdate', siteListUpdate);
-resolverMap.set('siteSettingsRead', siteSettingsRead);
-resolverMap.set('siteSettingsUpdate', siteSettingsUpdate);
-
 
 
 const jsonErrorHandler = (
