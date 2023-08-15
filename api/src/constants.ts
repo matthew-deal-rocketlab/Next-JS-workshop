@@ -5,6 +5,15 @@ export const JWT_SECRET =
 
 export const SALT_PASS_SEPARATOR = '~';
 
+// Same enum is defined in client
+export enum ApiStatus {
+  OK = 200,
+  ERROR = 400,
+  EXPIRED = 419,
+  UPGRADE = 426, // Use to prompt user to upgrade client
+}
+
+
 export enum UserStatus {
   Pending = 'P',
   Verified = 'V',

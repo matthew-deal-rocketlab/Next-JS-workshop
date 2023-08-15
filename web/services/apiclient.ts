@@ -9,12 +9,13 @@ export type ApiResponse = {
 }
 
 export enum ApiStatus {
-  OK,
-  ERROR,
-  NO_AUTH,
-  TIMEOUT,
-  NO_NETWORK,
-  UNKNOWN,
+  OK = 200,
+  ERROR = 400,
+  EXPIRED = 419,
+  UPGRADE = 426, // Use to prompt user to upgrade client
+  TIMEOUT = -1,
+  NO_NETWORK = -2,
+  UNKNOWN = -3,
 }
 
 
@@ -51,13 +52,13 @@ const jsonFetch = async (
   }
   // console.log(`${new Date()} >>> response`, response)
 
-  if (response.status === 200) {
+  if (response.status === ApiStatus.OK) {
     const json = await response.json()
     return { status: ApiStatus.OK, result: json }
   }
 
-  if (response.status === 403) {
-    return { status: ApiStatus.NO_AUTH, result: { url, options } }
+  if (response.status === ApiStatus.EXPIRED) {
+    return { status: ApiStatus.EXPIRED, result: { url, options } }
   }
 
   return { status: ApiStatus.UNKNOWN, result: response }

@@ -34,6 +34,8 @@ const OverlayContainer = styled.div`
 `;
 
 const PageLayout3Part = ({ onPageEnter, children }: ILayout3PageProps) => {
+  var ranOnce = false;
+
   const uiData = useContext(UiContext);
   const { isDrawerOpen, setUiData } = uiData;
   const handleOverlayClick = () => {
@@ -41,8 +43,11 @@ const PageLayout3Part = ({ onPageEnter, children }: ILayout3PageProps) => {
   };
 
   useEffect(() => {
-    if (typeof onPageEnter === 'function') onPageEnter();
-  }, [onPageEnter]);
+    if (!ranOnce && typeof onPageEnter === 'function') {
+      ranOnce = true;
+      onPageEnter();
+    };
+  }, [])
 
   return (
     <GlobalContainer>

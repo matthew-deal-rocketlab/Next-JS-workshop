@@ -16,10 +16,11 @@ import {
   PageLayoutFullPage,
 } from '@/components';
 import { SubmitResult, SubmitResultType } from '@/types.d';
-import { apiPost } from '@/utils/api-client';
+import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN, apiPost } from '@/utils/api-client';
 import { ApiStatus } from '@/services/apiclient';
 import { sleep } from '@/utils/misc';
 import { IAlertMessage } from '@/components/alert';
+import { localStringSet } from '@/utils/local-store';
 
 interface FormFields {
   email: string;
@@ -58,9 +59,12 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
 };
 
 const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
+  // Clear login tokens
+  await localStringSet(KEY_REFRESH_TOKEN, '');
+  await localStringSet(KEY_JWT_TOKEN, '');
+
   const payload = { authLogin: { ...data } };
   const loginResult = await apiPost('/jsonql', payload);
-  console.log('loginResult', loginResult);
   if (loginResult.status !== ApiStatus.OK) {
     return { text: 'Error logging in', type: SubmitResultType.error };
   }
@@ -72,7 +76,9 @@ const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
     return { text: `${authLogin}`, type: SubmitResultType.error };
   }
 
-  // Set Auth Token HERE!!
+  // Save login token
+  await localStringSet(KEY_REFRESH_TOKEN, authLogin['refreshToken']);
+  await localStringSet(KEY_JWT_TOKEN, authLogin['token']);
 
   return {
     text: 'Welcome! You will be redirected to the dashboard shortly',

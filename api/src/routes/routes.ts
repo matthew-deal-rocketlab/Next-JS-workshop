@@ -1,6 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 
-import { API_PREFIX } from '../constants';
+import { API_PREFIX, ApiStatus, ERROR_TOKEN_EXPIRED } from '../constants';
 import { getTime, getVersion } from '../resolvers/utils';
 import { sysCheck } from '../resolvers/syscheck';
 import { authForgotPassword, authLogin, authLogout, authRefresh, authResetPassword, authSignup, authVerify } from '../resolvers/auth';
@@ -51,8 +51,8 @@ const jsonErrorHandler = (
   next: NextFunction,
 ) => {
   if (err instanceof SyntaxError && 'body' in err) {
-    let formattedError = { status: 400, message: err.message };
-    return res.status(400).json(formattedError);
+    let formattedError = { status: ApiStatus.ERROR, message: err.message };
+    return res.status(ApiStatus.ERROR).json(formattedError);
   }
   next();
 };
@@ -106,12 +106,13 @@ const addRoutes = (app: Express) => {
       // check input
       const reqKeys = Object.keys(req.body);
       if (reqKeys.length === 0)
-        return res.status(400).send({ error: 'invalid request' });
+        return res.status(ApiStatus.ERROR).send({ error: 'invalid request' });
 
       // builder resolver context
       const userOrError = validateToken(req);
       if (req.headers['authorization'] && userOrError.error) {
-        return res.status(400).send({ error: userOrError.error });
+        const errorCode = userOrError.error === ERROR_TOKEN_EXPIRED.error ? ApiStatus.EXPIRED : ApiStatus.ERROR;
+        return res.status(errorCode).send({ error: userOrError.error });
       }
 
       const userIdentified = userOrError.result as StringMap ?? { id: 0, uid: '' };

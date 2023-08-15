@@ -1,22 +1,18 @@
-import { useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
 
-import { Button, Card, Form, FormInput, FormRow } from "@/components";
+import { Card, Form, FormInput } from "@/components";
+import { SiteDetails } from "@/types";
+import { ApiStatus } from "@/services/apiclient";
+import { apiPost } from '@/utils/api-client';
+import { sleep } from "@/utils/misc";
 
 
-
-interface SitePage {
-  url: string;
-  timeout: number;
+interface IUrlInputForm {
+  collection_id: number,
+  siteList: SiteDetails[],
+  updateSiteList: Function,
+  setAlert: Function,
 }
-
-
-const initialData: SitePage[] = [
-  { url: 'https://www.example.com', timeout: 30 },
-  { url: 'https://www.example.com/about', timeout: 30 },
-  { url: 'https://www.example.com/contact', timeout: 60 },
-]
-
 
 const noBorderStyle = { borderRadius: 0 };
 
@@ -58,28 +54,78 @@ const TableInput = styled(FormInput)`
 
 const getInputElement = (id: string) => document.getElementById(id) as HTMLInputElement
 
-const UrlInputForm = () => {
-  const [urlList, setUrlList] = useState<SitePage[]>([]);
+const UrlInputForm = ({ collection_id, siteList, updateSiteList, setAlert }: IUrlInputForm) => {
 
-  const onClickRemove = (index: number) => {
-    // urlList.splice(index,1);
-    urlList.splice(index, 1)
-    setUrlList([...urlList]);
+  const submitAdd = async (newItem: SiteDetails) => {
+    const data = {
+      crudCreate: {
+        table: "tbl_site",
+        fields: { ...newItem }
+      }
+    }
+    const apiResponse = await apiPost('/jsonql', data);
+    if (apiResponse.status !== ApiStatus.OK) {
+      setAlert({ message: "Error connecting to server", type: "error" });
+      return false;
+    }
+
+    // @ts-ignore
+    const crudCreateResult = apiResponse.result['crudCreate'];
+
+    if (typeof crudCreateResult === 'string') {
+      setAlert({ message: crudCreateResult, type: "error" });
+      return false;
+    }
+
+    return true;
   }
 
-  const onClickAdd = () => {
-    let timeoutValue = parseInt(getInputElement('timeout_new').value)
-    if (isNaN(timeoutValue)) timeoutValue = 30;
 
-    const newItem: SitePage = {
-      url: getInputElement('url_new').value,
-      timeout: timeoutValue
+  const submitDelete = async (itemId: number) => {
+    const data = {
+      crudDelete: {
+        table: "tbl_site",
+        id: itemId,
+      }
     }
-    setUrlList(urlList.concat(newItem));
+    const apiResponse = await apiPost('/jsonql', data);
+    if (apiResponse.status !== ApiStatus.OK) {
+      setAlert({ message: "Error connecting to server", type: "error" });
+      return false;
+    }
+
+    // @ts-ignore
+    const crudCreateResult = apiResponse.result['crudCreate'];
+
+    if (typeof crudCreateResult === 'string') {
+      setAlert({ message: crudCreateResult, type: "error" });
+      return false;
+    }
+
+    return true;
+  }
+
+
+  const onClickRemove = async (itemId: number) => {
+    await submitDelete(itemId);
+    sleep(1);
+    await updateSiteList();
+  }
+
+  const onClickAdd = async () => {
+    const newItem: SiteDetails = {
+      url: getInputElement('new_url').value,
+      frequency: getInputElement('new_frequency').value,
+      timeout: 30,
+    }
+    const result = await submitAdd(newItem);
+    if (!result) return;
+
+    updateSiteList();
 
     // clear input after adding to list
-    getInputElement('url_new').value = '';
-    getInputElement('timeout_new').value = '30';
+    getInputElement('new_url').value = '';
+    getInputElement('new_frequency').value = 'daily';
   }
 
   const onSubmitForm = (event: React.FormEvent<HTMLFormElement>) => {
@@ -97,45 +143,38 @@ const UrlInputForm = () => {
         timeouts[index] = parseInt(data[key] as string);
       }
     })
-
-    console.log(urls);
-    console.log(timeouts);
   }
-
-  useEffect(() => {
-    setUrlList(initialData);
-  }, [])
 
   return <Container x-name="container">
     <Card style={{ width: '700px' }}>
       <Form onSubmit={onSubmitForm}>
         <ListRow key="firstRow" x-name="ListRow">
           <ListCol>URL</ListCol>
-          <ListCol>Timeout</ListCol>
+          <ListCol>Frequency</ListCol>
           <ListCol></ListCol>
         </ListRow>
 
         {
-          urlList.map((item, index) =>
-            <ListRow key={`r${index}`} x-name="ListRow">
+          siteList.map((item, index) =>
+            <ListRow key={`r${item.id}`} x-name="ListRow">
               <ListCol>
                 <TableInput id={`url_${index}`} name={`url[${index}]`} type="text" defaultValue={item.url} />
               </ListCol>
               <ListCol>
-                <TableInput id={`timeout_${index}`} name={`timeout[${index}]`} type="number" defaultValue={item.timeout} />
+                <TableInput id={`timeout_${index}`} name={`timeout[${index}]`} type="text" defaultValue={item.frequency} />
               </ListCol>
               <ListCol>
-                <ActionButton type="button" onClick={() => onClickRemove(index)}>&#x2212;</ActionButton>
+                <ActionButton type="button" onClick={() => onClickRemove(item.id ?? 0)}>&#x2212;</ActionButton>
               </ListCol>
             </ListRow>)
         }
 
-        <ListRow key="lastRow" x-name="ListRow" style={{marginTop:'20px', marginBottom: '20px'}}>
+        <ListRow key="lastRow" x-name="ListRow" style={{ marginTop: '20px', marginBottom: '20px' }}>
           <ListCol>
-            <TableInput id={`url_new`} type="text" />
+            <TableInput id={`new_url`} type="text" />
           </ListCol>
           <ListCol>
-            <TableInput id={`timeout_new`} type="number" defaultValue={30}/>
+            <TableInput id={`new_frequency`} type="text" defaultValue='daily' />
           </ListCol>
           <ListCol>
             <ActionButton type="button" onClick={onClickAdd}>&#x2795;</ActionButton>

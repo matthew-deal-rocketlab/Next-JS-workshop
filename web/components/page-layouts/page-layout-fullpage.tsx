@@ -1,6 +1,7 @@
-import styled from 'styled-components';
-import { ICommonProps } from '@/types.d';
 import { useEffect } from 'react';
+import styled from 'styled-components';
+
+import { ICommonProps } from '@/types.d';
 
 interface IFullPageProps extends ICommonProps {
   onPageEnter?: Function;
@@ -28,9 +29,14 @@ const StyledPageFull = styled.div`
 `;
 
 const PageLayoutFullPage = ({onPageEnter, children}: IFullPageProps) => {
+  var ranOnce = false;
+
   useEffect(() => {
-    if (typeof onPageEnter === 'function') onPageEnter();
-  }, [onPageEnter])
+    if (!ranOnce && typeof onPageEnter === 'function') {
+      ranOnce = true;
+      onPageEnter();
+    };
+  }, [])
 
   return <StyledPageFull>{children}</StyledPageFull>;
 };

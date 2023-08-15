@@ -39,9 +39,14 @@ const PageLayout4Part = ({
   onPageEnter,
   children,
 }: ILayout4PageProps) => {
+  var ranOnce = false;
+
   useEffect(() => {
-    if (typeof onPageEnter === 'function') onPageEnter();
-  }, [onPageEnter]);
+    if (!ranOnce && typeof onPageEnter === 'function') {
+      ranOnce = true;
+      onPageEnter();
+    };
+  }, [])
 
   return (
     <GlobalContainer>

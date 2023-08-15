@@ -26,11 +26,11 @@ interface KeyValue<T> {
 
 type JsonQLInput = {
   [key: string]:
-    | string
-    | number
-    | boolean
-    | Array<string | number | boolean>
-    | JsonQLInput;
+  | string
+  | number
+  | boolean
+  | Array<string | number | boolean>
+  | JsonQLInput;
 };
 
 type JsonQLOutput = JsonQLInput;
@@ -46,3 +46,19 @@ interface SubmitResult {
 }
 
 type ColorType = 'error' | 'success' | 'warning' | 'info';
+
+
+interface SiteDetails {
+  id?: number,
+  user_id?: number,
+  timeout?: number,
+  height?: number,
+  collection_id?: number,
+  cookies?: string,
+  freqtime?: date,
+  width?: number,
+  url: string,
+  useragent?: string,
+  freqtimezone?: string,
+  frequency?: string,
+}

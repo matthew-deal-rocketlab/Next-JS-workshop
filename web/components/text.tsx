@@ -1,6 +1,6 @@
 import { themeStatic } from '@/theme';
 import React from 'react';
-import styled from 'styled-components';
+import styled, { StyleSheetManager } from 'styled-components';
 
 interface ITextElement extends React.HTMLProps<HTMLParagraphElement> {
   color?: string;
@@ -20,7 +20,7 @@ const StyledText = styled.p<ITextElement>`
   margin: ${({ margin }) => margin || '0'};
   padding: ${({ padding }) => padding || '0'};
 `;
-const Text = ({ children, ...rest }: ITextElement) => {
+const Text = ({ children, align, margin, ...rest }: ITextElement) => {
   return <StyledText {...rest}>{children}</StyledText>;
 };
 
