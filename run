@@ -1,6 +1,9 @@
 #!/bin/sh
 API_NAME=rlwm-api
 
+FILE_STAMP=$(date +'%Y%m%d_%H%M%S')
+FILE_DATESTAMP=$(date +'%Y-%m-%d')
+
 if [ -f ./.env ]; then . ./.env ; fi
 if [ -f ./env.settings ]; then . ./env.settings ; fi
 export DB_DATABASE=$DB_DATABASE
@@ -48,12 +51,17 @@ export const CRUD_TABLE_FIELDS: StringStringMap = {
   echo "};"
 }
 
-api_update_models() {
+api_update_models_OLD() {
   if [ -f ./.env ]; then . ./.env ; fi
   MODELS_FILE="src/models/database.ts"
 
   api_get_system_tables > $MODELS_FILE
   api_get_crud_tables >> $MODELS_FILE
+}
+
+api_update_models() {
+  MODELS_FILE="src/models/database.ts"
+  node scripts/model.js gen > $MODELS_FILE
 }
 
 setLAUNCH_IN_TAB() {
@@ -72,10 +80,10 @@ setLAUNCH_IN_TAB() {
 
 # API commands
 if [ "$1" = "api-dev" ]; then cd api; PORT=$API_PORT node dev-watch.js ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "api-check" ]; then cd api; yarn type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "api-build" ]; then cd api; yarn build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "api-check" ]; then cd api; pnpm run type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "api-build" ]; then cd api; pnpm run build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "api-update-models" ]; then cd api; api_update_models ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "api-check" ]; then cd api; yarn type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+# if [ "$1" = "api-check" ]; then cd api; pnpm run type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
 # Directus commands
 if [ "$1" = "dt-start" ]; then cd directus; ./run start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
@@ -84,10 +92,10 @@ if [ "$1" = "dt-export" ]; then cd directus; ./run export ; EXITCODE=$? ; cd .. 
 if [ "$1" = "dt-import" ]; then cd directus; ./run import "$2" ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
 # Web dashboard commands
-if [ "$1" = "web-dev" ]; then cd web; PORT=$WEB_PORT yarn dev ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "web-build" ]; then cd web; yarn build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "web-start" ]; then cd web; PORT=$WEB_PORT yarn start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "web-check" ]; then cd web; yarn next lint ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "web-dev" ]; then cd web; PORT=$WEB_PORT pnpm dev ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "web-build" ]; then cd web; pnpm build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "web-start" ]; then cd web; PORT=$WEB_PORT pnpm start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "web-check" ]; then cd web; pnpm next lint ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
 # Start / stop all components
 if [ "$1" = "start-all" ]; then
@@ -113,6 +121,21 @@ if [ "$1" = "stop-all" ]; then
   ./run dt-stop
   ./db stop
   exit
+fi
+
+if [ "$1" = "install-all" ]; then
+  cd api ; pnpm install
+  cd ../web ; pnpm install
+  exit
+fi
+
+
+if [ "$1" = "wrap" ]; then
+  CURRENT_FOLDER=$PWD
+  cd ..
+  zip -r "rlwm$FILE_DATESTAMP.zip" rlwm -x "rlwm/web/node_modules/*" -x "rlwm/api/node_modules/*" -x "rlwm/directus/_data/opt/app/node_modules/*"
+  cd $CURRENT_FOLDER
+  exit 0
 fi
 
 echo "Command not found"

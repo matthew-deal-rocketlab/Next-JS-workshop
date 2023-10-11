@@ -8,7 +8,7 @@ const prnt = console.log;
 
 const OUTPUT_FILE = "build/index.js";
 
-const BUILD_COMMAND = "yarn";
+const BUILD_COMMAND = "pnpm";
 const BUILD_ARGS = ["build:dev"];
 
 const RUN_COMMAND = "node";

@@ -39,7 +39,9 @@ const addUser = async (
     `VALUES ($1, $2, $3, $4, $5, $6) RETURNING uid`;
 
   let result = null;
-  const parameters = [UserStatus.Pending, email, password, firstname, lastname, verifyCode];
+  // TODO const parameters = [UserStatus.Pending, email, password, firstname, lastname, verifyCode];
+  const parameters = [UserStatus.Verified, email, password, firstname, lastname, verifyCode];
+
   result = await dbQuery(db, queryAddUser, parameters);
   if (result.error) return result.error;
   if (!result || result.rowCount !== 1) return 'could not add user';

@@ -47,7 +47,8 @@ app_config() {
     docker exec -it $CONTAINER_NAME su - user1 -c "cd /opt/app; ./node_modules/.bin/directus init"
     docker_stop
   else
-    echo "Application has not been initialized. Execute ./run init"
+    echo "Startup not complete. node_modules folder does not exist.  Please wait a little longer and try again"
+    echo "Check progress with ./run logs"
   fi
 }
 
@@ -56,7 +57,8 @@ docker_start() {
     echo ">> Starting existing container:"
     docker container start $CONTAINER_NAME
   else
-    docker run -dit --rm \
+    echo ">> Starting new container:"
+    docker run -dit \
       -p $APP_PORT:8055 \
       --network=$DOCKER_NETWORK \
       -v $PWD/_data/opt:/opt \
@@ -64,7 +66,7 @@ docker_start() {
       --entrypoint /bin/sh \
       --name $CONTAINER_NAME \
       node:18-bookworm-slim \
-      /opt/run launch
+      /opt/run launch $(id -u)
   fi
 }
 
@@ -80,11 +82,39 @@ docker_term() {
   docker exec -it $CONTAINER_NAME /bin/bash
 }
 
+
+user_init() {
+  # Initialize project as user account
+  export PNPM_HOME="/home/user1/.local/share/pnpm"
+  export PATH="$PNPM_HOME:$PATH"
+
+  which pnpm > /dev/null
+  if [ ! "$?" = "0" ]; then
+    curl -fsSL https://get.pnpm.io/install.sh | sh -
+    # set variables to allow running pnpm immediately
+  fi
+
+  if [ ! -f "/opt/app/package.json" ]; then
+    echo "{\n\"name\":\"$CONTAINER_NAME\"\n}" > /opt/app/package.json
+    cd /opt/app
+    pnpm add directus pg
+    echo "Packages added node_modules folder should exist"
+  fi
+}
+
 app_launch() {
-  if [ ! -d /home/user1 ]; then adduser --uid 1002 --gecos "" --disabled-password user1 ; fi
+  HOST_USER_ID=$1
+  echo "HOST_USER_ID: $HOST_USER_ID"
+
+  if [ ! -d /home/user1 ]; then adduser --uid $HOST_USER_ID --gecos "" --disabled-password user1 ; fi
+
+  which curl > /dev/null
+  if [ ! "$?" = "0" ]; then apt update ; apt install -y curl ; fi
+
+  su - user1 -c "/opt/run user-init"
 
   grep 'PORT=' /opt/app/.env > dev/null
-  if [ "$?" = "0" ]; then
+  if [ "$?" = "0" ] && [ -f "/opt/app/node_modules/.bin/directus" ] && [ -f "/opt/app/.env" ]; then
     su - user1 -c "cd /opt/app ; ./node_modules/.bin/directus start"
   else
     /bin/sh
@@ -110,17 +140,19 @@ app_import() {
 
 # Initialize application
 if [ "$1" = "init" ]; then app_init; exit $? ; fi
+if [ "$1" = "user-init" ]; then user_init; exit $? ; fi
 # Configure Directus
 if [ "$1" = "config" ]; then app_config; exit $? ; fi
 
 if [ "$1" = "start" ]; then docker_start; exit $? ; fi
 if [ "$1" = "stop" ]; then docker_stop; exit $? ; fi
 if [ "$1" = "rm" ]; then docker_rm; exit $? ; fi
+if [ "$1" = "logs" ]; then docker logs $2 $CONTAINER_NAME ; exit $? ; fi
 
 if [ "$1" = "term" ]; then docker_term; exit $? ; fi
 if [ "$1" = "setpass" ]; then set_password "$2" "$3"; exit $? ; fi
 
-if [ "$1" = "launch" ]; then app_launch; exit $? ; fi
+if [ "$1" = "launch" ]; then app_launch $2; exit $? ; fi
 
 if [ "$1" = "export" ]; then app_export; exit $? ; fi
 if [ "$1" = "import" ]; then app_import "$2"; exit $? ; fi

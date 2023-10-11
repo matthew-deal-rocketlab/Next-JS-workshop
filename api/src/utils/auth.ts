@@ -2,7 +2,7 @@ import crypto from 'crypto';
 
 import { API_HEADER, API_KEY, APP_SECRET, ERROR_TOKEN_EXPIRED, JWT_EXPIRY, JWT_REFRESH_EXPIRY, JWT_REFRESH_INTERVAL, JWT_SECRET } from '../constants';
 import { btoa, atob } from './converters';
-import { uuidv4 } from './misc';
+import { JSON_parse, JSON_stringify, uuidv4 } from './misc';
 import { Request } from 'express';
 
 
@@ -27,8 +27,8 @@ export const hashPassword = (pass: string, salt: string): string => {
 export const generateJWT = (payload: object, secret: string): string => {
   // Create the header and payload
   const header = { alg: 'HS256', typ: 'JWT' };
-  const encodedHeader = btoa(JSON.stringify(header));
-  const encodedPayload = btoa(JSON.stringify(payload));
+  const encodedHeader = btoa(JSON_stringify(header) ?? '');
+  const encodedPayload = btoa(JSON_stringify(payload) ?? '');
 
   // Create the signature
   const signatureInput = encodedHeader + '.' + encodedPayload;
@@ -43,22 +43,28 @@ export const generateJWT = (payload: object, secret: string): string => {
 };
 
 export const getUserJWT = (userid: number, userUid: string): string => {
+  const iat = Math.floor(Date.now() / 1000);
+
   var payload = {
     sub: userUid,
     // Sticking the user id in between two random numbers should obsecure it from the casual observer
     // having this in the JWT will save a database query
     rnd: encryptUserId(userid),
-    iat: Math.floor(Date.now() / 1000),
+    iat: iat,
+    exp: iat + JWT_EXPIRY,
   };
 
   return generateJWT(payload, JWT_SECRET);
 };
 
 export const getUserRefreshToken = (userID: string) => {
+  const iat = Math.floor(Date.now() / 1000);
+
   var payload = {
     sub: userID,
     rnd: uuidv4(false),
-    iat: Math.floor(Date.now() / 1000),
+    iat: iat,
+    exp: iat + JWT_REFRESH_EXPIRY,
   };
 
   return generateJWT(payload, JWT_SECRET);
@@ -71,10 +77,7 @@ export const validateToken = (req: Request): FnResult => {
   if (jwtParts.length !== 3) return { error: 'error: token invalid(1)' };
 
   const jwtPayload = (jwtParts[1] ?? '') as string;
-  let payload = null
-  try {
-    payload = JSON.parse(atob(jwtPayload));
-  } catch (_) { }
+  const payload = JSON_parse(atob(jwtPayload));
   if (payload === null) return { error: 'error: token invalid(2)' };
 
   // check date
@@ -107,10 +110,7 @@ export const validateRefreshToken = (refreshToken: string): validateRefreshToken
   if (jwtParts.length !== 3) return { error: 'error: token invalid(1)' };
 
   const jwtPayload = (jwtParts[1] ?? '') as string;
-  let payload = null
-  try {
-    payload = JSON.parse(atob(jwtPayload));
-  } catch (_) { }
+  const payload = JSON_parse(atob(jwtPayload));
   if (payload === null) return { error: 'error: token invalid(2)' };
 
   // check date

@@ -20,3 +20,17 @@ export const uuidv4 = (includeDashes: boolean = true) => {
 
   return includeDashes ? uuid : uuid.replaceAll('-', '');
 };
+
+
+export const JSON_stringify = (input: any, replacer?: ((this: any, key: string, value: any) => any) | undefined, space?: string | number | undefined): string | null => {
+  try {
+    return JSON.stringify(input, replacer, space);
+  } catch (_) { return null }
+}
+
+export const JSON_parse = (input: string): any | null => {
+  try {
+    return JSON.parse(input);
+  } catch (_) { return null }
+}
+

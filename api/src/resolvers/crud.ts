@@ -1,21 +1,21 @@
 // This is a generic resolver for CRUD operations on tables linked to users.
 // All CRUD tables must have an incrementing id and must be linked to a user through a user_id
-// The database schema must be defined in CRUD_TABLE_FIELDS in models/database.ts (this is a generated file)
+// The database schema must be defined in CRUD_TABLES in models/database.ts (this is a generated file)
 
 import { ERROR_INVALID_CREDENTIALS, ERROR_INVALID_INPUT, ERROR_NO_DB } from "../constants";
-import { CRUD_TABLE_FIELDS } from "../models/database";
+import { CRUD_TABLES } from "../models/database";
 import { dbQuery } from "../services/db";
 
 const MAX_ALLOWED_FIELDS = 50;
 
 const isTableValid = (tableName: string): boolean => {
-  return Object.keys(CRUD_TABLE_FIELDS).indexOf(tableName) >= 0;
+  return Object.keys(CRUD_TABLES).indexOf(tableName) >= 0;
 }
 
 const isFieldsValid = (tableName: string, fields: string[]): boolean => {
-  if (!CRUD_TABLE_FIELDS[tableName]) return false;
+  if (!CRUD_TABLES[tableName]) return false;
 
-  const tableFields = Object.keys(CRUD_TABLE_FIELDS[tableName] as object);
+  const tableFields = Object.keys(CRUD_TABLES[tableName] as object);
 
   for (var i = 0; i < fields.length && i < MAX_ALLOWED_FIELDS; i++) {
     const field = fields[i] ?? '';

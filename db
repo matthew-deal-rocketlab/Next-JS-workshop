@@ -10,6 +10,8 @@ APP_NAME=rlwm-db
 DB_PORT=5432
 NET_NAME=bridge1
 
+FILE_STAMP=$(date +'%Y-%m-%d_%H%M%S')
+
 # Command should always be run from this folder
 # cd /home/deploy/apps/pgdb15
 
@@ -65,7 +67,7 @@ docker_term() {
 
 docker_export() {
   EXP_DB_NAME="$1"
-  EXP_FILE="$2"
+  EXP_FILE="${EXP_DB_NAME}$FILE_STAMP.sql.gz"
   if [ "$EXP_FILE" = "" ]; then echo "no file specified" ; exit 255 ; fi
   if [ "$EXP_DB_NAME" = "" ]; then echo "database must be specified" ; exit 255 ; fi
   docker exec -t $APP_NAME /bin/sh -c "pg_dump -U postgres --no-owner -d $EXP_DB_NAME | gzip > /opt/tmpout.sql.gz"
@@ -98,7 +100,7 @@ if [ "$1" = "initdb" ]; then docker_init "$2"; exit $?; fi
 if [ "$1" = "term" ]; then docker_term; exit $?; fi
 
 if [ "$1" = "listdb" ]; then docker_listdb; exit $?; fi
-if [ "$1" = "export" ]; then docker_export "$2" "$3"; exit $?; fi
+if [ "$1" = "export" ]; then docker_export "$2"; exit $?; fi
 if [ "$1" = "import" ]; then docker_import "$2" "$3"; exit $?; fi
 
 echo "Command not found: $1 $2 $3"

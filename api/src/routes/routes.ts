@@ -1,7 +1,7 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 
 import { API_PREFIX, ApiStatus, ERROR_TOKEN_EXPIRED } from '../constants';
-import { getTime, getVersion } from '../resolvers/utils';
+import { getFakeUsers, getTime, getVersion } from '../resolvers/utils';
 import { sysCheck } from '../resolvers/syscheck';
 import { authForgotPassword, authLogin, authLogout, authRefresh, authResetPassword, authSignup, authVerify } from '../resolvers/auth';
 import { userRead, userUpdate } from '../resolvers/user';
@@ -16,6 +16,8 @@ const MAX_REQUESTS = 10;
 const resolverMap = new Map();
 resolverMap.set('time', getTime);
 resolverMap.set('version', getVersion);
+resolverMap.set('fakeUsers', getFakeUsers);
+
 
 // authentication
 resolverMap.set('authSignup', authSignup);
@@ -56,7 +58,13 @@ const funcWrapper = async (
   input: object,
   rc: ResolverContext,
 ): Promise<object> => {
-  const res = await fn(input, rc);
+  let res: FnResult;
+  try {
+    res = await fn(input, rc);
+  } catch (_) {
+    return { [fnName]: 'unknown error' };
+  }
+
   // if returned object contains a key named `error` that is a string, then return the string instead
   const output = typeof res.error === 'string' ? res.error : res;
 
