@@ -3,6 +3,10 @@
 
 ## Quick setup
 
+### Install Docker if you don't have it already.
+
+ [Docker install](https://www.docker.com/get-started/)
+
 ```
 # Copy sample configuration files
 cp env.api.sample .env
