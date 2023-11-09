@@ -1,4 +1,4 @@
-import SideNav from '@/components/sidenav';
+import SideNav from '@/components/dashboard/sidenav';
 import Link from 'next/link';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -11,23 +11,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               Some Logo
             </Link>
           </div>
-          <div className=" mx-auto flex flex-row gap-2 bg-white">
-            {/* We can group each link so that the hover effect is applied to each individually */}
+          <div className="mx-auto flex flex-row gap-2 bg-white">
             <div className="">
-              <Link
-                className="0 hidden rounded p-2 md:block"
-                href="/dashboard1">
-                Dashboard 1
+              <Link className="0 hidden rounded p-2 md:block" href="/dashboard">
+                Dashboard
               </Link>
             </div>
-            <div className="">
-              <Link className="hidden rounded p-2 md:block" href="/dashboard2">
-                Dashboard 2
-              </Link>
-            </div>
+
             <div className="">
               <Link className="hidden rounded p-2 md:block" href="/dashboard3">
-                Dashboard 3
+                Settings
               </Link>
             </div>
           </div>

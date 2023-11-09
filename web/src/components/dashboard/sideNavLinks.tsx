@@ -5,17 +5,14 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
 // Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Home', href: '/dashboard' },
-  {
-    name: 'Invoices',
-    href: '/dashboard/invoices',
-  },
+  { name: 'Invoices', href: '/dashboard/invoices' },
   { name: 'Customers', href: '/dashboard/customers' },
-];
+] as const;
 
-export default function NavLinks() {
+export default function SideNavLinks() {
+  // Get the current pathname from the router, so we can highlight the current link
   const pathname = usePathname();
   return (
     <>
@@ -25,9 +22,10 @@ export default function NavLinks() {
             key={link.name}
             href={link.href}
             className={clsx(
-              'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-gray-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+              'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-gray-100 md:flex-none md:justify-start md:p-2 md:px-3',
               {
-                'bg-gray-400 text-white': pathname === link.href,
+                'bg-gray-400 text-white hover:bg-gray-400':
+                  pathname === link.href,
               },
             )}>
             <p className="hidden md:block">{link.name}</p>
