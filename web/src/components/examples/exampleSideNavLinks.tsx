@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-import { cn } from '@/utils/cn';
+import { cn } from '@/examples/utils/cn';
 
 // Map of links to display in the side navigation.
 const links = [

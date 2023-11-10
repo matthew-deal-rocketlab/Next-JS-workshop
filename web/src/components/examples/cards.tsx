@@ -4,7 +4,7 @@ import {
   UserGroupIcon,
   InboxIcon,
 } from '@heroicons/react/24/outline';
-import { fetchCardData } from '../../lib/data';
+import { fetchCardData } from '../../examples/lib/data';
 
 const iconMap = {
   collected: BanknotesIcon,
@@ -20,13 +20,6 @@ export default async function Cards() {
     totalPaidInvoices,
     totalPendingInvoices,
   } = await fetchCardData();
-
-  console.log(
-    numberOfInvoices,
-    numberOfCustomers,
-    totalPaidInvoices,
-    totalPendingInvoices,
-  );
 
   return (
     <>
