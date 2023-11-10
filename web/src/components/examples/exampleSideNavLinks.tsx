@@ -6,9 +6,13 @@ import clsx from 'clsx';
 import { cn } from '@/utils/cn';
 
 // Map of links to display in the side navigation.
-const links = [{ name: 'Dashbord', href: '/dashboard' }] as const;
+const links = [
+  { name: 'Home', href: '/example' },
+  { name: 'Invoices', href: '/example/invoices' },
+  { name: 'Customers', href: '/example/customers' },
+] as const;
 
-export default function SideNavLinks() {
+export default function ExampleSideNavLinks() {
   // Get the current pathname from the router, so we can highlight the current link
   const pathname = usePathname();
   return (
