@@ -1,7 +1,10 @@
 import Cards from '@/components/examples/cards';
 import RevenueChart from '@/components/examples/revenue-chart';
 import LatestInvoices from '@/components/examples/latest-invoices';
-import { CardsSkeleton, RevenueChartSkeleton } from '@/components/skeletons';
+import {
+  CardsSkeleton,
+  RevenueChartSkeleton,
+} from '@/components/examples/skeletons';
 import { Suspense } from 'react';
 
 export default async function Page() {

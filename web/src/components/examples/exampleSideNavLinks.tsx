@@ -9,7 +9,7 @@ import { cn } from '@/examples/utils/cn';
 const links = [
   { name: 'Home', href: '/example' },
   { name: 'Invoices', href: '/example/invoices' },
-  { name: 'Customers', href: '/example/customers' },
+  { name: 'Custome 404 Page', href: '/example/customers' },
 ] as const;
 
 export default function ExampleSideNavLinks() {
