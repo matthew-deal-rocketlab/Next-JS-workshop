@@ -1,4 +1,3 @@
-import SideNav from '@/components/dashboard/sideNav/sidenav';
 import TopNav from '@/components/dashboard/topNav/topNav';
 import ExampleSideNav from '@/components/examples/exampleSidenav';
 
