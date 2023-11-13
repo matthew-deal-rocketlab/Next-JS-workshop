@@ -14,7 +14,6 @@ export async function fetchCardData() {
   const sql = await getDbClient();
   noStore();
   try {
-    await new Promise(resolve => setTimeout(resolve, 2000));
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
@@ -54,9 +53,6 @@ export async function fetchRevenue(): Promise<Revenue[]> {
   noStore();
 
   try {
-    // Simulate a slow database query to demonstrate data streaming.
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
     const queryText = 'SELECT * FROM revenue';
     const result = await sql.query(queryText);
 
@@ -74,8 +70,6 @@ export async function fetchLatestInvoices(): Promise<LatestInvoice[]> {
   noStore();
 
   try {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
     const queryText = `
         SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
         FROM invoices
