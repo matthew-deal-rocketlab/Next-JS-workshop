@@ -9,7 +9,8 @@ web
     - app
         - dashboard
         - example
-    - example
+    - components
+        - examples
     - global.css
     - layout.tsx
     - not-found.tsx
