@@ -77,8 +77,6 @@ export async function createInvoice(prevState: State, formData: FormData) {
 
 const UpdateInvoice = InvoiceSchema.omit({ date: true, id: true });
 
-// ...
-
 export async function updateInvoice(id: string, formData: FormData) {
   const sql = await getDbClient();
   const { customerId, amount, status } = UpdateInvoice.parse({
