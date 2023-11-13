@@ -23,14 +23,9 @@ This app was built with Next 14 and Tailwind, there are also a few packages inst
 If you're not planing to use Tailwind CSS and or Postgres remove these packages from the package.json file.
 
 ```
-yarn remove tailwindcss prettier-plugin-tailwindcss tailwind-merge clsx pg
+yarn remove tailwindcss prettier-plugin-tailwindcss tailwind-merge clsx pg use-debounce
 ```
 
-You will also need to remove the helper function called cn located at:
-
-```
-web/src/utils/cn.ts
-```
 
 ## Example Folders
 
@@ -46,7 +41,8 @@ The examples include:
 - Server components
 - Data fetching via Server components
 - Streaming data to client side components via Suspense 
-- New Next JS API's like useRouter, useSearchParams, usePathname for navigation and query params 
+- New Next JS API's like useRouter, useSearchParams, usePathname for navigation and query params
+- Custom 404 pages 
 
 
 ## Dashboard Folder
