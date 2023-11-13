@@ -38,6 +38,16 @@ The examples folders provide examples for using the NEW apis within Next JS 14
 
 When using this template to create a new project, you should remove the example folders from this app before pushing to git.
 
+The examples include:
+
+- The new App router
+    - page.tsx
+    - layout.tsx
+- Server components
+- Data fetching via Server components
+- Streaming data to client side components via Suspense 
+- New Next JS API's like useRouter, useSearchParams, usePathname for navigation and query params 
+
 
 ## Dashboard Folder
 
