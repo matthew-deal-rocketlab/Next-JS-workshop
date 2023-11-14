@@ -3,10 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-import { cn } from '@/examples/utils/cn';
+import { cn } from '../../../../utils/cn';
 
 // Map of links to display in the side navigation.
-const links = [{ name: 'Dashbord', href: '/dashboard' }] as const;
+const links = [
+  { name: 'Dashbord', href: '/dashboard' },
+  { name: 'Settings', href: '/dashboard/settings' },
+] as const;
 
 export default function SideNavLinks() {
   // Get the current pathname from the router, so we can highlight the current link
