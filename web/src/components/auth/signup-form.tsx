@@ -145,7 +145,7 @@ export default function LoginForm() {
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className="mb-3 text-2xl">Sign up.</h1>
         <div className="w-full">
-          <div className="relative">
+          <div className="grid lg:grid-cols-2 lg:gap-3">
             <Input
               id="firstname"
               type="text"
@@ -154,8 +154,6 @@ export default function LoginForm() {
               placeholder="Enter your first name"
               formErrors={formErrors.firstname}
             />
-          </div>
-          <div className="mt-4">
             <Input
               id="lastname"
               type="text"
@@ -174,7 +172,7 @@ export default function LoginForm() {
               formErrors={formErrors.email}
             />
           </div>
-          <div className="mt-4">
+          <div className="grid lg:grid-cols-2 lg:gap-3">
             <Input
               id="password"
               type="password"
@@ -183,8 +181,7 @@ export default function LoginForm() {
               placeholder="Enter password"
               formErrors={formErrors.pass}
             />
-          </div>
-          <div className="mt-4">
+
             <Input
               id="confirmPass"
               type="password"
@@ -218,5 +215,9 @@ export default function LoginForm() {
 }
 
 function SignupButton() {
-  return <Button className="mt-4 w-full">Sign up</Button>
+  return (
+    <div className="flex justify-center">
+      <Button className="mt-4 w-full max-w-[300px]">Sign up</Button>
+    </div>
+  )
 }

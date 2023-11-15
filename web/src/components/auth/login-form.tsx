@@ -176,5 +176,9 @@ export default function LoginForm() {
 }
 
 function LoginButton() {
-  return <Button className="mt-4 w-full">Log in</Button>
+  return (
+    <div className="flex justify-center">
+      <Button className="mt-4 w-full max-w-[300px]">Log in</Button>
+    </div>
+  )
 }
