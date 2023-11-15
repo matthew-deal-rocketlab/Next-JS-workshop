@@ -9,6 +9,7 @@ import { localStringSet } from '@/utils/local-store'
 import { sleep } from '@/utils/sleep'
 import { useRouter } from 'next/navigation'
 import React from 'react'
+import Link from 'next/link'
 
 interface FormFields {
   email: string
@@ -115,6 +116,7 @@ export default function LoginForm() {
   }
 
   return (
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <form onSubmit={onClickLogin} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className="mb-3 text-2xl">Please log in to continue.</h1>
@@ -152,7 +154,7 @@ export default function LoginForm() {
           </div>
         </div>
         <LoginButton />
-        <div className="flex h-8 items-end space-x-1">
+        <div className="flex h-4 items-end space-x-1">
           {/* Add form errors here */}
           {alert.message && (
             <>
@@ -162,6 +164,12 @@ export default function LoginForm() {
             </>
           )}
         </div>
+        <p className="mb-1 text-center text-xs">
+          Don't have an account?{' '}
+          <Link className="text-blue-500" href="/auth/signup">
+            Signup
+          </Link>
+        </p>
       </div>
     </form>
   )
