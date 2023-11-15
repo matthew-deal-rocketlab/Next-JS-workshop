@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/button'
 import { isEmail } from '@/utils/validators'
-import { type ColorType, type SubmitResult, SubmitResultType } from '@/types.d'
+import { type SubmitResult, SubmitResultType, type IAlertMessage } from '@/types.d'
 import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN, apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
 import { localStringSet } from '@/utils/local-store'
@@ -19,11 +19,6 @@ interface FormFields {
 const initialFormFields: FormFields = {
   email: '',
   pass: '',
-}
-
-interface IAlertMessage {
-  type: ColorType
-  message: string
 }
 
 // Checks the form inputs.  Returns null for no errors or object with error messages for each field
@@ -168,6 +163,12 @@ export default function LoginForm() {
           Don't have an account?{' '}
           <Link className="text-blue-500" href="/auth/signup">
             Signup
+          </Link>
+        </p>
+        <p className="mb-1 mt-3 text-center text-xs">
+          Forgot your password?{' '}
+          <Link className="text-blue-500" href="/auth/forgot-password">
+            Reset Password
           </Link>
         </p>
       </div>
