@@ -10,6 +10,8 @@ import { sleep } from '@/utils/sleep'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import Link from 'next/link'
+import Alert from '../alert'
+import Input from '../input'
 
 interface FormFields {
   email: string
@@ -72,7 +74,7 @@ const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
 
   return {
     text: 'Welcome! You will be redirected to the dashboard shortly',
-    type: SubmitResultType.ok,
+    type: SubmitResultType.success,
   }
 }
 
@@ -116,50 +118,28 @@ export default function LoginForm() {
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className="mb-3 text-2xl">Please log in to continue.</h1>
         <div className="w-full">
-          <div>
-            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900" htmlFor="email">
-              Email
-            </label>
-            <div className="relative">
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-3 text-sm outline-2 placeholder:text-gray-500"
-                id="email"
-                type="email"
-                name="email"
-                placeholder="Enter your email address"
-              />
-              {formErrors.email && <p className="mt-1 text-xs text-red-500">{formErrors.email}</p>}
-            </div>
-          </div>
+          <Input
+            id="email"
+            type="email"
+            name="email"
+            label="Email"
+            placeholder="Enter your email address"
+            formErrors={formErrors.email}
+          />
           <div className="mt-4">
-            <label className="mb-3 mt-5 block text-xs font-medium text-gray-900" htmlFor="password">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-3 text-sm outline-2 placeholder:text-gray-500"
-                id="password"
-                type="password"
-                name="pass"
-                placeholder="Enter password"
-                minLength={6}
-              />
-              {formErrors.pass && <p className="mt-1 text-xs text-red-500">{formErrors.pass}</p>}
-            </div>
+            <Input
+              id="password"
+              type="password"
+              name="pass"
+              label="Password *"
+              placeholder="Enter password"
+              formErrors={formErrors.pass}
+            />
           </div>
         </div>
         <LoginButton />
-        <div className="flex h-4 items-end space-x-1">
-          {/* Add form errors here */}
-          {alert.message && (
-            <>
-              <p aria-live="polite" className="text-sm text-red-500">
-                {alert.message}
-              </p>
-            </>
-          )}
-        </div>
-        <p className="mb-1 text-center text-xs">
+        {alert.message && <Alert classes="my-3" type={alert.type} message={alert.message} />}
+        <p className="mb-1 mt-4 text-center text-xs">
           Don't have an account?{' '}
           <Link className="text-blue-500" href="/auth/signup">
             Signup

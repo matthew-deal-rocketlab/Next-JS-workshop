@@ -31,8 +31,8 @@ interface JsonQLInput {
 type JsonQLOutput = JsonQLInput
 
 export enum SubmitResultType {
-  ok,
-  error,
+  success = 'success',
+  error = 'error',
 }
 
 interface SubmitResult {

@@ -9,6 +9,7 @@ import { isEmail } from '@/utils/validators'
 import { Button } from '@/components/button'
 import Input from '../input'
 import Link from 'next/link'
+import Alert from '../alert'
 
 interface FormFields {
   email: string
@@ -91,7 +92,7 @@ const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
 
   return {
     text: 'Welcome! Check your email to continue',
-    type: SubmitResultType.ok,
+    type: SubmitResultType.success,
   }
 }
 
@@ -101,7 +102,7 @@ export default function LoginForm() {
   const [showContinue, setShowContinue] = useState(false)
   const [submitResult, setSubmitResult] = useState<SubmitResult>({
     text: '',
-    type: SubmitResultType.ok,
+    type: SubmitResultType.success,
   })
   const [formErrors, setFormErrors] = useState<FormFields>(initialFormFields)
 
@@ -120,7 +121,7 @@ export default function LoginForm() {
     event.preventDefault()
     // clear errors when re-submitting
     setFormErrors(initialFormFields)
-    setSubmitResult({ text: '', type: SubmitResultType.ok })
+    setSubmitResult({ text: '', type: SubmitResultType.success })
 
     const formData = Object.fromEntries(new FormData(event.currentTarget)) as unknown as FormFields
 
@@ -133,7 +134,7 @@ export default function LoginForm() {
     try {
       const result = await submitFormData(formData)
       setSubmitResult(result)
-      setShowContinue(result.type === SubmitResultType.ok)
+      setShowContinue(result.type === SubmitResultType.success)
     } catch (error) {
       // Handle error
       console.error(error)
@@ -193,16 +194,10 @@ export default function LoginForm() {
           </div>
         </div>
         <SignupButton />
-        <div className="flex h-4 items-end space-x-1">
-          {/* Add form errors here */}
-          {submitResult.text && (
-            <>
-              <p aria-live="polite" className="text-sm text-red-500">
-                {submitResult.text}
-              </p>
-            </>
-          )}
-        </div>
+        {submitResult.text && (
+          <Alert classes="my-3" type={submitResult.type} message={submitResult.text} />
+        )}
+
         <p className="mb-1 text-center text-xs">
           Aleady have an account?{' '}
           <Link className="text-blue-500" href="/auth/login">

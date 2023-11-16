@@ -9,6 +9,7 @@ import { isEmail } from '@/utils/validators'
 import { useRouter } from 'next/navigation'
 import { Button } from '../button'
 import Link from 'next/link'
+import Alert from '../alert'
 
 interface FormFields {
   email: string
@@ -49,12 +50,12 @@ const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
 
   if (!(authForgotPassword.result && authForgotPassword.result === 'ok')) {
     // This is when email does not exists or error, for security we always return a success type message
-    return { text: `${obscureMessage}`, type: SubmitResultType.ok }
+    return { text: `${obscureMessage}`, type: SubmitResultType.success }
   }
 
   return {
     text: obscureMessage,
-    type: SubmitResultType.ok,
+    type: SubmitResultType.success,
   }
 }
 
@@ -67,6 +68,7 @@ export default function ForgotPassword() {
   })
 
   const onClickReset = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     setFormErrors(initialFormFields)
     setAlert({ message: '', type: 'success' })
 
@@ -110,10 +112,11 @@ export default function ForgotPassword() {
           />
         </div>
         <ResetButton />
-        <p className="mb-1 mt-3 text-center text-xs">
-          Don't have an account?{' '}
-          <Link className="text-blue-500" href="/auth/signup">
-            Signup
+        {alert.message && <Alert classes="mt-3" type={alert.type} message={alert.message} />}
+        <p className="mb-1 mt-4 text-center text-xs">
+          Remember your password?{' '}
+          <Link className="text-blue-500" href="/auth/login">
+            Login
           </Link>
         </p>
       </div>
