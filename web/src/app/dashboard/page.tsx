@@ -1,3 +1,5 @@
+import React from 'react'
+
 export default async function Page() {
   return (
     <div className="w-full">
@@ -5,5 +7,5 @@ export default async function Page() {
         <h1 className="text-2xl">Dashbaord</h1>
       </div>
     </div>
-  );
+  )
 }
