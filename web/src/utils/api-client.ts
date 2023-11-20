@@ -1,6 +1,6 @@
 import { API_BASE_URL, API_STATIC_KEY } from '@/constants'
 import { jsonPost, type ApiResponse, ApiStatus } from '@/services/apiclient'
-import { localStringGet, localStringSet } from './local-store'
+import { cookieStoreGet, cookieStoreSet } from '@/services/local-storage'
 
 export const KEY_JWT_TOKEN = 'JWT_TOKEN'
 export const KEY_REFRESH_TOKEN = 'REFRESH_TOKEN'
@@ -8,7 +8,7 @@ export const KEY_REFRESH_TOKEN = 'REFRESH_TOKEN'
 // retrieves updated refresh token and saves to local storage
 // returns the token if successful or empty string if failed
 const refreshToken = async (): Promise<string> => {
-  const currentRefreshToken = await localStringGet(KEY_REFRESH_TOKEN)
+  const currentRefreshToken = await cookieStoreGet(KEY_REFRESH_TOKEN)
   if (!currentRefreshToken) return ''
 
   const headers = {
@@ -31,10 +31,10 @@ const refreshToken = async (): Promise<string> => {
   const authRefreshResult = apiResponse.result.authRefresh
   if (typeof authRefreshResult === 'object' && authRefreshResult.token) {
     // TODO - to store somewhere else
-    await localStringSet(KEY_JWT_TOKEN, authRefreshResult.token)
+    cookieStoreSet(KEY_JWT_TOKEN, authRefreshResult.token)
 
     if (authRefreshResult.refreshToken !== currentRefreshToken) {
-      await localStringSet(KEY_REFRESH_TOKEN, authRefreshResult.refreshToken)
+      cookieStoreSet(KEY_REFRESH_TOKEN, authRefreshResult.refreshToken)
     }
 
     return authRefreshResult.token
@@ -56,10 +56,10 @@ export const apiPost = async (
   }
 
   // if a refresh token exists we must be in a logged in state
-  const currentRefreshToken = await localStringGet(KEY_REFRESH_TOKEN)
+  const currentRefreshToken = await cookieStoreGet(KEY_REFRESH_TOKEN)
   if (currentRefreshToken) {
     // TODO: to get somewhere else
-    const jwtToken = await localStringGet(KEY_JWT_TOKEN)
+    const jwtToken = await cookieStoreGet(KEY_JWT_TOKEN)
     headers.Authorization = `Bearer ${jwtToken}`
   }
 
