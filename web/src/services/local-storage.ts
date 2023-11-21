@@ -8,7 +8,7 @@ export const cookieStoreGet = async (key: string) => {
   return token?.value === '' ? undefined : token?.value
 }
 
-export const cookieStoreSet = (key: string, value: string) => {
+export const cookieStoreSet = async (key: string, value: string) => {
   cookies().set(key, value, {
     httpOnly: true, // Secure the cookie from client-side scripts
     sameSite: 'lax', // CSRF protection

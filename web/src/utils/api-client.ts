@@ -31,10 +31,10 @@ const refreshToken = async (): Promise<string> => {
   const authRefreshResult = apiResponse.result.authRefresh
   if (typeof authRefreshResult === 'object' && authRefreshResult.token) {
     // TODO - to store somewhere else
-    cookieStoreSet(KEY_JWT_TOKEN, authRefreshResult.token)
+    await cookieStoreSet(KEY_JWT_TOKEN, authRefreshResult.token)
 
     if (authRefreshResult.refreshToken !== currentRefreshToken) {
-      cookieStoreSet(KEY_REFRESH_TOKEN, authRefreshResult.refreshToken)
+      await cookieStoreSet(KEY_REFRESH_TOKEN, authRefreshResult.refreshToken)
     }
 
     return authRefreshResult.token

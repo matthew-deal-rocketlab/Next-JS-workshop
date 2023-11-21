@@ -69,8 +69,8 @@ const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
   }
 
   // Save login token
-  cookieStoreSet(KEY_REFRESH_TOKEN, authLogin.refreshToken)
-  cookieStoreSet(KEY_JWT_TOKEN, authLogin.token)
+  await cookieStoreSet(KEY_REFRESH_TOKEN, authLogin.refreshToken)
+  await cookieStoreSet(KEY_JWT_TOKEN, authLogin.token)
 
   return {
     text: 'Welcome! You will be redirected to the dashboard shortly',
