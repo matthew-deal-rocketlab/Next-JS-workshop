@@ -1,6 +1,6 @@
 import { API_BASE_URL, API_STATIC_KEY } from '@/constants'
 import { jsonPost, type ApiResponse, ApiStatus } from '@/services/apiclient'
-import { cookieStoreGet, cookieStoreSet } from '@/services/local-storage'
+import { cookieStoreGet, cookieStoreSet } from '@/services/cookie-store'
 
 export const KEY_JWT_TOKEN = 'JWT_TOKEN'
 export const KEY_REFRESH_TOKEN = 'REFRESH_TOKEN'

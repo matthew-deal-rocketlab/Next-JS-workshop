@@ -3,7 +3,7 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import { type FormEvent } from 'react'
-import { cookieStoreRemove } from '@/services/local-storage'
+import { cookieStoreRemove } from '@/services/cookie-store'
 import { KEY_REFRESH_TOKEN, KEY_JWT_TOKEN } from '@/utils/api-client'
 
 export default function SignOut() {

@@ -11,7 +11,7 @@ import React from 'react'
 import Link from 'next/link'
 import Alert from '@/components/alert'
 import Input from '@/components/input'
-import { cookieStoreSet, cookieStoreRemove } from '@/services/local-storage'
+import { cookieStoreSet, cookieStoreRemove } from '@/services/cookie-store'
 
 interface FormFields {
   email: string
