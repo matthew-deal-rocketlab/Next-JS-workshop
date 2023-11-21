@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import React from 'react'
-import { getToken } from './getToken'
+import { isTokenValid } from './checkToken'
 import { KEY_REFRESH_TOKEN } from './api-client'
 
 interface ComponentProps {
@@ -11,7 +11,7 @@ interface ComponentProps {
 export const requireAuth = <P extends ComponentProps>(Component: React.ComponentType<P>) => {
   return async function RequireAuthHOC(props: P) {
     // Get authenticated user
-    const accessToken = await getToken(KEY_REFRESH_TOKEN)
+    const accessToken = await isTokenValid(KEY_REFRESH_TOKEN)
 
     // Redirect if not signed in
     if (!accessToken) {

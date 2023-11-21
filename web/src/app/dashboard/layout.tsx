@@ -2,7 +2,6 @@ import React from 'react'
 import SideNav from '@/components/dashboard/sideNav/sidenav'
 import TopNav from '@/components/dashboard/topNav/topNav'
 import { requireAuth } from '@/utils/auth'
-import { checkTokenStillValid } from '@/utils/getToken'
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (

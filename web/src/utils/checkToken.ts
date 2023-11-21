@@ -18,7 +18,7 @@ export const checkTokenStillValid = (accessToken: string | null) => {
   }
 }
 
-export const getToken = async (type: string | undefined) => {
+export const isTokenValid = async (type: string | undefined) => {
   if (!type) return
   const token = (await cookieStoreGet(type)) ?? null
   const isTokenValid = checkTokenStillValid(token)
