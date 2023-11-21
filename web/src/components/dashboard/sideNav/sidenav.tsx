@@ -1,6 +1,6 @@
 // SideNav component
 import React from 'react'
-import SideNavLinks from './sideNavLinks'
+import SideNavLinks from './side-nav-links'
 import SignOut from '@/components/signout'
 
 export default function SideNav() {

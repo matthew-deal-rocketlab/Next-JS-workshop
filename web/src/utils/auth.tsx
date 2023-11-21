@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import React from 'react'
-import { isTokenValid } from './checkToken'
+import { isTokenValid } from './check-token'
 import { KEY_REFRESH_TOKEN } from './api-client'
 
 interface ComponentProps {

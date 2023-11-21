@@ -1,6 +1,6 @@
 import { type DecodedTokenProps } from '@/types'
-import jwtDecoder from './jwtDecoder'
-import dateToSeconds from './dateToSeconds'
+import jwtDecoder from './jwt-decoder'
+import dateToSeconds from './date-to-seconds'
 import { cookieStoreGet } from '@/services/cookie-store'
 
 export const checkTokenStillValid = (accessToken: string | null) => {
