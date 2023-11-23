@@ -1,7 +1,11 @@
-import { dbConnect } from "../services/db";
+import { ERROR_INVALID_CREDENTIALS, ERROR_NO_DB } from "../constants";
+import { dbConnect, dbQuery } from "../services/db";
 import { formatCurrency } from "../utils/misc";
 
 export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
   const sql = await dbConnect();
   try {
     // You can probably combine these into a single SQL query
@@ -25,11 +29,6 @@ export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Pr
     const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
     const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
 
-    console.log('hello', numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,)
-
     return {
       result: {
         numberOfCustomers,
@@ -43,3 +42,21 @@ export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Pr
     throw new Error('Failed to card data.');
   }
 }
+
+export const fetchRevenue = async (input: JsonQLInput, rc: ResolverContext): Promise<Revenue> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+
+  const queryText = 'SELECT * FROM revenue'
+  let result = null;
+  result = await dbQuery(rc.db, queryText);
+
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return { error: 'no result' };
+
+  const revenue = result.rows;
+
+  return { result: revenue } as Revenue;
+}
+

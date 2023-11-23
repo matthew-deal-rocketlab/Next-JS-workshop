@@ -27,8 +27,9 @@ type Invoice = {
 };
 
 type Revenue = {
-  month: string;
-  revenue: number;
+  error?: string;
+  month?: string;
+  revenue?: number;
 };
 
 type LatestInvoice = {
