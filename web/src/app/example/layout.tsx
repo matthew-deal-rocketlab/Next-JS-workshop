@@ -1,4 +1,4 @@
-import TopNav from '@/components/dashboard/topNav/topNav';
+import TopNav from '@/components/dashboard/topNav/top-nav';
 import ExampleSideNav from '@/components/examples/exampleSidenav';
 
 export default function Layout({ children }: { children: React.ReactNode }) {

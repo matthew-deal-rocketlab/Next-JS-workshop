@@ -1,27 +1,44 @@
+/* eslint-disable @next/next/no-async-client-component */
 'use client'
 
+import React, { useEffect, useState } from 'react'
 import { apiPost } from '@/utils/api-client'
-// import { fetchCardData } from '../../../examples/lib/data'
 import { ApiStatus } from '@/services/apiclient'
 import { SubmitResultType } from '@/types.d'
 
-export default async function Cards() {
-  
-  
-  const cardData = await apiPost('/jsonql', { fetchCardData: {} })
+export default function Cards() {
+  const [totalPaidInvoices, setTotalPaidInvoices] = useState(0)
+  const [totalPendingInvoices, setTotalPendingInvoices] = useState(0)
+  const [numberOfInvoices, setNumberOfInvoices] = useState(0)
+  const [numberOfCustomers, setNumberOfCustomers] = useState(0)
 
-  if (cardData.status !== ApiStatus.OK) {
-    return { text: 'Error logging in', type: SubmitResultType.error }
-  }
+  useEffect(() => {
+    const fetchCardData = async () => {
+      const cardData = await apiPost('/jsonql', { fetchCardData: {} })
 
-  console.log('cardData', cardData)
+      if (cardData.status !== ApiStatus.OK) {
+        return { text: 'Error logging in', type: SubmitResultType.error }
+      }
+      const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers } =
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        cardData?.result?.fetchCardData
+
+      setTotalPaidInvoices(totalPaidInvoices)
+      setTotalPendingInvoices(totalPendingInvoices)
+      setNumberOfInvoices(numberOfInvoices)
+      setNumberOfCustomers(numberOfCustomers)
+    }
+
+    void fetchCardData()
+  }, [])
 
   return (
     <>
-      {/* <Card title="Collected" value={totalPaidInvoices} type="collected" />
+      <Card title="Collected" value={totalPaidInvoices} type="collected" />
       <Card title="Pending" value={totalPendingInvoices} type="pending" />
       <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
-      <Card title="Total Customers" value={numberOfCustomers} type="customers" /> */}
+      <Card title="Total Customers" value={numberOfCustomers} type="customers" />
     </>
   )
 }
