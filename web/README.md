@@ -7,21 +7,27 @@ The folder structure is as follows
 web 
  - src
     - app
+        - auth
+            - forgot-password
+            - login
+            - signup
         - dashboard
         - example
+        - global.css
+        - layout.tsx
+        - not-found.tsx
+        - page.tsx
     - components
         - examples
-    - global.css
-    - layout.tsx
-    - not-found.tsx
-    - page.tsx
+    - services
+    - utils
 ```
 
 ## Before starting
 
 This app was built with Next 14 and Tailwind, there are also a few packages installed for Next 14 examples.
 
-If you're not planing to use Tailwind CSS and or Postgres remove these packages from the package.json file.
+If you're NOT planing to use Tailwind CSS remove all related packages from the package.json file.
 
 ```
 yarn remove tailwindcss prettier-plugin-tailwindcss tailwind-merge clsx pg use-debounce

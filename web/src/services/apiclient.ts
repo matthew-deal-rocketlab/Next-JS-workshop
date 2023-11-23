@@ -1,9 +1,8 @@
 // Underlying library to retrieve remote data
 
-import { JsonQLInput } from "@/types"
+import { type JsonQLInput } from '@/types'
 
-
-export type ApiResponse = {
+export interface ApiResponse {
   status: ApiStatus
   result: JsonQLInput | string | object
 }
@@ -17,7 +16,6 @@ export enum ApiStatus {
   NO_NETWORK = -2,
   UNKNOWN = -3,
 }
-
 
 const defaultFetchOptions = {
   method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -34,20 +32,19 @@ const defaultFetchOptions = {
   timeout: 9 * 1000, // 9 second timeout
 }
 
-const jsonFetch = async (
-  url: string,
-  options: RequestInit,
-): Promise<ApiResponse> => {
+const jsonFetch = async (url: string, options: RequestInit): Promise<ApiResponse> => {
   const fetchOptions = { ...defaultFetchOptions, ...options }
 
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   console.log(`${new Date()} ${options.method}: ${url}`)
   console.log(fetchOptions)
 
-  let response: Response;
+  let response: Response
   try {
     response = await fetch(url, { ...fetchOptions })
   } catch (error) {
     console.log('>>> error:', error)
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     return { status: ApiStatus.UNKNOWN, result: `unknown error: ${error}` }
   }
   // console.log(`${new Date()} >>> response`, response)
@@ -62,19 +59,12 @@ const jsonFetch = async (
   }
 
   return { status: ApiStatus.UNKNOWN, result: response }
-
 }
 
-export const jsonPost = async (
-  url: string,
-  options?: object,
-): Promise<ApiResponse> => {
-  return jsonFetch(url, { ...options, method: 'POST' })
+export const jsonPost = async (url: string, options?: object): Promise<ApiResponse> => {
+  return await jsonFetch(url, { ...options, method: 'POST' })
 }
 
-export const jsonGet = async (
-  url: string,
-  options?: object,
-): Promise<ApiResponse> => {
-  return jsonFetch(url, { ...options, method: 'GET' })
+export const jsonGet = async (url: string, options?: object): Promise<ApiResponse> => {
+  return await jsonFetch(url, { ...options, method: 'GET' })
 }

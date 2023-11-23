@@ -61,3 +61,15 @@ interface IAlertMessage {
   type: ColorType
   message: string
 }
+
+interface DecodedTokenProps {
+  header?: {
+    alg: string
+    typ: string
+  }
+  payload?: {
+    exp: number
+    iat: number
+    sub: number
+  }
+}
