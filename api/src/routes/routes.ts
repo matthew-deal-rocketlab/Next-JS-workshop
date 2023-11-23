@@ -153,18 +153,6 @@ const addRoutes = (app: Express) => {
       return res.json(result);
     },
   );
-  // app.post(
-  //   `${API_PREFIX}/example`,
-  //   express.json(),
-  //   jsonErrorHandler,
-  //   async (req: Request, res: Response): Promise<Response> => {
-  //     if (!validateAPIKey(req)) return res.end();
-
-  //     // check input
-  //     const reqKeys = Object.keys(req.body);
-  //     if (reqKeys.length === 0)
-  //       return res.status(ApiStatus.ERROR).send({ error: 'invalid request' });
-
 };
 
 export default addRoutes;

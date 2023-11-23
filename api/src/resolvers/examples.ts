@@ -1,7 +1,7 @@
 import { dbConnect } from "../services/db";
 import { formatCurrency } from "../utils/misc";
 
-export async function fetchCardData() {
+export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   const sql = await dbConnect();
   try {
     // You can probably combine these into a single SQL query
@@ -25,16 +25,18 @@ export async function fetchCardData() {
     const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
     const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
 
-    console.log(numberOfCustomers,
+    console.log('hello', numberOfCustomers,
       numberOfInvoices,
       totalPaidInvoices,
       totalPendingInvoices,)
 
     return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
+      result: {
+        numberOfCustomers,
+        numberOfInvoices,
+        totalPaidInvoices,
+        totalPendingInvoices,
+      }
     };
   } catch (error) {
     console.error('Database Error:', error);
