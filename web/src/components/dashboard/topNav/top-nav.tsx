@@ -1,4 +1,5 @@
-import Link from 'next/link';
+import React from 'react'
+import Link from 'next/link'
 
 export default function TopNav() {
   return (
@@ -22,5 +23,5 @@ export default function TopNav() {
         </Link>
       </div>
     </nav>
-  );
+  )
 }

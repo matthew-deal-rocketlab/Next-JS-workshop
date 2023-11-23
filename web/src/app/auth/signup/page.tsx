@@ -96,7 +96,7 @@ const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
   }
 }
 
-export default function LoginForm() {
+export default function SignupForm() {
   const { push } = useRouter()
 
   const [showContinue, setShowContinue] = useState(false)

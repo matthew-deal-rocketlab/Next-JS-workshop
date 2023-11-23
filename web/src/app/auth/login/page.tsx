@@ -5,13 +5,13 @@ import { isEmail } from '@/utils/validators'
 import { type SubmitResult, SubmitResultType, type IAlertMessage } from '@/types.d'
 import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN, apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
-import { localStringSet } from '@/utils/local-store'
 import { sleep } from '@/utils/sleep'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import Link from 'next/link'
 import Alert from '@/components/alert'
 import Input from '@/components/input'
+import { cookieStoreSet, cookieStoreRemove } from '@/services/cookie-store'
 
 interface FormFields {
   email: string
@@ -51,8 +51,8 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
 
 const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
   // Clear login tokens
-  await localStringSet(KEY_REFRESH_TOKEN, '')
-  await localStringSet(KEY_JWT_TOKEN, '')
+  cookieStoreRemove(KEY_REFRESH_TOKEN)
+  cookieStoreRemove(KEY_JWT_TOKEN)
 
   const payload = { authLogin: { ...data } }
   const loginResult = await apiPost('/jsonql', payload)
@@ -69,8 +69,8 @@ const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
   }
 
   // Save login token
-  await localStringSet(KEY_REFRESH_TOKEN, authLogin.refreshToken)
-  await localStringSet(KEY_JWT_TOKEN, authLogin.token)
+  await cookieStoreSet(KEY_REFRESH_TOKEN, authLogin.refreshToken)
+  await cookieStoreSet(KEY_JWT_TOKEN, authLogin.token)
 
   return {
     text: 'Welcome! You will be redirected to the dashboard shortly',

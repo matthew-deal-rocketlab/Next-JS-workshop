@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 
 // Map of links to display in the side navigation.
 const links = [
-  { name: 'Dashbord', href: '/dashboard' },
+  { name: 'Dashboard', href: '/dashboard' },
   { name: 'Settings', href: '/dashboard/settings' },
 ] as const
 

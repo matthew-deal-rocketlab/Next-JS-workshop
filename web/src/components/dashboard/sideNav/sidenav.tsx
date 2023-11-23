@@ -1,7 +1,7 @@
 // SideNav component
-import Link from 'next/link';
-import SideNavLinks from './sideNavLinks';
-import SignOut from '@/components/signout';
+import React from 'react'
+import SideNavLinks from './side-nav-links'
+import SignOut from '@/components/signout'
 
 export default function SideNav() {
   return (
@@ -15,5 +15,5 @@ export default function SideNav() {
         </div>
       </div>
     </div>
-  );
+  )
 }
