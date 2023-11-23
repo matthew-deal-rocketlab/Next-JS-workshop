@@ -8,6 +8,7 @@ import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateAPIKey, validateToken } from '../utils/auth';
 import { crudCreate, crudDelete, crudRead, crudUpdate } from '../resolvers/crud';
+import { fetchCardData } from '../resolvers/examples';
 
 const prnt = console.log;
 
@@ -37,6 +38,10 @@ resolverMap.set('crudCreate', crudCreate);
 resolverMap.set('crudRead', crudRead);
 resolverMap.set('crudUpdate', crudUpdate);
 resolverMap.set('crudDelete', crudDelete);
+
+// exmaples, streaming, invoices, etc...
+resolverMap.set('fetchCardData', fetchCardData); 
+
 
 
 const jsonErrorHandler = (
@@ -135,6 +140,8 @@ const addRoutes = (app: Express) => {
 
       const resultArray = await Promise.all(requests);
 
+      console.log('resultArray', resultArray)
+
       await dbClose(rc.db);
 
       // reformat output from an array of objects to one object
@@ -146,6 +153,18 @@ const addRoutes = (app: Express) => {
       return res.json(result);
     },
   );
+  // app.post(
+  //   `${API_PREFIX}/example`,
+  //   express.json(),
+  //   jsonErrorHandler,
+  //   async (req: Request, res: Response): Promise<Response> => {
+  //     if (!validateAPIKey(req)) return res.end();
+
+  //     // check input
+  //     const reqKeys = Object.keys(req.body);
+  //     if (reqKeys.length === 0)
+  //       return res.status(ApiStatus.ERROR).send({ error: 'invalid request' });
+
 };
 
 export default addRoutes;

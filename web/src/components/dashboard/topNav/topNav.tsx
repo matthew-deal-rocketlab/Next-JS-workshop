@@ -14,7 +14,7 @@ export default function TopNav() {
             Dashboard
           </Link>
           <Link className="hidden rounded p-2 md:block" href="/example">
-            Custom 404 example
+            Examples
           </Link>
         </div>
         <Link className="hidden rounded p-2 md:block" href="/profile">

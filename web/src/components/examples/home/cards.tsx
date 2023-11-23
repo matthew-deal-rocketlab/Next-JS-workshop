@@ -1,15 +1,27 @@
-import { fetchCardData } from '../../../examples/lib/data'
+'use client'
+
+import { apiPost } from '@/utils/api-client'
+// import { fetchCardData } from '../../../examples/lib/data'
+import { ApiStatus } from '@/services/apiclient'
+import { SubmitResultType } from '@/types.d'
 
 export default async function Cards() {
-  const { numberOfInvoices, numberOfCustomers, totalPaidInvoices, totalPendingInvoices } =
-    await fetchCardData()
+  
+  
+  const cardData = await apiPost('/jsonql', { fetchCardData: {} })
+
+  if (cardData.status !== ApiStatus.OK) {
+    return { text: 'Error logging in', type: SubmitResultType.error }
+  }
+
+  console.log('cardData', cardData)
 
   return (
     <>
-      <Card title="Collected" value={totalPaidInvoices} type="collected" />
+      {/* <Card title="Collected" value={totalPaidInvoices} type="collected" />
       <Card title="Pending" value={totalPendingInvoices} type="pending" />
       <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
-      <Card title="Total Customers" value={numberOfCustomers} type="customers" />
+      <Card title="Total Customers" value={numberOfCustomers} type="customers" /> */}
     </>
   )
 }
