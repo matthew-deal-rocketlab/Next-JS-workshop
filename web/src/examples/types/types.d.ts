@@ -45,7 +45,7 @@ export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
   amount: number
 }
 
-export interface InvoicesTable {
+export interface InvoicesTableProps {
   id: string
   customer_id: string
   name: string

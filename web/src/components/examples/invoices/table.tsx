@@ -1,20 +1,48 @@
-import Image from 'next/image';
-import {
-  UpdateInvoice,
-  DeleteInvoice,
-} from '@/components/examples/invoices/buttons';
-import InvoiceStatus from '@/components/examples/invoices/status';
-import { formatDateToLocal, formatCurrency } from '@/examples/utils/helpers';
-import { fetchFilteredInvoices } from '@/examples/lib/data';
+'use client'
 
-export default async function InvoicesTable({
+import React, { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { UpdateInvoice, DeleteInvoice } from '@/components/examples/invoices/buttons'
+import InvoiceStatus from '@/components/examples/invoices/status'
+import { formatDateToLocal, formatCurrency } from '@/examples/utils/helpers'
+import { apiPost } from '@/utils/api-client'
+import { ApiStatus } from '@/services/apiclient'
+import { SubmitResultType } from '@/types.d'
+import { type InvoicesTableProps } from '@/examples/types/types'
+
+export default function InvoicesTable({
   query,
   currentPage,
 }: {
-  query: string;
-  currentPage: number;
+  query: string
+  currentPage: number
 }) {
-  const invoices = await fetchFilteredInvoices(query, currentPage);
+  // const invoices = await fetchFilteredInvoices(query, currentPage)
+  const [invoices, setInvoices] = useState<InvoicesTableProps[]>([])
+
+  useEffect(() => {
+    const fetchLatestInvoiceData = async () => {
+      const invoiceData = await apiPost('/jsonql', {
+        fetchFilteredInvoices: {
+          query,
+          page: currentPage,
+        },
+      })
+
+      if (invoiceData.status !== ApiStatus.OK) {
+        return { text: 'Error logging in', type: SubmitResultType.error }
+      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      const { fetchFilteredInvoices } = invoiceData?.result
+
+      console.log('fetchFilteredInvoices', invoiceData)
+
+      setInvoices(fetchFilteredInvoices)
+    }
+
+    void fetchLatestInvoiceData()
+  }, [currentPage, query])
 
   return (
     <div className="mt-6 flow-root">
@@ -22,9 +50,7 @@ export default async function InvoicesTable({
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
           <div className="md:hidden">
             {invoices?.map(invoice => (
-              <div
-                key={invoice.id}
-                className="mb-2 w-full rounded-md bg-white p-4">
+              <div key={invoice.id} className="mb-2 w-full rounded-md bg-white p-4">
                 <div className="flex items-center justify-between border-b pb-4">
                   <div>
                     <div className="mb-2 flex items-center">
@@ -43,9 +69,7 @@ export default async function InvoicesTable({
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
-                    <p className="text-xl font-medium">
-                      {formatCurrency(invoice.amount)}
-                    </p>
+                    <p className="text-xl font-medium">{formatCurrency(invoice.amount)}</p>
                     <p>{formatDateToLocal(invoice.date)}</p>
                   </div>
                   <div className="flex justify-end gap-2">
@@ -89,15 +113,9 @@ export default async function InvoicesTable({
                       <p>{invoice.name}</p>
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {invoice.email}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {formatCurrency(invoice.amount)}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {formatDateToLocal(invoice.date)}
-                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">{invoice.email}</td>
+                  <td className="whitespace-nowrap px-3 py-3">{formatCurrency(invoice.amount)}</td>
+                  <td className="whitespace-nowrap px-3 py-3">{formatDateToLocal(invoice.date)}</td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <InvoiceStatus status={invoice.status} />
                   </td>
@@ -114,5 +132,5 @@ export default async function InvoicesTable({
         </div>
       </div>
     </div>
-  );
+  )
 }

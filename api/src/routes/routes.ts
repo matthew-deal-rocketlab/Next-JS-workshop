@@ -8,7 +8,7 @@ import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateAPIKey, validateToken } from '../utils/auth';
 import { crudCreate, crudDelete, crudRead, crudUpdate } from '../resolvers/crud';
-import { fetchCardData, fetchRevenue, fetchLatestInvoices, fetchInvoicesPages } from '../resolvers/examples';
+import { fetchCardData, fetchRevenue, fetchLatestInvoices, fetchInvoicesPages, fetchFilteredInvoices, fetchInvoiceById, fetchCustomers } from '../resolvers/examples';
 
 const prnt = console.log;
 
@@ -39,11 +39,14 @@ resolverMap.set('crudRead', crudRead);
 resolverMap.set('crudUpdate', crudUpdate);
 resolverMap.set('crudDelete', crudDelete);
 
-// exmaples, streaming, invoices, etc...
+// examples, streaming, invoices, customers, etc...
 resolverMap.set('fetchCardData', fetchCardData); 
 resolverMap.set('fetchRevenue', fetchRevenue); 
 resolverMap.set('fetchLatestInvoices', fetchLatestInvoices); 
 resolverMap.set('fetchInvoicesPages', fetchInvoicesPages); 
+resolverMap.set('fetchFilteredInvoices', fetchFilteredInvoices); 
+resolverMap.set('fetchInvoiceById', fetchInvoiceById); 
+resolverMap.set('fetchCustomers', fetchCustomers); 
 
 
 const jsonErrorHandler = (
@@ -84,7 +87,7 @@ const addRoutes = (app: Express) => {
   app.get(
     `${API_PREFIX}/healthcheck`,
     (req: Request, res: Response): Response => {
-      prnt(`${req.method} ${req.path}`);
+      prnt('ouchies', `${req.method} ${req.path}`);
       return res.json({
         status: 'ok',
         time: new Date().toISOString(),

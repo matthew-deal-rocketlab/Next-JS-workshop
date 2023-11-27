@@ -24,9 +24,13 @@ export default function Page({
   const currentPage = Number(searchParams?.page) || 1
   // const totalPages = await fetchInvoicesPages(query)
 
+  console.log('searchParams', searchParams)
+
   useEffect(() => {
     const fetchInvoicePagesData = async () => {
-      const invoiceData = await apiPost('/jsonql', { fetchInvoicesPages: {} })
+      const invoiceData = await apiPost('/jsonql', {
+        fetchInvoicesPages: { query: searchParams?.query },
+      })
 
       if (invoiceData.status !== ApiStatus.OK) {
         return { text: 'Error logging in', type: SubmitResultType.error }

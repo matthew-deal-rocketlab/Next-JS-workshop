@@ -102,7 +102,7 @@ export const fetchInvoicesPages = async (input: JsonQLInput, rc: ResolverContext
         invoices.date::text ILIKE $1 OR
         invoices.status ILIKE $1
     `
-    
+
   let result = null;
   result = await dbQuery(rc.db, queryText, [`%${input}%`]);
 
@@ -115,3 +115,96 @@ export const fetchInvoicesPages = async (input: JsonQLInput, rc: ResolverContext
   return { result: totalPages }
 }
 
+
+export const fetchFilteredInvoices = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+
+  const ITEMS_PER_PAGE = 6
+  const offset = (input.page - 1) * ITEMS_PER_PAGE
+
+  const queryText = `
+      SELECT
+        invoices.id,
+        invoices.amount,
+        invoices.date,
+        invoices.status,
+        customers.name,
+        customers.email,
+        customers.image_url
+      FROM invoices
+      JOIN customers ON invoices.customer_id = customers.id
+      WHERE
+        customers.name ILIKE $1 OR
+        customers.email ILIKE $1 OR
+        invoices.amount::text ILIKE $1 OR
+        invoices.date::text ILIKE $1 OR
+        invoices.status ILIKE $1
+      ORDER BY invoices.date DESC
+      LIMIT $2 OFFSET $3
+    `
+    
+  let result = null;
+  result = await dbQuery(rc.db, queryText, [`%${input.query}%`, ITEMS_PER_PAGE, offset]);
+
+  console.log('result', result)
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return { error: 'no result' };
+
+
+  return { result: result.rows }
+}
+
+export const fetchInvoiceById = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+
+  const queryText = `
+    SELECT
+      id,
+      customer_id,
+      amount,
+      status
+    FROM invoices
+    WHERE id = $1;
+  `
+    
+  let result = null;
+  result = await dbQuery(rc.db, queryText, [input]);
+
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return { error: 'no result' };
+
+  const invoice = result.rows.map(invoice => ({
+    ...invoice,
+    amount: invoice.amount / 100,
+  }))
+
+  return { result: invoice[0] }
+}
+
+export const fetchCustomers = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+
+  const queryText = `
+    SELECT
+      id,
+      name
+    FROM customers
+    ORDER BY name ASC
+  `
+    
+  let result = null;
+  result = await dbQuery(rc.db, queryText);
+
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return { error: 'no result' };
+
+  const customers: CustomerField[] = result.rows
+
+  return { result: customers }
+}

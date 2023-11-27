@@ -4,7 +4,7 @@ import getDbClient from './sqlClient'
 import {
   type CustomerField,
   type InvoiceForm,
-  type InvoicesTable,
+  type InvoicesTableProps,
   type LatestInvoice,
   type LatestInvoiceRaw,
   type Revenue,
@@ -124,7 +124,7 @@ export async function fetchFilteredInvoices(query: string, currentPage: number) 
       [`%${query}%`, ITEMS_PER_PAGE, offset],
     )
 
-    return invoices.rows as InvoicesTable[]
+    return invoices.rows as InvoicesTableProps[]
   } catch (error) {
     console.error('Database Error:', error)
     throw new Error('Failed to fetch invoices.')
