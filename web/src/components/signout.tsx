@@ -29,11 +29,10 @@ export default function SignOut({ isCollapsed }: Collapsed) {
         className={`relative flex h-[30px] w-full items-center  ${
           isCollapsed ? 'justify-center' : ''
         } overflow-hidden`}>
-        {/* Position the icon absolutely to the left */}
         <div className="absolute left-1">
           <SvgIcon pathData={signOutIcon} className="h-5 w-5" alt="signout" />
         </div>
-        {/* The text will slide in and out as the sidebar width changes */}
+
         <span
           className={`absolute bottom-0 left-10 top-0 flex items-center text-xs transition-opacity duration-300 ease-in-out ${
             isCollapsed ? 'opacity-0' : 'opacity-100'

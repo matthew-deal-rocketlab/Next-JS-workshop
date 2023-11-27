@@ -28,8 +28,6 @@ const links = [
   },
 ] as const
 
-// svg icon paths
-
 function getLinkClassName(pathname: string, href: string): string {
   const baseClassName =
     'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-gray-100'
@@ -49,11 +47,10 @@ export default function SideNavLinks({ isCollapsed }: Collapsed) {
             className={`relative flex h-[48px] w-full items-center ${
               isCollapsed ? 'justify-center' : ''
             } overflow-hidden`}>
-            {/* Position the icon absolutely to the left */}
             <div className="absolute left-1">
               <SvgIcon pathData={link.iconPath} className="h-5 w-5" alt={link.name} />
             </div>
-            {/* The text will slide in and out as the sidebar width changes */}
+
             <span
               className={`absolute bottom-0 left-10 top-0 flex items-center text-xs transition-opacity duration-300 ease-in-out ${
                 isCollapsed ? 'opacity-0' : 'opacity-100'
