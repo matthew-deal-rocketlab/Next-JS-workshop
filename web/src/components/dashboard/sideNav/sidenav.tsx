@@ -47,9 +47,9 @@ export default function SideNav() {
         isCollapsed ? 'w-[4.5rem]' : 'w-64'
       } flex-none`}>
       <div className="flex h-full flex-col overflow-y-auto px-1 py-4 transition-all duration-300 ease-in-out">
-        <div className="flex grow flex-col justify-between space-y-2 rounded-lg bg-gray-200 p-2 transition-all duration-300 ease-in-out ">
-          <div className="space-y-2 ">
-            <div className="flex items-center justify-start p-2 text-3xl">
+        <div className="flex grow flex-col justify-between space-y-2 rounded-lg bg-gray-200 p-2 transition-all duration-300 ease-in-out">
+          <div className="space-y-2">
+            <div className="flex items-center justify-start px-3 py-0 text-2xl">
               <div onClick={toggleCollapse} className="cursor-pointer">
                 &#9776;
               </div>
