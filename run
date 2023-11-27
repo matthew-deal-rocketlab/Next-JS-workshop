@@ -11,56 +11,13 @@ export DB_USER=$DB_USER
 export DB_PASSWORD=$DB_PASSWORD
 export DB_PORT=$DB_PORT
 export DB_HOST=$DB_HOST
+export DB_SSL=$DB_SSL
 
 export GAPP_EMAIL_URL=$GAPP_EMAIL_URL
 export GAPP_EMAIL_API_KEY=$GAPP_EMAIL_API_KEY
 
-get_table_ddl() {
-  TABLE_NAME="$1"
-  SQL_GETMODEL="SELECT '    \"' || column_name || '\": \"' || udt_name || '\",'
-  FROM information_schema.columns
-  WHERE table_name = '$TABLE_NAME';"
-
-  docker exec -t rlwm-db psql -t -P footer=off -c "$SQL_GETMODEL" "$DB_DATABASE" $DB_USER
-}
-
-api_get_system_tables() {
-  echo "// DO NOT EDIT.  This is a generated file created with ./run api-update-models
-export const SYSTEM_TABLE_FIELDS: StringStringMap = {
-  'tbl_user': {"
-  get_table_ddl tbl_user
-  echo "  },"
-
-  echo "  'tbl_user_detail': {"
-  get_table_ddl tbl_user_detail
-  echo "  }"
-  echo "};\n\n"
-}
-
-api_get_crud_tables() {
-  echo "// All CRUD tables must have an auto incrementing id and be linked to a user through a user_id
-// CRUD tables can be managed with the crud resolvers: crudCreate, crudRead, crudUpdate, crudDelete
-export const CRUD_TABLE_FIELDS: StringStringMap = {
-  'tbl_collection': {"
-  get_table_ddl tbl_collection
-  echo "  },"
-
-  echo "  'tbl_site': {"
-  get_table_ddl tbl_site
-  echo "  }"
-  echo "};"
-}
-
-api_update_models_OLD() {
-  if [ -f ./.env ]; then . ./.env ; fi
-  MODELS_FILE="src/models/database.ts"
-
-  api_get_system_tables > $MODELS_FILE
-  api_get_crud_tables >> $MODELS_FILE
-}
-
 api_update_models() {
-  MODELS_FILE="src/models/database.ts"
+  MODELS_FILE="src/models/database.gen.ts"
   node scripts/model.js gen > $MODELS_FILE
 }
 
@@ -78,11 +35,24 @@ setLAUNCH_IN_TAB() {
     end tell"
 }
 
+app_wrap() {
+ CURRENT_FOLDER=$PWD
+  cd ..
+  zip -r "rlwm$FILE_DATESTAMP.zip" rlwm -x "rlwm/web/node_modules/*" \
+    -x "rlwm/api/node_modules/*" \
+    -x "rlwm/api-gql/node_modules/*" \
+    -x "rlwm/directus/_data/opt/app/node_modules/*" -x "rlwm/directus/_data/opt/.pnpm-store/*" \
+    -x "rlwm/_data/sql/*" -x "rlwm/web/.next/*"
+  cd $CURRENT_FOLDER
+}
+
 # API commands
+if [ "$1" = "api-gql-dev" ]; then cd api-gql; PORT=$API_GQL_PORT node dev-watch.js ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+
 if [ "$1" = "api-dev" ]; then cd api; PORT=$API_PORT node dev-watch.js ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "api-check" ]; then cd api; pnpm run type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "api-build" ]; then cd api; pnpm run build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "api-update-models" ]; then cd api; api_update_models ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "api-update-models" ]; then cd api-gql ; api_update_models ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 # if [ "$1" = "api-check" ]; then cd api; pnpm run type-check ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
 # Directus commands
@@ -113,7 +83,7 @@ if [ "$1" = "start-all" ]; then
   osascript -e "$LAUNCH_IN_TAB"
   # open web browser tabs
   sleep 3
-  open http://localhost:5000 http://localhost:5002
+  open http://localhost:5003 http://localhost:5002
   exit
 fi
 
@@ -129,13 +99,6 @@ if [ "$1" = "install-all" ]; then
   exit
 fi
 
-
-if [ "$1" = "wrap" ]; then
-  CURRENT_FOLDER=$PWD
-  cd ..
-  zip -r "rlwm$FILE_DATESTAMP.zip" rlwm -x "rlwm/web/node_modules/*" -x "rlwm/api/node_modules/*" -x "rlwm/directus/_data/opt/app/node_modules/*"
-  cd $CURRENT_FOLDER
-  exit 0
-fi
+if [ "$1" = "wrap" ]; then app_wrap ; exit $? ; fi
 
 echo "Command not found"
