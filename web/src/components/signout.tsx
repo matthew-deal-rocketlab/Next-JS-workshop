@@ -29,7 +29,7 @@ export default function SignOut({ isCollapsed }: Collapsed) {
         className={`relative flex h-[30px] w-full items-center  ${
           isCollapsed ? 'justify-center' : ''
         } overflow-hidden`}>
-        <div className="absolute left-1">
+        <div className="absolute left-0.5">
           <SvgIcon pathData={signOutIcon} className="h-5 w-5" alt="signout" />
         </div>
 
