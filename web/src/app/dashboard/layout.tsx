@@ -9,7 +9,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <TopNav />
       <div className="flex flex-1 overflow-hidden md:flex-row">
         <SideNav />
-        <div className="flex-grow overflow-y-auto p-6 md:p-12">{children}</div>
+        <div className="flex-grow overflow-y-auto p-12">{children}</div>
       </div>
     </div>
   )

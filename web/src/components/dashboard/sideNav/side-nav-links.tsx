@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { type Collapsed } from './sidenav'
 
+import Image from 'next/image'
+
 // Map of links to display in the side navigation.
 const links = [
-  { name: 'Dashboard', href: '/dashboard' },
-  { name: 'Settings', href: '/dashboard/settings' },
-  { name: 'Custom 404 example', href: '/example' },
-] as const
+  { name: 'Dashboard', href: '/dashboard', iconSrc: '/table-columns-solid.svg' },
+  { name: 'Settings', href: '/dashboard/settings', iconSrc: '/gear-solid.svg' },
+  { name: 'Custom 404 example', href: '/example', iconSrc: '/triangle-exclamation-solid.svg' },
+]
 
 function getLinkClassName(pathname: string, href: string): string {
   const baseClassName =
@@ -27,20 +29,26 @@ export default function SideNavLinks({ isCollapsed }: Collapsed) {
   return (
     <>
       {links.map(link => (
-        <Link
-          key={link.name}
-          href={link.href}
-          className={`${getLinkClassName(pathname, link.href)}`}>
-          {/* The container for the link */}
+        <Link key={link.name} href={link.href} className={getLinkClassName(pathname, link.href)}>
           <div
-            className={` flex h-[48px] ${
+            className={`flex h-[48px] items-center ${
               isCollapsed ? 'justify-center' : 'justify-start'
-            } items-center`}>
-            {/* Show only the first letter when collapsed or in mobile view */}
-            <span className="hidden md:inline">
-              {isCollapsed ? link.name.charAt(0) : link.name}
+            }`}>
+            {/* Render the icon only if the sidebar is not collapsed */}
+            {!isCollapsed && link.iconSrc && null}
+            <span className="inline">
+              {isCollapsed ? (
+                <Image
+                  src={link.iconSrc}
+                  className="white h-6"
+                  alt={`${link.name} icon`}
+                  width={50}
+                  height={50}
+                />
+              ) : (
+                link.name
+              )}
             </span>
-            <span className="md:hidden">{link.name.charAt(0)}</span>
           </div>
         </Link>
       ))}
