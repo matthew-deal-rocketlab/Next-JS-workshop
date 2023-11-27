@@ -8,7 +8,7 @@ import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateAPIKey, validateToken } from '../utils/auth';
 import { crudCreate, crudDelete, crudRead, crudUpdate } from '../resolvers/crud';
-import { fetchCardData, fetchRevenue } from '../resolvers/examples';
+import { fetchCardData, fetchRevenue, fetchLatestInvoices } from '../resolvers/examples';
 
 const prnt = console.log;
 
@@ -42,6 +42,8 @@ resolverMap.set('crudDelete', crudDelete);
 // exmaples, streaming, invoices, etc...
 resolverMap.set('fetchCardData', fetchCardData); 
 resolverMap.set('fetchRevenue', fetchRevenue); 
+resolverMap.set('fetchLatestInvoices', fetchLatestInvoices); 
+
 
 
 

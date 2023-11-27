@@ -60,3 +60,29 @@ export const fetchRevenue = async (input: JsonQLInput, rc: ResolverContext): Pro
   return { result: revenue } as Revenue;
 }
 
+export const fetchLatestInvoices = async (input: JsonQLInput, rc: ResolverContext): Promise<LatestInvoice> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+
+  const queryText = `
+        SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
+        FROM invoices
+        JOIN customers ON invoices.customer_id = customers.id
+        ORDER BY invoices.date DESC
+        LIMIT 5
+      `
+  let result = null;
+  result = await dbQuery(rc.db, queryText);
+
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return { error: 'no result' };
+
+  const latestInvoices: LatestInvoice[] = result.rows.map(invoice => ({
+    ...invoice,
+    amount: formatCurrency(invoice.amount),
+  }))
+
+  return { result: latestInvoices };
+}
+

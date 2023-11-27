@@ -33,6 +33,7 @@ type Revenue = {
 };
 
 type LatestInvoice = {
+  error?: string;
   id: string;
   name: string;
   image_url: string;
