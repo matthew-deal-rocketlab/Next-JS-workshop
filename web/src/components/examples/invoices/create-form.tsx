@@ -1,21 +1,22 @@
-'use client';
+'use client'
 
-import { CustomerField } from '@/examples/types/types';
-import Link from 'next/link';
+import React from 'react'
+import { type CustomerField } from '@/examples/types/types'
+import Link from 'next/link'
 import {
   CheckIcon,
   ClockIcon,
   CurrencyDollarIcon,
   UserCircleIcon,
-} from '@heroicons/react/24/outline';
-import { Button } from '@/components/button';
-import { State, createInvoice } from '@/examples/lib/actions';
-import { useFormState } from 'react-dom';
+} from '@heroicons/react/24/outline'
+import { Button } from '@/components/button'
+import { type State, createInvoice } from '@/examples/lib/actions'
+import { useFormState } from 'react-dom'
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
-  const initialState: State = { message: null, errors: {} };
+  const initialState: State = { message: null, errors: {} }
 
-  const [state, dispatch] = useFormState(createInvoice, initialState);
+  const [state, dispatch] = useFormState(createInvoice, initialState)
 
   return (
     <form action={dispatch}>
@@ -44,10 +45,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </div>
         </div>
         {state.errors?.customerId ? (
-          <div
-            id="customer-error"
-            aria-live="polite"
-            className="mt-2 text-sm text-red-500">
+          <div id="customer-error" aria-live="polite" className="mt-2 text-sm text-red-500">
             {state.errors.customerId.map((error: string) => (
               <p key={error}>{error}</p>
             ))}
@@ -74,10 +72,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </div>
         </div>
         {state.errors?.amount ? (
-          <div
-            id="customer-error"
-            aria-live="polite"
-            className="mt-2 text-sm text-red-500">
+          <div id="customer-error" aria-live="polite" className="mt-2 text-sm text-red-500">
             {state.errors.amount.map((error: string) => (
               <p key={error}>{error}</p>
             ))}
@@ -86,9 +81,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
 
         {/* Invoice Status */}
         <fieldset>
-          <legend className="mb-2 block text-sm font-medium">
-            Set the invoice status
-          </legend>
+          <legend className="mb-2 block text-sm font-medium">Set the invoice status</legend>
           <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
             <div className="flex gap-4">
               <div className="flex items-center">
@@ -123,10 +116,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
           </div>
         </fieldset>
         {state.errors?.status ? (
-          <div
-            id="customer-error"
-            aria-live="polite"
-            className="mt-2 text-sm text-red-500">
+          <div id="customer-error" aria-live="polite" className="mt-2 text-sm text-red-500">
             {state.errors.status.map((error: string) => (
               <p key={error}>{error}</p>
             ))}
@@ -142,5 +132,5 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
         <Button type="submit">Create Invoice</Button>
       </div>
     </form>
-  );
+  )
 }

@@ -43,7 +43,7 @@ export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Pr
   }
 }
 
-export const fetchRevenue = async (input: JsonQLInput, rc: ResolverContext): Promise<Revenue> => {
+export const fetchRevenue = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
   const useruid = rc.useruid;
   if (!useruid) return ERROR_INVALID_CREDENTIALS;
@@ -60,7 +60,7 @@ export const fetchRevenue = async (input: JsonQLInput, rc: ResolverContext): Pro
   return { result: revenue } as Revenue;
 }
 
-export const fetchLatestInvoices = async (input: JsonQLInput, rc: ResolverContext): Promise<LatestInvoice> => {
+export const fetchLatestInvoices = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
   const useruid = rc.useruid;
   if (!useruid) return ERROR_INVALID_CREDENTIALS;
@@ -83,6 +83,35 @@ export const fetchLatestInvoices = async (input: JsonQLInput, rc: ResolverContex
     amount: formatCurrency(invoice.amount),
   }))
 
-  return { result: latestInvoices };
+  return { result: latestInvoices }
+}
+
+export const fetchInvoicesPages = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+
+  const queryText = `
+      SELECT COUNT(*)
+      FROM invoices
+      JOIN customers ON invoices.customer_id = customers.id
+      WHERE
+        customers.name ILIKE $1 OR
+        customers.email ILIKE $1 OR
+        invoices.amount::text ILIKE $1 OR
+        invoices.date::text ILIKE $1 OR
+        invoices.status ILIKE $1
+    `
+    
+  let result = null;
+  result = await dbQuery(rc.db, queryText, [`%${input}%`]);
+
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return { error: 'no result' };
+
+  const ITEMS_PER_PAGE = 6
+  const totalPages = Math.ceil(Number(result.rows[0].count) / ITEMS_PER_PAGE)
+
+  return { result: totalPages }
 }
 

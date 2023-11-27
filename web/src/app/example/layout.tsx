@@ -1,5 +1,6 @@
-import TopNav from '@/components/dashboard/topNav/top-nav';
-import ExampleSideNav from '@/components/examples/exampleSidenav';
+import React from 'react'
+import TopNav from '@/components/dashboard/topNav/top-nav'
+import ExampleSideNav from '@/components/examples/exampleSidenav'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -10,5 +11,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex-grow overflow-y-auto p-6 md:p-12">{children}</div>
       </div>
     </div>
-  );
+  )
 }

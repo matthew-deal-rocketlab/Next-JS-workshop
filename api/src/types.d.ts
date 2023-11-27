@@ -47,6 +47,7 @@ type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
 };
 
 type InvoicesTable = {
+  error?: string;
   id: string;
   customer_id: string;
   name: string;

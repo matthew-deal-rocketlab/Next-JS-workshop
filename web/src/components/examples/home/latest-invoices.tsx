@@ -7,7 +7,6 @@ import { apiPost } from '@/utils/api-client'
 import React, { useEffect, useState } from 'react'
 
 export default function LatestInvoices() {
-  // const latestInvoices = await fetchLatestInvoices()
   const [invoices, setInvoices] = useState<LatestInvoice[]>([])
 
   useEffect(() => {
