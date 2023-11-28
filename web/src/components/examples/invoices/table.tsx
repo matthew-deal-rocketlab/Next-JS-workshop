@@ -36,7 +36,11 @@ const fetchLatestInvoiceData = async ({ query, currentPage }: IvoiceTableQueryPr
 export default async function InvoicesTable({ query, currentPage }: IvoiceTableQueryProps) {
   const invoices: InvoicesTableProps[] = await fetchLatestInvoiceData({ query, currentPage })
 
-  return (
+  console.log('invoices', invoices)
+
+  return invoices === 'no result' ? (
+    'No result'
+  ) : (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">

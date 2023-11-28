@@ -148,6 +148,7 @@ export const fetchFilteredInvoices = async (input: JsonQLInput, rc: ResolverCont
   let result = null;
   result = await dbQuery(rc.db, queryText, [`%${input.query}%`, ITEMS_PER_PAGE, offset]);
 
+
   console.log('result', result)
   if (result.error) return { error: result.error }
   if (!result || result.rowCount == 0) return { error: 'no result' };
@@ -207,4 +208,60 @@ export const fetchCustomers = async (input: JsonQLInput, rc: ResolverContext): P
   const customers: CustomerField[] = result.rows
 
   return { result: customers }
+}
+
+export const createInvoice = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
+
+  const queryText = `
+    INSERT INTO invoices (id, customer_id, amount, status, date)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING id;
+  `
+    
+  let result = null;
+  result = await dbQuery(rc.db, queryText, [input.invoiceId, input.customerId, input.amountInCents, input.status, input.date]);
+
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return { error: 'no result' };
+
+  return { result: result.rows[0] }
+}
+
+export const updateInvoice = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
+
+  const queryText = `
+    UPDATE invoices
+    SET customer_id = $1, amount = $2, status = $3
+    WHERE id = $4
+  `
+    
+  let result = null;
+  result = await dbQuery(rc.db, queryText, [input.customerId, input.amountInCents, input.status, input.id]);
+
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return { error: 'no result' };
+
+  return { result: result.rows[0] }
+}
+
+export const deleteInvoice = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
+
+  const queryText = `DELETE FROM invoices WHERE id = $1`
+    
+  let result = null;
+  result = await dbQuery(rc.db, queryText, [input.id]);
+
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount == 0) return { error: 'no result' };
+
+  return { result: result.rows[0] }
 }

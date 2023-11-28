@@ -1,9 +1,8 @@
-import { API_BASE_URL, API_STATIC_KEY } from '@/constants'
+'use server'
+
+import { API_BASE_URL, API_STATIC_KEY, KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
 import { jsonPost, type ApiResponse, ApiStatus } from '@/services/apiclient'
 import { cookieStoreGet, cookieStoreSet } from '@/services/cookie-store'
-
-export const KEY_JWT_TOKEN = 'JWT_TOKEN'
-export const KEY_REFRESH_TOKEN = 'REFRESH_TOKEN'
 
 // retrieves updated refresh token and saves to local storage
 // returns the token if successful or empty string if failed

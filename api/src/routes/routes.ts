@@ -8,7 +8,7 @@ import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateAPIKey, validateToken } from '../utils/auth';
 import { crudCreate, crudDelete, crudRead, crudUpdate } from '../resolvers/crud';
-import { fetchCardData, fetchRevenue, fetchLatestInvoices, fetchInvoicesPages, fetchFilteredInvoices, fetchInvoiceById, fetchCustomers } from '../resolvers/examples';
+import { fetchCardData, fetchRevenue, fetchLatestInvoices, fetchInvoicesPages, fetchFilteredInvoices, fetchInvoiceById, fetchCustomers, createInvoice, updateInvoice, deleteInvoice } from '../resolvers/examples';
 
 const prnt = console.log;
 
@@ -47,6 +47,9 @@ resolverMap.set('fetchInvoicesPages', fetchInvoicesPages);
 resolverMap.set('fetchFilteredInvoices', fetchFilteredInvoices); 
 resolverMap.set('fetchInvoiceById', fetchInvoiceById); 
 resolverMap.set('fetchCustomers', fetchCustomers); 
+resolverMap.set('createInvoice', createInvoice); 
+resolverMap.set('updateInvoice', updateInvoice); 
+resolverMap.set('deleteInvoice', deleteInvoice); 
 
 
 const jsonErrorHandler = (

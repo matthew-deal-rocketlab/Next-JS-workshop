@@ -3,9 +3,9 @@
 import { useRouter } from 'next/navigation'
 import { type FormEvent } from 'react'
 import { cookieStoreRemove } from '@/services/cookie-store'
-import { KEY_REFRESH_TOKEN, KEY_JWT_TOKEN } from '@/utils/api-client'
 import { type Collapsed } from './dashboard/sideNav/sidenav'
 import SvgIcon from './svgIcon'
+import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
 
 export default function SignOut({ isCollapsed }: Collapsed) {
   const router = useRouter()
