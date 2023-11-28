@@ -1,5 +1,3 @@
-'use client'
-
 import React, { Suspense, useEffect, useState } from 'react'
 import Pagination from '@/components/examples/invoices/pagination'
 import Search from '@/components/examples/invoices/search'
@@ -11,7 +9,24 @@ import { apiPost } from '@/utils/api-client'
 import { SubmitResultType } from '@/types.d'
 import { ApiStatus } from '@/services/apiclient'
 
-export default function Page({
+const fetchInvoicePagesData = async (query: string) => {
+  const invoiceData = await apiPost('/jsonql', {
+    fetchInvoicesPages: { query },
+  })
+
+  if (invoiceData.status !== ApiStatus.OK) {
+    return { text: 'Error logging in', type: SubmitResultType.error }
+  }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const { fetchInvoicesPages } = invoiceData?.result
+
+  console.log('fetchInvoicesPages', invoiceData)
+
+  return fetchInvoicesPages
+}
+
+export default async function Page({
   searchParams,
 }: {
   searchParams?: {
@@ -19,33 +34,13 @@ export default function Page({
     page?: string
   }
 }) {
-  const [pages, setPages] = useState<number>(0)
   const query = searchParams?.query ?? ''
   const currentPage = Number(searchParams?.page) || 1
   // const totalPages = await fetchInvoicesPages(query)
 
   console.log('searchParams', searchParams)
 
-  useEffect(() => {
-    const fetchInvoicePagesData = async () => {
-      const invoiceData = await apiPost('/jsonql', {
-        fetchInvoicesPages: { query: searchParams?.query },
-      })
-
-      if (invoiceData.status !== ApiStatus.OK) {
-        return { text: 'Error logging in', type: SubmitResultType.error }
-      }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      const { fetchInvoicesPages } = invoiceData?.result
-
-      console.log('fetchInvoicesPages', invoiceData)
-
-      setPages(fetchInvoicesPages)
-    }
-
-    void fetchInvoicePagesData()
-  }, [])
+  const pages = await fetchInvoicePagesData(query)
 
   return (
     <div className="w-full">

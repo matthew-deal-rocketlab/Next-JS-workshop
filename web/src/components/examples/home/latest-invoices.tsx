@@ -1,32 +1,26 @@
-'use client'
-
 import { type LatestInvoice } from '@/examples/types/types'
 import { ApiStatus } from '@/services/apiclient'
 import { SubmitResultType } from '@/types.d'
 import { apiPost } from '@/utils/api-client'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
-export default function LatestInvoices() {
-  const [invoices, setInvoices] = useState<LatestInvoice[]>([])
+const fetchLatestInvoiceData = async () => {
+  const invoiceData = await apiPost('/jsonql', { fetchLatestInvoices: {} })
 
-  useEffect(() => {
-    const fetchLatestInvoiceData = async () => {
-      const invoiceData = await apiPost('/jsonql', { fetchLatestInvoices: {} })
+  if (invoiceData.status !== ApiStatus.OK) {
+    return { text: 'Error logging in', type: SubmitResultType.error }
+  }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const { fetchLatestInvoices } = invoiceData?.result
 
-      if (invoiceData.status !== ApiStatus.OK) {
-        return { text: 'Error logging in', type: SubmitResultType.error }
-      }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      const { fetchLatestInvoices } = invoiceData?.result
+  console.log('fetchLatestInvoices', invoiceData)
 
-      console.log('fetchLatestInvoices', invoiceData)
+  return fetchLatestInvoices
+}
 
-      setInvoices(fetchLatestInvoices)
-    }
-
-    void fetchLatestInvoiceData()
-  }, [])
+export default async function LatestInvoices() {
+  const invoices: LatestInvoice[] = await fetchLatestInvoiceData()
 
   return (
     <div className="flex w-full flex-col md:col-span-4 lg:col-span-4">

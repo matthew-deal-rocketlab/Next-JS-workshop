@@ -35,7 +35,6 @@ const defaultFetchOptions = {
 const jsonFetch = async (url: string, options: RequestInit): Promise<ApiResponse> => {
   const fetchOptions = { ...defaultFetchOptions, ...options }
 
-  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   console.log(`${new Date()} ${options.method}: ${url}`)
   console.log(fetchOptions)
 
@@ -44,7 +43,6 @@ const jsonFetch = async (url: string, options: RequestInit): Promise<ApiResponse
     response = await fetch(url, { ...fetchOptions })
   } catch (error) {
     console.log('>>> error:', error)
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     return { status: ApiStatus.UNKNOWN, result: `unknown error: ${error}` }
   }
   // console.log(`${new Date()} >>> response`, response)

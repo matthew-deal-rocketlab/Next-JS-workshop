@@ -1,6 +1,4 @@
-'use client'
-
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import { UpdateInvoice, DeleteInvoice } from '@/components/examples/invoices/buttons'
 import InvoiceStatus from '@/components/examples/invoices/status'
@@ -10,39 +8,35 @@ import { ApiStatus } from '@/services/apiclient'
 import { SubmitResultType } from '@/types.d'
 import { type InvoicesTableProps } from '@/examples/types/types'
 
-export default function InvoicesTable({
-  query,
-  currentPage,
-}: {
+interface IvoiceTableQueryProps {
   query: string
   currentPage: number
-}) {
+}
+
+const fetchLatestInvoiceData = async ({ query, currentPage }: IvoiceTableQueryProps) => {
+  const invoiceData = await apiPost('/jsonql', {
+    fetchFilteredInvoices: {
+      query,
+      page: currentPage,
+    },
+  })
+
+  if (invoiceData.status !== ApiStatus.OK) {
+    return { text: 'Error logging in', type: SubmitResultType.error }
+  }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const { fetchFilteredInvoices } = invoiceData?.result
+
+  console.log('fetchFilteredInvoices', invoiceData)
+
+  return fetchFilteredInvoices
+}
+
+export default async function InvoicesTable({ query, currentPage }: IvoiceTableQueryProps) {
   // const invoices = await fetchFilteredInvoices(query, currentPage)
-  const [invoices, setInvoices] = useState<InvoicesTableProps[]>([])
 
-  useEffect(() => {
-    const fetchLatestInvoiceData = async () => {
-      const invoiceData = await apiPost('/jsonql', {
-        fetchFilteredInvoices: {
-          query,
-          page: currentPage,
-        },
-      })
-
-      if (invoiceData.status !== ApiStatus.OK) {
-        return { text: 'Error logging in', type: SubmitResultType.error }
-      }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      const { fetchFilteredInvoices } = invoiceData?.result
-
-      console.log('fetchFilteredInvoices', invoiceData)
-
-      setInvoices(fetchFilteredInvoices)
-    }
-
-    void fetchLatestInvoiceData()
-  }, [currentPage, query])
+  const invoices: InvoicesTableProps[] = await fetchLatestInvoiceData({ query, currentPage })
 
   return (
     <div className="mt-6 flow-root">

@@ -1,37 +1,30 @@
-/* eslint-disable @next/next/no-async-client-component */
-'use client'
-
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
 import { SubmitResultType } from '@/types.d'
 
-export default function Cards() {
-  const [totalPaidInvoices, setTotalPaidInvoices] = useState(0)
-  const [totalPendingInvoices, setTotalPendingInvoices] = useState(0)
-  const [numberOfInvoices, setNumberOfInvoices] = useState(0)
-  const [numberOfCustomers, setNumberOfCustomers] = useState(0)
+const fetchCardData = async () => {
+  const cardData = await apiPost('/jsonql', { fetchCardData: {} })
 
-  useEffect(() => {
-    const fetchCardData = async () => {
-      const cardData = await apiPost('/jsonql', { fetchCardData: {} })
+  if (cardData.status !== ApiStatus.OK) {
+    return { text: 'Error logging in', type: SubmitResultType.error }
+  }
+  const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers } =
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    cardData?.result?.fetchCardData
 
-      if (cardData.status !== ApiStatus.OK) {
-        return { text: 'Error logging in', type: SubmitResultType.error }
-      }
-      const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers } =
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        cardData?.result?.fetchCardData
+  return {
+    totalPaidInvoices,
+    totalPendingInvoices,
+    numberOfInvoices,
+    numberOfCustomers,
+  }
+}
 
-      setTotalPaidInvoices(totalPaidInvoices)
-      setTotalPendingInvoices(totalPendingInvoices)
-      setNumberOfInvoices(numberOfInvoices)
-      setNumberOfCustomers(numberOfCustomers)
-    }
-
-    void fetchCardData()
-  }, [])
+export default async function Cards() {
+  const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers } =
+    await fetchCardData()
 
   return (
     <>

@@ -1,6 +1,4 @@
-'use client'
-
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { generateYAxis } from '@/examples/utils/helpers'
 // import { fetchRevenue } from '@/examples/lib/data'
 import { ApiStatus } from '@/services/apiclient'
@@ -8,33 +6,25 @@ import { SubmitResultType } from '@/types.d'
 import { apiPost } from '@/utils/api-client'
 import { type Revenue } from '@/examples/types/types'
 
-export default function RevenueChart() {
-  const [revenue, setRevenue] = useState<Revenue[]>([])
-  const [yAxisLabels, setYAxisLabels] = useState<string[]>([])
-  const [topLabel, setTopLabel] = useState<number>(0)
+const fetchRevenueData = async () => {
+  const revenueData = await apiPost('/jsonql', { fetchRevenue: {} })
 
-  useEffect(() => {
-    const fetchRevenueData = async () => {
-      const revenueData = await apiPost('/jsonql', { fetchRevenue: {} })
+  if (revenueData.status !== ApiStatus.OK) {
+    return { text: 'Error logging in', type: SubmitResultType.error }
+  }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const { fetchRevenue } = revenueData?.result
 
-      if (revenueData.status !== ApiStatus.OK) {
-        return { text: 'Error logging in', type: SubmitResultType.error }
-      }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      const { fetchRevenue } = revenueData?.result
+  console.log('fetchRevenue', revenueData)
 
-      console.log('fetchRevenue', revenueData)
+  return fetchRevenue
+}
 
-      setRevenue(fetchRevenue)
-      const { yAxisLabels, topLabel } = generateYAxis(fetchRevenue)
-      setYAxisLabels(yAxisLabels)
-      setTopLabel(topLabel)
-    }
-
-    void fetchRevenueData()
-  }, [])
-
+export default async function RevenueChart() {
+  const fetchRevenue = await fetchRevenueData()
+  const { yAxisLabels, topLabel } = generateYAxis(fetchRevenue)
+  const revenue: Revenue[] = fetchRevenue
   const chartHeight = 350
 
   if (!revenue || revenue.length === 0) {
