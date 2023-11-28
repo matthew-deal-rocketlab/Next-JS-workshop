@@ -1,6 +1,5 @@
 import React from 'react'
 import { generateYAxis } from '@/examples/utils/helpers'
-// import { fetchRevenue } from '@/examples/lib/data'
 import { ApiStatus } from '@/services/apiclient'
 import { SubmitResultType } from '@/types.d'
 import { apiPost } from '@/utils/api-client'

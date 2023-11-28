@@ -34,8 +34,6 @@ const fetchLatestInvoiceData = async ({ query, currentPage }: IvoiceTableQueryPr
 }
 
 export default async function InvoicesTable({ query, currentPage }: IvoiceTableQueryProps) {
-  // const invoices = await fetchFilteredInvoices(query, currentPage)
-
   const invoices: InvoicesTableProps[] = await fetchLatestInvoiceData({ query, currentPage })
 
   return (

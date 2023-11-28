@@ -1,10 +1,9 @@
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense } from 'react'
 import Pagination from '@/components/examples/invoices/pagination'
 import Search from '@/components/examples/invoices/search'
 import Table from '@/components/examples/invoices/table'
 import { CreateInvoice } from '@/components/examples/invoices/buttons'
 import { InvoicesTableSkeleton } from '@/components/examples/skeletons'
-// import { fetchInvoicesPages } from '@/examples/lib/data'
 import { apiPost } from '@/utils/api-client'
 import { SubmitResultType } from '@/types.d'
 import { ApiStatus } from '@/services/apiclient'
@@ -36,7 +35,6 @@ export default async function Page({
 }) {
   const query = searchParams?.query ?? ''
   const currentPage = Number(searchParams?.page) || 1
-  // const totalPages = await fetchInvoicesPages(query)
 
   console.log('searchParams', searchParams)
 

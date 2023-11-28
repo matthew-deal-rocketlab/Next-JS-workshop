@@ -1,8 +1,9 @@
 import React from 'react'
 import TopNav from '@/components/dashboard/topNav/top-nav'
 import ExampleSideNav from '@/components/examples/exampleSidenav'
+import { requireAuth } from '@/utils/auth'
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen flex-col">
       <TopNav />
@@ -13,3 +14,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </div>
   )
 }
+
+export default requireAuth(Layout)

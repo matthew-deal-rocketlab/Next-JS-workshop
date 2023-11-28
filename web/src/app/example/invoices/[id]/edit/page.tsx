@@ -1,7 +1,6 @@
 import React from 'react'
 import Form from '@/components/examples/invoices/edit-form'
 import Breadcrumbs from '@/components/examples/invoices/breadcrumbs'
-// import { fetchInvoiceById, fetchCustomers } from '@/examples/lib/data'
 import { notFound } from 'next/navigation'
 import { apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
