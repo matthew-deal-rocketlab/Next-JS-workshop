@@ -87,7 +87,7 @@ const addRoutes = (app: Express) => {
   app.get(
     `${API_PREFIX}/healthcheck`,
     (req: Request, res: Response): Response => {
-      prnt('ouchies', `${req.method} ${req.path}`);
+      prnt('SQL: ', `${req.method} ${req.path}`);
       return res.json({
         status: 'ok',
         time: new Date().toISOString(),
