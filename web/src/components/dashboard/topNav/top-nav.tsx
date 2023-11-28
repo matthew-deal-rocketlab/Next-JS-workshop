@@ -10,15 +10,7 @@ export default function TopNav() {
             Some Logo
           </Link>
         </div>
-        <div className="mx-auto flex flex-row gap-2 bg-white">
-          <Link className="0 hidden rounded p-2 md:block" href="/dashboard">
-            Dashboard
-          </Link>
-          <Link className="hidden rounded p-2 md:block" href="/example">
-            Examples
-          </Link>
-        </div>
-        <Link className="hidden rounded p-2 md:block" href="/profile">
+        <Link className="block rounded p-2" href="/profile">
           Profile
         </Link>
       </div>
