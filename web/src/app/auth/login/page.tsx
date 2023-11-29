@@ -49,7 +49,7 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
   return hasErrors ? result : null
 }
 
-const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
+export const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
   // Clear login tokens
   cookieStoreRemove(KEY_REFRESH_TOKEN)
   cookieStoreRemove(KEY_JWT_TOKEN)
@@ -141,13 +141,13 @@ export default function LoginForm() {
         {alert.message && <Alert classes="my-3" type={alert.type} message={alert.message} />}
         <p className="mb-1 mt-4 text-center text-xs">
           Don't have an account?{' '}
-          <Link className="text-blue-500" href="/auth/signup">
+          <Link className="text-blue-500" href="/auth/signup" role="link">
             Signup
           </Link>
         </p>
         <p className="mb-1 mt-3 text-center text-xs">
           Forgot your password?{' '}
-          <Link className="text-blue-500" href="/auth/forgot-password">
+          <Link className="text-blue-500" href="/auth/forgot-password" role="link">
             Reset Password
           </Link>
         </p>
