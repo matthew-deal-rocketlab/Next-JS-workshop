@@ -1,8 +1,9 @@
-import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Login from '../page'
 import { useRouter } from 'next/navigation'
+
+// These tests would be redundant if we implmented Zod, If you use this Template and install Zod, Remove these tests
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
