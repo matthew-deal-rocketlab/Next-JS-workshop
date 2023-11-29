@@ -99,6 +99,7 @@ export default function LoginForm() {
     }
 
     const result = await submitLoginFormData(formData)
+
     if (result.type === SubmitResultType.error) {
       setAlert({ message: result.text, type: 'error' })
       return

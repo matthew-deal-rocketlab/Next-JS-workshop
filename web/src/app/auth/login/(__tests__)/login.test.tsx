@@ -9,7 +9,7 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }))
 
-describe('LoginForm Component', () => {
+describe('Login', () => {
   beforeEach(() => {
     // Mock the router functions you use in the component
     ;(useRouter as jest.Mock).mockReturnValue({
