@@ -42,7 +42,6 @@ describe('LoginForm Component', () => {
 it('shows an error message for invalid password input', async () => {
   render(<Login />)
 
-  // Simulate entering an invalid email address
   fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@mail.com' } })
   fireEvent.change(screen.getByLabelText(/pass/i), { target: { value: '' } })
 
