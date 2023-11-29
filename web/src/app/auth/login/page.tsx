@@ -49,7 +49,7 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
   return hasErrors ? result : null
 }
 
-export const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
+const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
   // Clear login tokens
   cookieStoreRemove(KEY_REFRESH_TOKEN)
   cookieStoreRemove(KEY_JWT_TOKEN)
