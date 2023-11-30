@@ -1,11 +1,10 @@
 import { type DecodedTokenProps } from '@/types'
 import jwtDecoder from './jwt-decoder'
 import dateToSeconds from './date-to-seconds'
-import { cookieStoreGet } from '@/services/cookie-store'
 
 export const checkTokenStillValid = (accessToken: string | null) => {
-  const decodedToken: DecodedTokenProps = accessToken
-    ? jwtDecoder(accessToken)
+  const decodedToken = accessToken
+    ? (jwtDecoder(accessToken) as DecodedTokenProps)
     : {
         header: null,
         payload: null,
@@ -16,11 +15,4 @@ export const checkTokenStillValid = (accessToken: string | null) => {
     console.log('Decoded token:', decodedToken, dateToSeconds(date))
     return true
   }
-}
-
-export const isTokenValid = async (type: string | undefined) => {
-  if (!type) return
-  const token = (await cookieStoreGet(type)) ?? null
-  const isTokenValid = checkTokenStillValid(token)
-  return isTokenValid
 }

@@ -6,41 +6,42 @@ import { cookieStoreGet, cookieStoreSet } from '@/services/cookie-store'
 
 // retrieves updated refresh token and saves to local storage
 // returns the token if successful or empty string if failed
-const refreshToken = async (): Promise<string> => {
-  const currentRefreshToken = await cookieStoreGet(KEY_REFRESH_TOKEN)
-  if (!currentRefreshToken) return ''
 
-  const headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    'x-api-key': API_STATIC_KEY,
-  }
+// export const refreshToken = async (): Promise<string> => {
+//   const currentRefreshToken = await cookieStoreGet(KEY_REFRESH_TOKEN)
+//   if (!currentRefreshToken) return ''
 
-  const payload = { authRefresh: { refreshToken: currentRefreshToken } }
+//   const headers = {
+//     Accept: 'application/json',
+//     'Content-Type': 'application/json',
+//     'x-api-key': API_STATIC_KEY,
+//   }
 
-  const apiResponse = await jsonPost(`${API_BASE_URL}/jsonql`, {
-    headers,
-    body: JSON.stringify(payload),
-  })
+//   const payload = { authRefresh: { refreshToken: currentRefreshToken } }
 
-  if (apiResponse.status !== ApiStatus.OK || apiResponse.result === null) return ''
+//   const apiResponse = await jsonPost(`${API_BASE_URL}/jsonql`, {
+//     headers,
+//     body: JSON.stringify(payload),
+//   })
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const authRefreshResult = apiResponse.result.authRefresh
-  if (typeof authRefreshResult === 'object' && authRefreshResult.token) {
-    // TODO - to store somewhere else
-    await cookieStoreSet(KEY_JWT_TOKEN, authRefreshResult.token)
+//   if (apiResponse.status !== ApiStatus.OK || apiResponse.result === null) return ''
 
-    if (authRefreshResult.refreshToken !== currentRefreshToken) {
-      await cookieStoreSet(KEY_REFRESH_TOKEN, authRefreshResult.refreshToken)
-    }
+//   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//   // @ts-expect-error
+//   const authRefreshResult = apiResponse.result.authRefresh
+//   if (typeof authRefreshResult === 'object' && authRefreshResult.token) {
+//     // TODO - to store somewhere else
+//     await cookieStoreSet(KEY_JWT_TOKEN, authRefreshResult.token)
 
-    return authRefreshResult.token
-  }
+//     if (authRefreshResult.refreshToken !== currentRefreshToken) {
+//       await cookieStoreSet(KEY_REFRESH_TOKEN, authRefreshResult.refreshToken)
+//     }
 
-  return ''
-}
+//     return authRefreshResult.token
+//   }
+
+//   return ''
+// }
 
 export const apiPost = async (
   url: string,
@@ -70,12 +71,12 @@ export const apiPost = async (
   if (apiResponse.status === ApiStatus.OK) return apiResponse
 
   // handle other situations
-  if (apiResponse.status === ApiStatus.EXPIRED) {
-    if (!allowRefresh) return { status: ApiStatus.EXPIRED, result: 'session expired' }
-    // JWT access token has expired.  renew token and try API call again
-    const newToken = await refreshToken()
-    if (newToken) return await apiPost(url, data, false)
-  }
+  // if (apiResponse.status === ApiStatus.EXPIRED) {
+  //   if (!allowRefresh) return { status: ApiStatus.EXPIRED, result: 'session expired' }
+  //   // JWT access token has expired.  renew token and try API call again
+  //   const newToken = await refreshToken()
+  //   if (newToken) return await apiPost(url, data, false)
+  // }
 
   // For erros, maybe just flash a message on the screen
   if (apiResponse.status === ApiStatus.NO_NETWORK) {

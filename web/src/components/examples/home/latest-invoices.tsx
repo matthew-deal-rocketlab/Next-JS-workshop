@@ -14,7 +14,7 @@ const fetchLatestInvoiceData = async () => {
   // @ts-expect-error
   const { fetchLatestInvoices } = invoiceData?.result
 
-  console.log('fetchLatestInvoices', invoiceData)
+  // console.log('fetchLatestInvoices', invoiceData)
 
   return fetchLatestInvoices
 }

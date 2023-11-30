@@ -1,7 +1,6 @@
 import React from 'react'
 import TopNav from '@/components/dashboard/topNav/top-nav'
 import ExampleSideNav from '@/components/examples/exampleSidenav'
-import { requireAuth } from '@/utils/auth'
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,4 +14,4 @@ function Layout({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default requireAuth(Layout)
+export default Layout

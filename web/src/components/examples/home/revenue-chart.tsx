@@ -15,7 +15,7 @@ const fetchRevenueData = async () => {
   // @ts-expect-error
   const { fetchRevenue } = revenueData?.result
 
-  console.log('fetchRevenue', revenueData)
+  // console.log('fetchRevenue', revenueData)
 
   return fetchRevenue
 }
