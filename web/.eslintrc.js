@@ -14,10 +14,16 @@ module.exports = {
     'react/react-in-jsx-scope': 0,
     "prettier/prettier": "error",
     "@typescript-eslint/strict-boolean-expressions": "off",
-    "@typescript-eslint/no-unused-vars": "warn"
+    "@typescript-eslint/no-unused-vars": "warn",
+    "cypress/no-assigning-return-values": "error",
+    "cypress/no-unnecessary-waiting": "error",
+    "cypress/assertion-before-screenshot": "warn",
+    "cypress/no-force": "warn",
+    "cypress/no-async-tests": "error",
+    "cypress/no-pause": "error"
   },
   parserOptions: {
     "project": "./tsconfig.json"
   },
-  plugins: ["prettier", "testing-library"]
+  plugins: ["prettier", "testing-library", "cypress"]
 }
