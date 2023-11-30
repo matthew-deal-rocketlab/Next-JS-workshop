@@ -99,6 +99,7 @@ export default function LoginForm() {
     }
 
     const result = await submitLoginFormData(formData)
+
     if (result.type === SubmitResultType.error) {
       setAlert({ message: result.text, type: 'error' })
       return
@@ -141,13 +142,13 @@ export default function LoginForm() {
         {alert.message && <Alert classes="my-3" type={alert.type} message={alert.message} />}
         <p className="mb-1 mt-4 text-center text-xs">
           Don't have an account?{' '}
-          <Link className="text-blue-500" href="/auth/signup">
+          <Link className="text-blue-500" href="/auth/signup" role="link">
             Signup
           </Link>
         </p>
         <p className="mb-1 mt-3 text-center text-xs">
           Forgot your password?{' '}
-          <Link className="text-blue-500" href="/auth/forgot-password">
+          <Link className="text-blue-500" href="/auth/forgot-password" role="link">
             Reset Password
           </Link>
         </p>

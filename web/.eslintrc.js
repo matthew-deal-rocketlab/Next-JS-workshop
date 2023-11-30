@@ -4,7 +4,8 @@ module.exports = {
     "standard-with-typescript",
     "standard-jsx",
     "plugin:react/recommended",
-    "prettier"
+    "prettier",
+    "plugin:testing-library/react"
   ],
   rules: {
     "react/prop-types": "off",
@@ -18,5 +19,5 @@ module.exports = {
   parserOptions: {
     "project": "./tsconfig.json"
   },
-  plugins: ["prettier"]
+  plugins: ["prettier", "testing-library"]
 }

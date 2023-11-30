@@ -55,3 +55,23 @@ The examples include:
 ## Dashboard Folder
 
 The dashboard folder contains a very minimal dashboard example. It is a good starting point for building a dashboard.
+
+
+## Tests
+This Template is making use of Jest and React Testing Library ( RTL ) for unit test. There are a couple of examples within the App. Most if not all of these can be removed if you're planning to use Zod, since the Zod can handle validation and errors. 
+
+We should only use unit tests in cases where we need to test a specific function or component that isn't covered by Typscript, since Typescript will catch most errors.
+
+To run a test use the following command
+
+```
+pnpm test
+```
+This will run all tests within the App. 
+
+If you want to run a specific test use the following command
+
+```
+pnpm test -- <path to test file>
+```
+
