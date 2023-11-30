@@ -1,6 +1,6 @@
 import React from 'react'
 import TopNav from '@/components/dashboard/topNav/top-nav'
-import ExampleSideNav from '@/components/examples/exampleSidenav'
+import ExampleSideNav from '@/components/dashboard/sideNav/sidenav'
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
