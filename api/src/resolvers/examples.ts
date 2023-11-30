@@ -122,7 +122,7 @@ export const fetchFilteredInvoices = async (input: JsonQLInput, rc: ResolverCont
   if (!useruid) return ERROR_INVALID_CREDENTIALS;
 
   const ITEMS_PER_PAGE = 6
-  const offset = (input.page - 1) * ITEMS_PER_PAGE
+  const offset = (input.page as number - 1) * ITEMS_PER_PAGE
 
   const queryText = `
       SELECT
