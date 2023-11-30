@@ -4,6 +4,7 @@ import { API_HEADER, API_KEY, APP_SECRET, ERROR_TOKEN_EXPIRED, JWT_EXPIRY, JWT_R
 import { btoa, atob } from './converters';
 import { JSON_parse, JSON_stringify, uuidv4 } from './misc';
 import { Request } from 'express';
+import dateToSeconds from './date-to-seconds';
 
 
 const encryptUserId = (userId: number): string => {
@@ -82,13 +83,19 @@ export const validateToken = (req: Request): FnResult => {
 
   // check date
   const now = new Date();
-  let expiry = new Date(payload.iat * 1000)
-  expiry.setSeconds(expiry.getSeconds() + JWT_EXPIRY);
-  if (now > expiry) return ERROR_TOKEN_EXPIRED;
+  const currentTime = dateToSeconds(now);
+  const expiry = payload.exp
+  if (currentTime > expiry) {
+    console.log('token expired', currentTime, expiry)
+    return ERROR_TOKEN_EXPIRED;    
+  } 
 
   // check signature
   const calculated = generateJWT(payload, JWT_SECRET);
-  if (calculated !== jwtRaw) return { error: 'error: token invalid(3)' };
+  if (calculated !== jwtRaw) {
+    console.log('token invalid')
+    return { error: 'error: token invalid(3)' };
+  }
 
   return {
     result: {

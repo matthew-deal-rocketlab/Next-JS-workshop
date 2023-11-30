@@ -1,3 +1,5 @@
+'use server'
+
 import Form from '@/components/examples/invoices/create-form'
 import Breadcrumbs from '@/components/examples/invoices/breadcrumbs'
 import { apiPost } from '@/utils/api-client'
@@ -23,6 +25,8 @@ const fetchCustomersData = async () => {
 
 export default async function Page() {
   const customers = await fetchCustomersData()
+
+  console.log('customers', customers)
 
   return (
     <main>

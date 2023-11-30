@@ -63,11 +63,11 @@ interface IAlertMessage {
 }
 
 interface DecodedTokenProps {
-  header?: {
+  header: {
     alg: string
     typ: string
   }
-  payload?: {
+  payload: {
     exp: number
     iat: number
     sub: number

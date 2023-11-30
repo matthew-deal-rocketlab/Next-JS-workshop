@@ -149,7 +149,6 @@ export const fetchFilteredInvoices = async (input: JsonQLInput, rc: ResolverCont
   result = await dbQuery(rc.db, queryText, [`%${input.query}%`, ITEMS_PER_PAGE, offset]);
 
 
-  console.log('result', result)
   if (result.error) return { error: result.error }
   if (!result || result.rowCount == 0) return { error: 'no result' };
 
