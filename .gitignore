@@ -1,5 +1,6 @@
 _data/
 node_modules/
 api/build/
+api-gql/build/
 web/build/
 .env*

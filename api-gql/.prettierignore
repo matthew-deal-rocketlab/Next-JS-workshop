@@ -1,0 +1,2 @@
+# ignore generated files since we have no control over them
+src/**/*.gen.ts
