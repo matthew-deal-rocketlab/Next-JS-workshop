@@ -1,0 +1,59 @@
+#!/bin/sh
+
+if [ -f ../.env ]; then . ../.env ; fi
+if [ -f ../env.settings ]; then . ../env.settings ; fi
+export DB_DATABASE=$DB_DATABASE
+export DB_USER=$DB_USER
+export DB_PASSWORD=$DB_PASSWORD
+export DB_PORT=$DB_PORT
+export DB_HOST=$DB_HOST
+export DB_SSL=$DB_SSL
+
+
+code_check_format() {
+  if [ "$1" = "fix" ]; then
+    ./node_modules/.bin/prettier --write --list-different ./src
+  else
+    ./node_modules/.bin/prettier --check ./src
+  fi
+  exit $?
+}
+
+code_check_lint() {
+  if [ "$1" = "fix" ]; then
+    ./node_modules/.bin/eslint --fix --ext .js,.jsx,.ts,.tsx --ignore-pattern "src/**/*.gen.ts" ./src
+  else
+    ./node_modules/.bin/eslint --ext .js,.jsx,.ts,.tsx --ignore-pattern "src/**/*.gen.ts" ./src
+  fi
+  exit $?;
+}
+
+code_typecheck() {
+  ./node_modules/.bin/tsc --noEmit --allowJs
+}
+
+update_graphql() {
+  ./node_modules/.bin/graphql-codegen --config gql-codegen.ts
+}
+
+api_update_models() {
+  MODELS_FILE="src/models/database.gen.ts"
+  node scripts/model.js gen > $MODELS_FILE
+}
+
+
+
+# Quality control
+if [ "$1" = "format" ]; then code_check_format $2; exit $?; fi
+if [ "$1" = "lint" ]; then code_check_lint $2; exit $?; fi
+if [ "$1" = "typecheck" ]; then code_typecheck $2; exit $?; fi
+
+# graphql
+if [ "$1" = "update-gql" ]; then update_graphql ; exit $?; fi
+if [ "$1" = "update-models" ]; then api_update_models ; exit $? ; fi
+if [ "$1" = "update-all" ]; then update_graphql ; api_update_models ; exit $?; fi
+
+
+if [ "$1" = "dev" ]; then PORT=$API_GQL_PORT node dev-watch.js ; exit $? ; fi
+
+echo "Command not found"

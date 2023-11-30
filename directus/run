@@ -100,6 +100,8 @@ user_init() {
     pnpm add directus pg
     echo "Packages added node_modules folder should exist"
   fi
+
+  if [ ! -d "/opt/app/node_modules" ]; then cd /opt/app ; pnpm install ; fi
 }
 
 app_launch() {
