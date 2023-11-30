@@ -12,12 +12,16 @@ export const config = {
 export async function middleware(request: NextRequest) {
   // get current refresh token
   const currentRefreshToken = await cookieStoreGet(KEY_REFRESH_TOKEN)
+  const currentToken = await cookieStoreGet(KEY_JWT_TOKEN)
   // Redirect if not signed in
-  if (!currentRefreshToken) {
+  if (!currentRefreshToken || !currentToken) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
   // check if token is still valid
-  const isTokenValid = checkTokenStillValid(currentRefreshToken)
+  const isRefreshTokenValid = checkTokenStillValid(currentRefreshToken)
+  const isTokenValid = checkTokenStillValid(currentToken)
+
+  console.log('isTokenValid', isTokenValid, isRefreshTokenValid)
 
   // if expired attempt to refresh
   if (!isTokenValid) {
