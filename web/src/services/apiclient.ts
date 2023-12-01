@@ -7,15 +7,17 @@ export interface ApiResponse {
   result: JsonQLInput | string | object
 }
 
-export enum ApiStatus {
-  OK = 200,
-  ERROR = 400,
-  EXPIRED = 419,
-  UPGRADE = 426, // Use to prompt user to upgrade client
-  TIMEOUT = -1,
-  NO_NETWORK = -2,
-  UNKNOWN = -3,
-}
+export const ApiStatus = {
+  OK: 200,
+  ERROR: 400,
+  EXPIRED: 419,
+  UPGRADE: 426, // Use to prompt user to upgrade client
+  TIMEOUT: -1,
+  NO_NETWORK: -2,
+  UNKNOWN: -3,
+} as const
+
+type ApiStatus = typeof ApiStatus[keyof typeof ApiStatus]
 
 const defaultFetchOptions = {
   method: 'POST', // *GET, POST, PUT, DELETE, etc.
