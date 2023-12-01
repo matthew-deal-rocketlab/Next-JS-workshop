@@ -25,5 +25,5 @@ module.exports = {
   parserOptions: {
     "project": "./tsconfig.json"
   },
-  plugins: ["prettier", "testing-library", "cypress"]
+  plugins: ["prettier", "cypress"]
 }
