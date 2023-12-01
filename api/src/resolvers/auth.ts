@@ -49,6 +49,26 @@ const addUser = async (
   return { value: result.rows[0]['uid'] };
 };
 
+// Inserts a user into the database
+// Returns an empty string on success or the error message desribing problem
+export const deleteUser = async (
+  db: DBConnection,
+  email: string,
+): Promise<OkString | string> => {
+  const queryAddUser =
+    `DELETE FROM tbl_user WHERE email = $1`;
+
+  let result = null;
+  // TODO const parameters = [UserStatus.Pending, email, password, firstname, lastname, verifyCode];
+  const parameters = [UserStatus.Verified, email,];
+
+  result = await dbQuery(db, queryAddUser, parameters);
+  if (result.error) return result.error;
+  if (!result || result.rowCount !== 1) return 'could not add user';
+
+  return { value: result.rows[0]['uid'] };
+};
+
 // Adds a user in the system
 export const authSignup = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
