@@ -22,7 +22,7 @@ module.exports = {
     "cypress/no-pause": "error"
   },
   parserOptions: {
-    "project": "./tsconfig.json"
+    project: './tsconfig.json',
   },
   plugins: ["prettier", "cypress"]
 }

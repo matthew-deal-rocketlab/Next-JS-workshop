@@ -1,7 +1,9 @@
+'use server'
+
 import { redirect } from 'next/navigation'
 import React from 'react'
 import { isTokenValid } from './check-token'
-import { KEY_REFRESH_TOKEN } from './api-client'
+import { KEY_REFRESH_TOKEN } from '@/constants'
 
 interface ComponentProps {
   // Add specific prop types here

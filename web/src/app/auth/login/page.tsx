@@ -3,7 +3,7 @@
 import { Button } from '@/components/button'
 import { isEmail } from '@/utils/validators'
 import { type SubmitResult, SubmitResultType, type IAlertMessage } from '@/types.d'
-import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN, apiPost } from '@/utils/api-client'
+import { apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
 import { sleep } from '@/utils/sleep'
 import { useRouter } from 'next/navigation'
@@ -12,6 +12,7 @@ import Link from 'next/link'
 import Alert from '@/components/alert'
 import Input from '@/components/input'
 import { cookieStoreSet, cookieStoreRemove } from '@/services/cookie-store'
+import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
 
 interface FormFields {
   email: string
