@@ -97,7 +97,7 @@ describe('Auth Tests', () => {
 
   describe('Remove user', () => {
     it('should delete the test user', () => {
-      const email = 'testuser@rocketlab.com.au' // User email to delete
+      const email = Cypress.env('TEST_EMAIL') // User email to delete
       const token = Cypress.env('authToken') // Retrieve the token
 
       cy.request({
