@@ -5,7 +5,6 @@ module.exports = {
     "standard-jsx",
     "plugin:react/recommended",
     "prettier",
-    "plugin:testing-library/react"
   ],
   rules: {
     "react/prop-types": "off",
