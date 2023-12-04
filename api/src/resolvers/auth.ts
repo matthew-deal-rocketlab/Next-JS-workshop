@@ -51,22 +51,20 @@ const addUser = async (
 
 // Inserts a user into the database
 // Returns an empty string on success or the error message desribing problem
-export const deleteUser = async (
-  db: DBConnection,
-  email: string,
-): Promise<OkString | string> => {
-  const queryAddUser =
+export const deleteUser = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB;
+  const useruid = rc.useruid;
+  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+
+  const queryText =
     `DELETE FROM tbl_user WHERE email = $1`;
 
   let result = null;
-  const parameters = [UserStatus.Verified, email];
+  result = await dbQuery(rc.db, queryText, [input.email]);
+  if (result.error) return { error: result.error };
+  if (!result || result.rowCount !== 1) return { error: 'Could not delete user' };
 
-  result = await dbQuery(db, queryAddUser, parameters);
-  console.log('result', result)
-  if (result.error) return result.error;
-  if (!result || result.rowCount !== 1) return 'could not delete user';
-
-  return { value: 'User deleted successfully' };
+  return { result: 'User deleted successfully' };
 };
 
 // Adds a user in the system

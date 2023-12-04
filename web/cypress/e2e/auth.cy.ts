@@ -28,8 +28,6 @@ describe('Auth Tests', () => {
       cy.wait('@signupRequest').then(interception => {
         const responseBody = interception.response?.body
 
-        console.log('responseBody', responseBody)
-
         // Check if the response body contains the message indicating an existing email
         if (responseBody && responseBody.authSignup === 'email already exists') {
           cy.contains('email already exists')
