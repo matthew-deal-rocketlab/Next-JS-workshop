@@ -28,10 +28,12 @@ describe('Auth Tests', () => {
       cy.wait('@signupRequest').then(interception => {
         const responseBody = interception.response?.body
 
+        console.log('responseBody', responseBody)
+
         // Check if the response body contains the message indicating an existing email
         if (responseBody && responseBody.authSignup === 'email already exists') {
           cy.contains('email already exists')
-        } else if (responseBody && responseBody.successMessage) {
+        } else if (responseBody?.successMessage) {
           // Check for a success message or any other positive indicator in the response
           cy.contains('Welcome! Check your email to continue')
         }
@@ -82,12 +84,12 @@ describe('Auth Tests', () => {
       cy.contains('Log in').click()
 
       cy.wait('@loginRequest').then(interception => {
-        let token = interception.response?.body.authLogin.token
+        const token = interception.response?.body.authLogin.token
         // Set the token as an environment variable
         Cypress.env('authToken', token)
 
         const responseBody = interception?.response?.statusCode === 200
-        if (responseBody === true) {
+        if (responseBody) {
           cy.contains('Welcome! You will be redirected to the dashboard shortly')
           cy.url().should('include', '/dashboard')
         }
@@ -97,28 +99,29 @@ describe('Auth Tests', () => {
 
   describe('Remove user', () => {
     it('should delete the test user', () => {
-      const email = 'testuser@rocketlab.com.au'; // User email to delete
-      const token = Cypress.env('authToken'); // Retrieve the token
-  
+      const email = 'testuser@rocketlab.com.au' // User email to delete
+      const token = Cypress.env('authToken') // Retrieve the token
+
       cy.request({
         method: 'POST',
         url: `${Cypress.env('API_URL')}`,
-        body: {  fetchCustomers: {} },
+        body: {
+          deleteUser: {
+            email,
+          },
+        },
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json',
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
           'Content-type': 'application/json',
-          'x-api-key': 'c37861c7-7414-4a40-bbd8-3343662e4483'
+          'x-api-key': 'c37861c7-7414-4a40-bbd8-3343662e4483',
         },
       }).then(response => {
-        expect(response.status).to.eq(200); 
+        expect(response.status).to.eq(200)
 
-        console.log(response);
-        console.log(response.body);
-
-      });
-    });
-  });
-  
-  
+        console.log('response', response)
+        console.log('response.body', response.body)
+      })
+    })
+  })
 })

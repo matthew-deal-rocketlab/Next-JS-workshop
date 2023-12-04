@@ -62,10 +62,11 @@ export const deleteUser = async (
   const parameters = [UserStatus.Verified, email];
 
   result = await dbQuery(db, queryAddUser, parameters);
+  console.log('result', result)
   if (result.error) return result.error;
   if (!result || result.rowCount !== 1) return 'could not delete user';
 
-  return { value: result.rows[0]['uid'] };
+  return { value: 'User deleted successfully' };
 };
 
 // Adds a user in the system
