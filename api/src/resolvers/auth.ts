@@ -59,12 +59,11 @@ export const deleteUser = async (
     `DELETE FROM tbl_user WHERE email = $1`;
 
   let result = null;
-  // TODO const parameters = [UserStatus.Pending, email, password, firstname, lastname, verifyCode];
-  const parameters = [UserStatus.Verified, email,];
+  const parameters = [UserStatus.Verified, email];
 
   result = await dbQuery(db, queryAddUser, parameters);
   if (result.error) return result.error;
-  if (!result || result.rowCount !== 1) return 'could not add user';
+  if (!result || result.rowCount !== 1) return 'could not delete user';
 
   return { value: result.rows[0]['uid'] };
 };
