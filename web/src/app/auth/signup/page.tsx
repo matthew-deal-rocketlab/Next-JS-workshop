@@ -212,7 +212,9 @@ export default function SignupForm() {
 function SignupButton() {
   return (
     <div className="flex justify-center">
-      <Button className="mt-4 w-full max-w-[300px]">Sign up</Button>
+      <Button id="signup" className="mt-4 w-full max-w-[300px]">
+        Sign up
+      </Button>
     </div>
   )
 }

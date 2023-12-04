@@ -16,7 +16,7 @@ const Input = (props: InputProps) => {
   return (
     <div>
       {label && (
-        <label className="mb-2 mt-5 block text-xs font-medium text-gray-900" htmlFor={name}>
+        <label className="mb-2 mt-5 block text-xs font-medium text-gray-900" htmlFor={id}>
           {label}
         </label>
       )}

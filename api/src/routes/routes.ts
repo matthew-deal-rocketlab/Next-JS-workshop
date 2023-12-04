@@ -3,7 +3,7 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import { API_PREFIX, ApiStatus, ERROR_TOKEN_EXPIRED } from '../constants';
 import { getFakeUsers, getTime, getVersion } from '../resolvers/utils';
 import { sysCheck } from '../resolvers/syscheck';
-import { authForgotPassword, authLogin, authLogout, authRefresh, authResetPassword, authSignup, authVerify } from '../resolvers/auth';
+import { authForgotPassword, authLogin, authLogout, authRefresh, authResetPassword, authSignup, authVerify, deleteUser } from '../resolvers/auth';
 import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateAPIKey, validateToken } from '../utils/auth';
@@ -28,6 +28,7 @@ resolverMap.set('authResetPassword', authResetPassword);
 resolverMap.set('authRefresh', authRefresh);
 resolverMap.set('authLogin', authLogin);
 resolverMap.set('authLogout', authLogout);
+resolverMap.set('deleteUser', deleteUser);
 
 // user management
 resolverMap.set('userRead', userRead);
