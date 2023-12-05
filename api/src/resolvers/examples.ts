@@ -1,5 +1,5 @@
 import { ERROR_INVALID_CREDENTIALS, ERROR_NO_DB } from "../constants";
-import { dbConnect, dbQuery } from "../services/db";
+import { dbQuery } from "../services/db";
 import { formatCurrency } from "../utils/misc";
 
 export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
@@ -94,15 +94,15 @@ export const fetchInvoicesPages = async (input: JsonQLInput, rc: ResolverContext
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
       WHERE
-        customers.name ILIKE $1 OR
-        customers.email ILIKE $1 OR
-        invoices.amount::text ILIKE $1 OR
-        invoices.date::text ILIKE $1 OR
-        invoices.status ILIKE $1
+        customers.name ILIKE CONCAT('%', $1::text, '%') OR
+        customers.email ILIKE CONCAT('%', $1::text, '%') OR
+        invoices.amount::text ILIKE CONCAT('%', $1::text, '%') OR
+        invoices.date::text ILIKE CONCAT('%', $1::text, '%') OR
+        invoices.status ILIKE CONCAT('%', $1::text, '%')
     `
 
   let result = null;
-  result = await dbQuery(rc.db, queryText, [`%${input}%`]);
+  result = await dbQuery(rc.db, queryText, [input.query]);
 
   if (result.error) return { error: result.error }
   if (!result || result.rowCount == 0) return { error: 'no result' };
@@ -119,9 +119,10 @@ export const fetchFilteredInvoices = async (input: JsonQLInput, rc: ResolverCont
   const useruid = rc.useruid;
   if (!useruid) return ERROR_INVALID_CREDENTIALS;
 
-  const ITEMS_PER_PAGE = 6
-  const offset = (input.page as number - 1) * ITEMS_PER_PAGE
+  const ITEMS_PER_PAGE = 6;
+  const offset = (input.page as number - 1) * ITEMS_PER_PAGE;
 
+  // Updated query with explicit casting to text
   const queryText = `
       SELECT
         invoices.id,
@@ -134,25 +135,24 @@ export const fetchFilteredInvoices = async (input: JsonQLInput, rc: ResolverCont
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
       WHERE
-        customers.name ILIKE $1 OR
-        customers.email ILIKE $1 OR
-        invoices.amount::text ILIKE $1 OR
-        invoices.date::text ILIKE $1 OR
-        invoices.status ILIKE $1
+        customers.name ILIKE CONCAT('%', $1::text, '%') OR
+        customers.email ILIKE CONCAT('%', $1::text, '%') OR
+        invoices.amount::text ILIKE CONCAT('%', $1::text, '%') OR
+        invoices.date::text ILIKE CONCAT('%', $1::text, '%') OR
+        invoices.status ILIKE CONCAT('%', $1::text, '%')
       ORDER BY invoices.date DESC
       LIMIT $2 OFFSET $3
-    `
-    
+    `;
+
   let result = null;
-  result = await dbQuery(rc.db, queryText, [`%${input.query}%`, ITEMS_PER_PAGE, offset]);
+  result = await dbQuery(rc.db, queryText, [input.query, ITEMS_PER_PAGE, offset]);
 
-
-  if (result.error) return { error: result.error }
+  if (result.error) return { error: result.error };
   if (!result || result.rowCount == 0) return { error: 'no result' };
 
-
-  return { result: result.rows }
+  return { result: result.rows };
 }
+
 
 export const fetchInvoiceById = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB;
