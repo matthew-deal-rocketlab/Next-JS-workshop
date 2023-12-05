@@ -6,27 +6,26 @@ export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Pr
   if (!rc.db) return ERROR_NO_DB;
   const useruid = rc.useruid;
   if (!useruid) return ERROR_INVALID_CREDENTIALS;
+
   try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise =  await dbQuery(rc.db, `SELECT COUNT(*) FROM invoices`);
-    const customerCountPromise = await dbQuery(rc.db, `SELECT COUNT(*) FROM customers`);
-    const invoiceStatusPromise = await dbQuery(rc.db, `SELECT
+    const invoiceCountPromise = dbQuery(rc.db, `SELECT COUNT(*) FROM invoices`);
+    const customerCountPromise = dbQuery(rc.db, `SELECT COUNT(*) FROM customers`);
+    const invoiceStatusPromise = dbQuery(rc.db, `SELECT
            SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
            SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
            FROM invoices`);
 
-    const data = await Promise.all([
+    const results = await Promise.allSettled([
       invoiceCountPromise,
       customerCountPromise,
       invoiceStatusPromise,
     ]);
 
-    const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
-    const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
+    // Processing results
+    const numberOfInvoices = results[0].status === 'fulfilled' ? Number(results[0].value.rows[0].count ?? '0') : 'Error';
+    const numberOfCustomers = results[1].status === 'fulfilled' ? Number(results[1].value.rows[0].count ?? '0') : 'Error';
+    const totalPaidInvoices = results[2].status === 'fulfilled' ? formatCurrency(results[2].value.rows[0].paid ?? '0') : 'Error';
+    const totalPendingInvoices = results[2].status === 'fulfilled' ? formatCurrency(results[2].value.rows[0].pending ?? '0') : 'Error';
 
     return {
       result: {
@@ -38,7 +37,7 @@ export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Pr
     };
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to card data.');
+    return { error: 'database error' };
   }
 }
 
