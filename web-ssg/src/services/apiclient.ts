@@ -2,8 +2,9 @@
 
 import { type JsonQLInput } from '@/types'
 
+type ApiStatusType = (typeof ApiStatus)[keyof typeof ApiStatus]
 export interface ApiResponse {
-  status: ApiStatus
+  status: ApiStatusType
   result: JsonQLInput | string | object
 }
 
@@ -16,8 +17,6 @@ export const ApiStatus = {
   NO_NETWORK: -2,
   UNKNOWN: -3,
 } as const
-
-type ApiStatus = typeof ApiStatus[keyof typeof ApiStatus]
 
 const defaultFetchOptions = {
   method: 'POST', // *GET, POST, PUT, DELETE, etc.
