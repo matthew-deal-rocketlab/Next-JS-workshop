@@ -3,11 +3,12 @@ import express, { Express, NextFunction, Request, Response } from 'express';
 import { API_PREFIX, ApiStatus, ERROR_TOKEN_EXPIRED } from '../constants';
 import { getFakeUsers, getTime, getVersion } from '../resolvers/utils';
 import { sysCheck } from '../resolvers/syscheck';
-import { authForgotPassword, authLogin, authLogout, authRefresh, authResetPassword, authSignup, authVerify } from '../resolvers/auth';
+import { authForgotPassword, authLogin, authLogout, authRefresh, authResetPassword, authSignup, authVerify, deleteUser } from '../resolvers/auth';
 import { userRead, userUpdate } from '../resolvers/user';
 import { dbClose, dbConnect } from '../services/db';
 import { validateAPIKey, validateToken } from '../utils/auth';
 import { crudCreate, crudDelete, crudRead, crudUpdate } from '../resolvers/crud';
+import { fetchCardData, fetchRevenue, fetchLatestInvoices, fetchInvoicesPages, fetchFilteredInvoices, fetchInvoiceById, fetchCustomers, createInvoice, updateInvoice, deleteInvoice } from '../resolvers/examples';
 
 const prnt = console.log;
 
@@ -27,6 +28,7 @@ resolverMap.set('authResetPassword', authResetPassword);
 resolverMap.set('authRefresh', authRefresh);
 resolverMap.set('authLogin', authLogin);
 resolverMap.set('authLogout', authLogout);
+resolverMap.set('deleteUser', deleteUser);
 
 // user management
 resolverMap.set('userRead', userRead);
@@ -37,6 +39,18 @@ resolverMap.set('crudCreate', crudCreate);
 resolverMap.set('crudRead', crudRead);
 resolverMap.set('crudUpdate', crudUpdate);
 resolverMap.set('crudDelete', crudDelete);
+
+// examples, streaming, invoices, customers, etc...
+resolverMap.set('fetchCardData', fetchCardData); 
+resolverMap.set('fetchRevenue', fetchRevenue); 
+resolverMap.set('fetchLatestInvoices', fetchLatestInvoices); 
+resolverMap.set('fetchInvoicesPages', fetchInvoicesPages); 
+resolverMap.set('fetchFilteredInvoices', fetchFilteredInvoices); 
+resolverMap.set('fetchInvoiceById', fetchInvoiceById); 
+resolverMap.set('fetchCustomers', fetchCustomers); 
+resolverMap.set('createInvoice', createInvoice); 
+resolverMap.set('updateInvoice', updateInvoice); 
+resolverMap.set('deleteInvoice', deleteInvoice); 
 
 
 const jsonErrorHandler = (
@@ -77,7 +91,7 @@ const addRoutes = (app: Express) => {
   app.get(
     `${API_PREFIX}/healthcheck`,
     (req: Request, res: Response): Response => {
-      prnt(`${req.method} ${req.path}`);
+      prnt('SQL: ', `${req.method} ${req.path}`);
       return res.json({
         status: 'ok',
         time: new Date().toISOString(),

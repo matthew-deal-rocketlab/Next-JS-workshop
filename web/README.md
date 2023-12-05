@@ -1,38 +1,74 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Next JS Web Template
 
-## Getting Started
+The folder structure is as follows
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+```
+web
+ - src
+    - app
+        - auth
+            - forgot-password
+            - login
+            - signup
+        - dashboard
+        - example
+        - global.css
+        - layout.tsx
+        - not-found.tsx
+        - page.tsx
+    - components
+        - examples
+    - services
+    - utils
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Before starting
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+This app was built with Next 14 and Tailwind, there are also a few packages installed for Next 14 examples.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+If you're NOT planing to use Tailwind CSS remove all related packages from the package.json file.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```
+yarn remove tailwindcss prettier-plugin-tailwindcss tailwind-merge clsx pg use-debounce
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Example Folders
 
-## Learn More
+The examples folders provide examples for using the NEW apis within Next JS 14
 
-To learn more about Next.js, take a look at the following resources:
+When using this template to create a new project, you should remove the example folders from this app before pushing to git.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The examples include:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- The new App router
+  - page.tsx
+  - layout.tsx
+- Server components
+- Data fetching via Server components
+- Streaming data to client side components via Suspense
+- New Next JS API's like useRouter, useSearchParams, usePathname for navigation and query params
+- Custom 404 pages
 
-## Deploy on Vercel
+## Dashboard Folder
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The dashboard folder contains a very minimal dashboard example. It is a good starting point for building a dashboard.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Tests
+
+This Template is making use of Cypress for E2E tests
+
+To run the tests use the following command:
+
+```
+npx cypress open
+```
+
+This will open the Cypress UI, from there you can run the tests.
+
+If you want to run the tests in headless mode use the following command
+
+```
+npx cypress run
+```
+
+To write new tests, create a new file within the cypress/e2e folder.

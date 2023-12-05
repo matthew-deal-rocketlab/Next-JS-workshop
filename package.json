@@ -1,0 +1,11 @@
+{
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "prettier": "^3.0.3"
+  }
+}

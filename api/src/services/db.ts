@@ -30,7 +30,7 @@ export const dbQuery = async (
   sql: string,
   values?: any[],
 ): Promise<DBResult> => {
-  if (IS_DEBUG) console.log(sql);
+  if (IS_DEBUG) console.log('debug output: ', sql);
   try {
     if (values) {
       if (IS_DEBUG) console.log(values);

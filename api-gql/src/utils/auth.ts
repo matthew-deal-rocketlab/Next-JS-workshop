@@ -13,6 +13,7 @@ import {
 import { btoa, atob } from './converters'
 import { JSON_parse, JSON_stringify, uuidv4 } from './misc'
 import { Request } from 'express'
+import dateToSeconds from './date-to-seconds'
 
 export type JWTPayload = {
   sub: string
@@ -94,9 +95,9 @@ export const validateToken = (req: Request): FnResult => {
 
   // check date
   const now = new Date()
-  const expiry = new Date(payload.iat * 1000)
-  expiry.setSeconds(expiry.getSeconds() + JWT_EXPIRY)
-  if (now > expiry) return ERROR_TOKEN_EXPIRED
+  const currentTime = dateToSeconds(now);
+  const expiry = payload.exp
+  if (currentTime > expiry) return ERROR_TOKEN_EXPIRED
 
   // check signature
   const calculated = generateJWT(payload, JWT_SECRET)
