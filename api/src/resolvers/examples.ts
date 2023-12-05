@@ -6,14 +6,13 @@ export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Pr
   if (!rc.db) return ERROR_NO_DB;
   const useruid = rc.useruid;
   if (!useruid) return ERROR_INVALID_CREDENTIALS;
-  const sql = await dbConnect();
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql.query(`SELECT COUNT(*) FROM invoices`);
-    const customerCountPromise = sql.query(`SELECT COUNT(*) FROM customers`);
-    const invoiceStatusPromise = sql.query(`SELECT
+    const invoiceCountPromise =  await dbQuery(rc.db, `SELECT COUNT(*) FROM invoices`);
+    const customerCountPromise = await dbQuery(rc.db, `SELECT COUNT(*) FROM customers`);
+    const invoiceStatusPromise = await dbQuery(rc.db, `SELECT
            SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
            SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
            FROM invoices`);
