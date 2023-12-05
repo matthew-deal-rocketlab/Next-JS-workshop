@@ -7,7 +7,11 @@ import { ApiStatus } from '@/services/apiclient'
 import { SubmitResultType } from '@/types.d'
 
 const fetchInvoiceByIdData = async (id: string) => {
-  const invoiceData = await apiPost('/jsonql', { fetchInvoiceById: {} })
+  const invoiceData = await apiPost('/jsonql', {
+    fetchInvoiceById: {
+      query: id,
+    },
+  })
 
   if (invoiceData.status !== ApiStatus.OK) {
     return { text: 'Error logging in', type: SubmitResultType.error }

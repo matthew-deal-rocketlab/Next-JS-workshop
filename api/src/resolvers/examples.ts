@@ -170,7 +170,7 @@ export const fetchInvoiceById = async (input: JsonQLInput, rc: ResolverContext):
   `
     
   let result = null;
-  result = await dbQuery(rc.db, queryText, [input]);
+  result = await dbQuery(rc.db, queryText, [input.query]);
 
   if (result.error) return { error: result.error }
   if (!result || result.rowCount == 0) return { error: 'no result' };
