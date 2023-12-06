@@ -7,7 +7,6 @@ module.exports = {
     '@typescript-eslint/consistent-type-definitions': 'off',
     'prettier/prettier': 'error',
     '@typescript-eslint/strict-boolean-expressions': 'off',
-    '@typescript-eslint/no-unused-vars': 'warn',
   },
   parserOptions: {
     project: './tsconfig.json',
