@@ -67,6 +67,12 @@ if [ "$1" = "web-build" ]; then cd web; pnpm build ; EXITCODE=$? ; cd .. ; exit 
 if [ "$1" = "web-start" ]; then cd web; PORT=$WEB_PORT pnpm start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 if [ "$1" = "web-check" ]; then cd web; pnpm next lint ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
+# Web-ssg dashboard commands
+if [ "$1" = "ssg-dev" ]; then cd web-ssg; PORT=$WEB_PORT pnpm dev ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssg-build" ]; then cd web-ssg; pnpm build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssg-start" ]; then cd web-ssg; PORT=$WEB_PORT pnpm start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssg-check" ]; then cd web-sgg; pnpm next lint ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+
 # Start / stop all components
 if [ "$1" = "start-all" ]; then
   # Start database
@@ -76,6 +82,9 @@ if [ "$1" = "start-all" ]; then
   ./run dt-start
   # start Web dashboard
   setLAUNCH_IN_TAB Grass "cd $PWD ; ./run web-dev"
+  osascript -e "$LAUNCH_IN_TAB"
+  # start Web dashboard
+  setLAUNCH_IN_TAB Grass "cd $PWD ; ./run ssg-dev"
   osascript -e "$LAUNCH_IN_TAB"
   # start API
   sleep 1

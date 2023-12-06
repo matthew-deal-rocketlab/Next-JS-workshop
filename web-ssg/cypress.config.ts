@@ -8,7 +8,7 @@ export default defineConfig({
     SIGNUP_URL: 'auth/signup',
   },
   e2e: {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:5003',
     experimentalStudio: true,
     setupNodeEvents(on, config) {
       // implement node event listeners here
