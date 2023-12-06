@@ -1,33 +1,36 @@
-import { ERROR_INVALID_CREDENTIALS, ERROR_NO_DB } from "../constants";
-import { dbConnect, dbQuery } from "../services/db";
-import { formatCurrency } from "../utils/misc";
+import { ERROR_INVALID_CREDENTIALS, ERROR_NO_DB } from '../constants'
+import { dbConnect, dbQuery } from '../services/db'
+import { formatCurrency } from '../utils/misc'
 
-export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
-  if (!useruid) return ERROR_INVALID_CREDENTIALS;
-  const sql = await dbConnect();
+export const fetchCardData = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
+  const sql = await dbConnect()
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql.query(`SELECT COUNT(*) FROM invoices`);
-    const customerCountPromise = sql.query(`SELECT COUNT(*) FROM customers`);
+    const invoiceCountPromise = sql.query(`SELECT COUNT(*) FROM invoices`)
+    const customerCountPromise = sql.query(`SELECT COUNT(*) FROM customers`)
     const invoiceStatusPromise = sql.query(`SELECT
            SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
            SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-           FROM invoices`);
+           FROM invoices`)
 
     const data = await Promise.all([
       invoiceCountPromise,
       customerCountPromise,
       invoiceStatusPromise,
-    ]);
+    ])
 
-    const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
-    const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
+    const numberOfInvoices = Number(data[0].rows[0].count ?? '0')
+    const numberOfCustomers = Number(data[1].rows[0].count ?? '0')
+    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0')
+    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0')
 
     return {
       result: {
@@ -35,35 +38,41 @@ export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Pr
         numberOfInvoices,
         totalPaidInvoices,
         totalPendingInvoices,
-      }
-    };
+      },
+    }
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to card data.');
+    console.error('Database Error:', error)
+    throw new Error('Failed to card data.')
   }
 }
 
-export const fetchRevenue = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
-  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+export const fetchRevenue = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const queryText = 'SELECT * FROM revenue'
-  let result = null;
-  result = await dbQuery(rc.db, queryText);
+  let result = null
+  result = await dbQuery(rc.db, queryText)
 
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount == 0) return { error: 'no result' };
+  if (!result || result.rowCount == 0) return { error: 'no result' }
 
-  const revenue = result.rows;
+  const revenue = result.rows
 
-  return { result: revenue } as Revenue;
+  return { result: revenue } as Revenue
 }
 
-export const fetchLatestInvoices = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
-  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+export const fetchLatestInvoices = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const queryText = `
         SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -72,11 +81,11 @@ export const fetchLatestInvoices = async (input: JsonQLInput, rc: ResolverContex
         ORDER BY invoices.date DESC
         LIMIT 5
       `
-  let result = null;
-  result = await dbQuery(rc.db, queryText);
+  let result = null
+  result = await dbQuery(rc.db, queryText)
 
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount == 0) return { error: 'no result' };
+  if (!result || result.rowCount == 0) return { error: 'no result' }
 
   const latestInvoices: LatestInvoice[] = result.rows.map(invoice => ({
     ...invoice,
@@ -86,10 +95,13 @@ export const fetchLatestInvoices = async (input: JsonQLInput, rc: ResolverContex
   return { result: latestInvoices }
 }
 
-export const fetchInvoicesPages = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
-  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+export const fetchInvoicesPages = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const queryText = `
       SELECT COUNT(*)
@@ -103,11 +115,11 @@ export const fetchInvoicesPages = async (input: JsonQLInput, rc: ResolverContext
         invoices.status ILIKE $1
     `
 
-  let result = null;
-  result = await dbQuery(rc.db, queryText, [`%${input}%`]);
+  let result = null
+  result = await dbQuery(rc.db, queryText, [`%${input}%`])
 
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount == 0) return { error: 'no result' };
+  if (!result || result.rowCount == 0) return { error: 'no result' }
 
   const ITEMS_PER_PAGE = 6
   const totalPages = Math.ceil(Number(result.rows[0].count) / ITEMS_PER_PAGE)
@@ -115,14 +127,16 @@ export const fetchInvoicesPages = async (input: JsonQLInput, rc: ResolverContext
   return { result: totalPages }
 }
 
-
-export const fetchFilteredInvoices = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
-  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+export const fetchFilteredInvoices = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const ITEMS_PER_PAGE = 6
-  const offset = (input.page as number - 1) * ITEMS_PER_PAGE
+  const offset = ((input.page as number) - 1) * ITEMS_PER_PAGE
 
   const queryText = `
       SELECT
@@ -144,22 +158,23 @@ export const fetchFilteredInvoices = async (input: JsonQLInput, rc: ResolverCont
       ORDER BY invoices.date DESC
       LIMIT $2 OFFSET $3
     `
-    
-  let result = null;
-  result = await dbQuery(rc.db, queryText, [`%${input.query}%`, ITEMS_PER_PAGE, offset]);
 
+  let result = null
+  result = await dbQuery(rc.db, queryText, [`%${input.query}%`, ITEMS_PER_PAGE, offset])
 
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount == 0) return { error: 'no result' };
-
+  if (!result || result.rowCount == 0) return { error: 'no result' }
 
   return { result: result.rows }
 }
 
-export const fetchInvoiceById = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
-  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+export const fetchInvoiceById = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const queryText = `
     SELECT
@@ -170,12 +185,12 @@ export const fetchInvoiceById = async (input: JsonQLInput, rc: ResolverContext):
     FROM invoices
     WHERE id = $1;
   `
-    
-  let result = null;
-  result = await dbQuery(rc.db, queryText, [input]);
+
+  let result = null
+  result = await dbQuery(rc.db, queryText, [input])
 
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount == 0) return { error: 'no result' };
+  if (!result || result.rowCount == 0) return { error: 'no result' }
 
   const invoice = result.rows.map(invoice => ({
     ...invoice,
@@ -185,10 +200,13 @@ export const fetchInvoiceById = async (input: JsonQLInput, rc: ResolverContext):
   return { result: invoice[0] }
 }
 
-export const fetchCustomers = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
-  if (!useruid) return ERROR_INVALID_CREDENTIALS;
+export const fetchCustomers = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const queryText = `
     SELECT
@@ -197,21 +215,24 @@ export const fetchCustomers = async (input: JsonQLInput, rc: ResolverContext): P
     FROM customers
     ORDER BY name ASC
   `
-    
-  let result = null;
-  result = await dbQuery(rc.db, queryText);
+
+  let result = null
+  result = await dbQuery(rc.db, queryText)
 
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount == 0) return { error: 'no result' };
+  if (!result || result.rowCount == 0) return { error: 'no result' }
 
   const customers: CustomerField[] = result.rows
 
   return { result: customers }
 }
 
-export const createInvoice = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
+export const createInvoice = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const queryText = `
@@ -219,19 +240,28 @@ export const createInvoice = async (input: JsonQLInput, rc: ResolverContext): Pr
     VALUES ($1, $2, $3, $4, $5)
     RETURNING id;
   `
-    
-  let result = null;
-  result = await dbQuery(rc.db, queryText, [input.invoiceId, input.customerId, input.amountInCents, input.status, input.date]);
+
+  let result = null
+  result = await dbQuery(rc.db, queryText, [
+    input.invoiceId,
+    input.customerId,
+    input.amountInCents,
+    input.status,
+    input.date,
+  ])
 
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount == 0) return { error: 'no result' };
+  if (!result || result.rowCount == 0) return { error: 'no result' }
 
   return { result: result.rows[0] }
 }
 
-export const updateInvoice = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
+export const updateInvoice = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const queryText = `
@@ -239,28 +269,36 @@ export const updateInvoice = async (input: JsonQLInput, rc: ResolverContext): Pr
     SET customer_id = $1, amount = $2, status = $3
     WHERE id = $4
   `
-    
-  let result = null;
-  result = await dbQuery(rc.db, queryText, [input.customerId, input.amountInCents, input.status, input.id]);
+
+  let result = null
+  result = await dbQuery(rc.db, queryText, [
+    input.customerId,
+    input.amountInCents,
+    input.status,
+    input.id,
+  ])
 
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount == 0) return { error: 'no result' };
+  if (!result || result.rowCount == 0) return { error: 'no result' }
 
   return { result: result.rows[0] }
 }
 
-export const deleteInvoice = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
-  if (!rc.db) return ERROR_NO_DB;
-  const useruid = rc.useruid;
+export const deleteInvoice = async (
+  input: JsonQLInput,
+  rc: ResolverContext,
+): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const queryText = `DELETE FROM invoices WHERE id = $1`
-    
-  let result = null;
-  result = await dbQuery(rc.db, queryText, [input.id]);
+
+  let result = null
+  result = await dbQuery(rc.db, queryText, [input.id])
 
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount == 0) return { error: 'no result' };
+  if (!result || result.rowCount == 0) return { error: 'no result' }
 
   return { result: result.rows[0] }
 }

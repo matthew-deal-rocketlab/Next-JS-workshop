@@ -20,12 +20,12 @@
     "noUncheckedIndexedAccess": true,
     "allowUnreachableCode": false,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
+    "experimentalDecorators": true
     // "noImplicitAny": false,
   },
   "include": ["src", "../_docs/gmail.js"],
   "exclude": ["node_modules", "tests"],
-  "typeRoots": ["./src"], // "./node_modules/@types", 
+  "typeRoots": ["./src"], // "./node_modules/@types",
   "types": ["express", "node", "pg"],
   "ts-node": {
     "transpileOnly": true,

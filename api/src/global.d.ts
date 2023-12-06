@@ -1,28 +1,23 @@
-import { Client } from 'pg';
+import { Client } from 'pg'
 
 declare global {
   type JsonQLInput = {
-    [key: string]:
-    | string
-    | number
-    | boolean
-    | Array<string | number | boolean>
-    | JsonQLInput;
-  };
+    [key: string]: string | number | boolean | Array<string | number | boolean> | JsonQLInput
+  }
 
   type JsonQLOutput = {
-    error?: string;
-    result?: string | number | boolean | object | JsonQLInput | JsonQLInput[];
-  };
+    error?: string
+    result?: string | number | boolean | object | JsonQLInput | JsonQLInput[]
+  }
 
   interface ResolverContext {
-    userid: number;
-    useruid: string;
-    db: DBConnection | null;
+    userid: number
+    useruid: string
+    db: DBConnection | null
   }
 
   interface StringMap {
-    [key: string]: string | number;
+    [key: string]: string | number
   }
 
   interface StringStringMap {
@@ -31,21 +26,21 @@ declare global {
 
   // Generic type that returns a string/string map for an error or a string as a result
   interface FnResult {
-    error?: string;
-    result?: string | StringMap;
+    error?: string
+    result?: string | StringMap
   }
 
   // interface for returning simple success values
   interface OkString {
-    value: string;
+    value: string
   }
   interface OkNumber {
-    value: number;
+    value: number
   }
 
   // Site items
   interface ISiteItem {
-    url: string;
-    timeout: number;
+    url: string
+    timeout: number
   }
 }
