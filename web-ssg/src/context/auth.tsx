@@ -1,8 +1,16 @@
 'use client'
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { API_BASE_URL, API_STATIC_KEY, KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
 import { ApiStatus, jsonPost } from '@/services/apiclient'
+import { checkTokenStillValid } from '@/utils/check-token'
 
 type AuthProviderProps = {
   children: ReactNode
@@ -15,16 +23,29 @@ type AuthContextType = {
   refreshToken: () => Promise<void>
 }
 
+type AuthRefreshResult = {
+  authRefresh?: {
+    token?: string
+    refreshToken?: string
+  }
+}
+
+/*
+ * AuthContext is used to provide authentication status to the app.
+ * It also provides methods to set and clear tokens.
+ * It also checks the token validity on mount and refreshes it if needed.
+ * It is used by the useAuth hook.
+ */
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setAuthenticated] = useState<boolean | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-
   const router = useRouter()
   const pathname = usePathname()
 
-  const refreshToken = async () => {
+  const refreshToken = useCallback(async () => {
     const currentRefreshToken = localStorage.getItem(KEY_REFRESH_TOKEN)
     if (!currentRefreshToken) return
 
@@ -40,39 +61,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       body: JSON.stringify(payload),
     })
 
-    if (apiResponse.status !== ApiStatus.OK || apiResponse.result === null) return ''
+    if (apiResponse.status !== ApiStatus.OK || apiResponse.result === null) return
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const authRefreshResult = apiResponse.result.authRefresh
+    const result = apiResponse.result as AuthRefreshResult
+    const authRefreshResult = result.authRefresh
     if (typeof authRefreshResult === 'object' && authRefreshResult.token) {
       localStorage.setItem(KEY_JWT_TOKEN, authRefreshResult.token)
-
       if (authRefreshResult.refreshToken !== currentRefreshToken) {
-        localStorage.setItem(KEY_REFRESH_TOKEN, authRefreshResult.refreshToken)
+        localStorage.setItem(KEY_REFRESH_TOKEN, authRefreshResult.refreshToken as string)
       }
-
-      return authRefreshResult.token
     }
-
-    return ''
-  }
+  }, [])
 
   useEffect(() => {
     const jwtToken = localStorage.getItem(KEY_JWT_TOKEN)
-    const refreshToken = localStorage.getItem(KEY_REFRESH_TOKEN)
-    const authStatus = !!jwtToken && !!refreshToken
-    setAuthenticated(authStatus)
+    const refreshTokenValue = localStorage.getItem(KEY_REFRESH_TOKEN)
 
-    console.log('refreshToken', refreshToken)
-    console.log('jwtToken', jwtToken)
-    console.log('authStatus', authStatus)
+    if (jwtToken && refreshTokenValue && !checkTokenStillValid(jwtToken)) {
+      refreshToken().catch(err => {
+        console.error('Error refreshing token: ', err)
+      })
+    }
+
+    const authStatus = !!jwtToken && !!refreshTokenValue
+    setAuthenticated(authStatus)
 
     if (!authStatus && !pathname.startsWith('/auth')) {
       router.push('/auth/login')
     }
     setIsLoading(false)
-  }, [router, pathname])
+  }, [router, pathname, refreshToken])
 
   const setTokens = (jwtToken: string, refreshToken: string) => {
     localStorage.setItem(KEY_JWT_TOKEN, jwtToken)

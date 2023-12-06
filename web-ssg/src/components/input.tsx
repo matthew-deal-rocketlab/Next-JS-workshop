@@ -12,7 +12,7 @@ interface InputProps {
 }
 
 const Input = (props: InputProps) => {
-  const { id, label, name, type, placeholder, value, formErrors, onChange } = props
+  const { id, label, name, type, placeholder, formErrors, onChange } = props
   return (
     <div>
       {label && (

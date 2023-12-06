@@ -36,15 +36,15 @@ const defaultFetchOptions = {
 const jsonFetch = async (url: string, options: RequestInit): Promise<ApiResponse> => {
   const fetchOptions = { ...defaultFetchOptions, ...options }
 
-  console.log(`${new Date()} ${options.method}: ${url}`)
-  console.log(fetchOptions)
-
   let response: Response
   try {
     response = await fetch(url, { ...fetchOptions })
   } catch (error) {
     console.log('>>> error:', error)
-    return { status: ApiStatus.UNKNOWN, result: `unknown error: ${error}` }
+    return {
+      status: ApiStatus.UNKNOWN,
+      result: error instanceof Error ? `unknown error: ${error.message}` : 'unknown error',
+    }
   }
   // console.log(`${new Date()} >>> response`, response)
 

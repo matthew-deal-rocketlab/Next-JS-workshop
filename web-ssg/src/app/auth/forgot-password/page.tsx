@@ -6,7 +6,6 @@ import { type SubmitResult, SubmitResultType, type IAlertMessage } from '@/types
 import { apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
 import { isEmail } from '@/utils/validators'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/button'
 import Link from 'next/link'
 import Alert from '@/components/alert'
@@ -60,7 +59,6 @@ const submitFormData = async (data: FormFields): Promise<SubmitResult> => {
 }
 
 export default function ForgotPassword() {
-  const { push } = useRouter()
   const [formErrors, setFormErrors] = React.useState(initialFormFields)
   const [alert, setAlert] = React.useState<IAlertMessage>({
     message: '',
@@ -91,9 +89,6 @@ export default function ForgotPassword() {
       // Handle error
       console.error(error)
     }
-  }
-  const onAlertClose = () => {
-    setAlert({ message: '', type: 'success' })
   }
 
   return (

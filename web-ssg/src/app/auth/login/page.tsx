@@ -18,6 +18,13 @@ interface FormFields {
   pass: string
 }
 
+type AuthLoginResult = {
+  authLogin: {
+    token: string
+    refreshToken: string
+  }
+}
+
 const initialFormFields: FormFields = {
   email: '',
   pass: '',
@@ -65,9 +72,16 @@ export default function LoginForm() {
       return { text: 'Error logging in', type: SubmitResultType.error }
     }
 
-    const authLogin = loginResult.result.authLogin
-    if (!(authLogin.token && authLogin.token.length > 20)) {
-      return { text: `${authLogin}`, type: SubmitResultType.error }
+    const result = loginResult.result as AuthLoginResult
+    const authLogin = result.authLogin
+    // First, check if authLogin is a string, which indicates an error message.
+    if (typeof authLogin === 'string') {
+      return { text: authLogin, type: SubmitResultType.error }
+    }
+
+    // Next, check if the token is valid.
+    if (!authLogin.token || authLogin.token.length <= 20) {
+      return { text: 'Invalid login token received.', type: SubmitResultType.error }
     }
 
     // Use setTokens from context to update auth state
@@ -100,10 +114,6 @@ export default function LoginForm() {
     setAlert({ message: result.text, type: 'success' })
     await sleep(2000)
     push('/dashboard')
-  }
-
-  const onAlertClose = () => {
-    setAlert({ message: '', type: 'success' })
   }
 
   return (

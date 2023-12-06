@@ -1,5 +1,5 @@
-import clsx, { ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import clsx, { type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 // This function combines clsx and tailwind-merge.
 // This fixed a few issues.
@@ -13,5 +13,5 @@ import { twMerge } from 'tailwind-merge';
 // If you're using this template, and are removing tailing, Delete this file.
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
