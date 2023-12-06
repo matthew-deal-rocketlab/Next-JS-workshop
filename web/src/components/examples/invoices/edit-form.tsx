@@ -1,6 +1,6 @@
 'use client'
 
-import { CustomerField, InvoiceForm } from '@/examples/types/types'
+import { type CustomerField, type InvoiceForm } from '@/examples/types/types'
 import {
   CheckIcon,
   ClockIcon,
