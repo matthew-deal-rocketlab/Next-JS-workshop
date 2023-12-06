@@ -12,7 +12,7 @@ const fetchCardData = async () => {
   const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers } =
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    cardData?.result?.fetchCardData
+    cardData.result.fetchCardData
 
   return {
     totalPaidInvoices,
