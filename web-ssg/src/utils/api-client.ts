@@ -13,11 +13,6 @@ import { refreshTokenHelper } from './refreshToken'
  */
 
 export const apiPost = async (url: string, data: object): Promise<ApiResponse> => {
-  // Function to refresh token
-  const refreshToken = async () => {
-    await refreshTokenHelper()
-  }
-
   const jwtToken = localStorage.getItem(KEY_JWT_TOKEN)
   const headers = {
     Accept: 'application/json',
