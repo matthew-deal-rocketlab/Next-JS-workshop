@@ -1,11 +1,10 @@
 # rlwm
 
-
 ## Quick setup
 
 ### Install Docker if you don't have it already.
 
- [Docker install](https://www.docker.com/get-started/)
+[Docker install](https://www.docker.com/get-started/)
 
 ```
 # Copy sample configuration files
@@ -14,8 +13,15 @@ cp env.api.sample .env
 # install node modules
 cd api
 yarn install
+
+The next step depends on if you're using the ssg or ssr template
+SSR:
 cd ../web
 yarn install
+
+SSG:
+cd ../web-ssg
+
 cd ..
 
 # Start database and initialize it
@@ -41,8 +47,11 @@ cp env.directus.sample ./directus/_data/opt/app/.env
 # Run the api
 ./run api-dev
 
-# Run the web interface
-./run web-dev
+# For the SSR Template, Run the web interface
+./run ssr-dev
+
+# For the SSG Template, Run the web interface
+./run ssg-dev
 
 # Run Directus - optional
 ./run dt-start
@@ -50,16 +59,14 @@ cp env.directus.sample ./directus/_data/opt/app/.env
 
 ## Local dev URL access
 
-* Web interface
-http://localhost:5000
+- Web interface
+  http://localhost:5003
 
-* API
-http://localhost:5001/api/healthcheck
+- API
+  http://localhost:5001/api/healthcheck
 
-* Directus
-http://localhost:5002/admin
-
-
+- Directus
+  http://localhost:5002/admin
 
 ## Backup database
 

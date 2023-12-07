@@ -2,6 +2,7 @@
 
 import { API_BASE_URL, API_STATIC_KEY, KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
 import { jsonPost, type ApiResponse, ApiStatus } from '@/services/apiclient'
+import { refreshTokenHelper } from './refreshToken'
 
 type AuthRefreshResponse = {
   authRefresh?: {
@@ -21,33 +22,7 @@ type AuthRefreshResponse = {
 export const apiPost = async (url: string, data: object): Promise<ApiResponse> => {
   // Function to refresh token
   const refreshToken = async () => {
-    const currentRefreshToken = localStorage.getItem(KEY_REFRESH_TOKEN)
-    if (!currentRefreshToken) return false
-
-    const headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'x-api-key': API_STATIC_KEY,
-    }
-
-    const payload = { authRefresh: { refreshToken: currentRefreshToken } }
-    const refreshResponse = await jsonPost(`${API_BASE_URL}/jsonql`, {
-      headers,
-      body: JSON.stringify(payload),
-    })
-
-    if (refreshResponse.status === ApiStatus.OK) {
-      const result = refreshResponse.result as AuthRefreshResponse
-      if (result.authRefresh?.token) {
-        localStorage.setItem(KEY_JWT_TOKEN, result.authRefresh.token)
-        if (result.authRefresh.refreshToken) {
-          localStorage.setItem(KEY_REFRESH_TOKEN, result.authRefresh.refreshToken)
-        }
-        return true
-      }
-    }
-
-    return false
+    await refreshTokenHelper()
   }
 
   const jwtToken = localStorage.getItem(KEY_JWT_TOKEN)
