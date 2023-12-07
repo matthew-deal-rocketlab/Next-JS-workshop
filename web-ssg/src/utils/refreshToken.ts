@@ -34,5 +34,8 @@ export async function refreshTokenHelper() {
     if (authRefreshResult.refreshToken !== currentRefreshToken) {
       localStorage.setItem(KEY_REFRESH_TOKEN, authRefreshResult.refreshToken as string)
     }
+    return true
   }
+
+  return false
 }

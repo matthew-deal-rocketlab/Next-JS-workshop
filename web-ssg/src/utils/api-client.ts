@@ -1,15 +1,8 @@
 'use client'
 
-import { API_BASE_URL, API_STATIC_KEY, KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
-import { jsonPost, type ApiResponse, ApiStatus } from '@/services/apiclient'
+import { API_BASE_URL, API_STATIC_KEY, KEY_JWT_TOKEN } from '@/constants'
+import { jsonPost, type ApiResponse } from '@/services/apiclient'
 import { refreshTokenHelper } from './refreshToken'
-
-type AuthRefreshResponse = {
-  authRefresh?: {
-    token?: string
-    refreshToken?: string
-  }
-}
 
 /*
  * This is a wrapper around the jsonPost function from the apiclient.
@@ -41,7 +34,7 @@ export const apiPost = async (url: string, data: object): Promise<ApiResponse> =
   // This is an additional status check, even know we are checking this in the AuthProvider.
   // This checks when we call an API endpoint directly, without using the AuthProvider.
   if (apiResponse.status === 419) {
-    const refreshed = await refreshToken()
+    const refreshed = await refreshTokenHelper()
     if (refreshed) {
       return await apiPost(url, data)
     }
