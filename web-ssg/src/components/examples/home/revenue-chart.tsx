@@ -1,32 +1,46 @@
-import React from 'react'
+'use client'
+
+import React, { useEffect, useState } from 'react'
 import { generateYAxis } from '@/examples/utils/helpers'
 import { ApiStatus } from '@/services/apiclient'
-import { SubmitResultType } from '@/types.d'
 import { apiPost } from '@/utils/api-client'
 import { type Revenue } from '@/examples/types/types'
 
-const fetchRevenueData = async () => {
-  const revenueData = await apiPost('/jsonql', { fetchRevenue: {} })
+export default function RevenueChart() {
+  const [revenueData, setRevenueData] = useState<Revenue[]>([])
+  const [loading, setLoading] = useState(true)
+  // const { refreshToken } = useAuth()
 
-  if (revenueData.status !== ApiStatus.OK) {
-    return { text: 'Error logging in', type: SubmitResultType.error }
-  }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const { fetchRevenue } = revenueData?.result
+  useEffect(() => {
+    const fetchRevenueData = async () => {
+      const response = await apiPost('/jsonql', { fetchRevenue: {} })
 
-  // console.log('fetchRevenue', revenueData)
+      if (response.status === ApiStatus.OK) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const { fetchRevenue } = response.result
 
-  return fetchRevenue
-}
+        setRevenueData(fetchRevenue)
+      } else {
+        console.error('Error fetching revenue data:', response)
+      }
 
-export default async function RevenueChart() {
-  const fetchRevenue = await fetchRevenueData()
-  const { yAxisLabels, topLabel } = generateYAxis(fetchRevenue)
-  const revenue: Revenue[] = fetchRevenue
+      setLoading(false)
+    }
+
+    fetchRevenueData().catch(console.error)
+  }, [])
+
+  const { yAxisLabels, topLabel } = generateYAxis(revenueData)
   const chartHeight = 350
 
-  if (!revenue || revenue.length === 0) {
+  const revenue: Revenue[] = revenueData
+
+  if (loading) {
+    return <p>Loading...</p>
+  }
+
+  if (!revenueData || revenueData.length === 0) {
     return <p className="mt-4 text-gray-400">No data available.</p>
   }
 

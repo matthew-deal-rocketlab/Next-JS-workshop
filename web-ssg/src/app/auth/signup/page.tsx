@@ -27,11 +27,6 @@ const initialFormFields: FormFields = {
   confirmPass: '',
 }
 
-interface ColoredSpanProps {
-  type: SubmitResultType
-  children: string
-}
-
 const validateInputs = (inputs: FormFields): FormFields | null => {
   let hasErrors = false
   const result = { ...initialFormFields }
@@ -105,10 +100,6 @@ export default function SignupForm() {
     type: SubmitResultType.success,
   })
   const [formErrors, setFormErrors] = useState<FormFields>(initialFormFields)
-
-  const onClickCancel = (event: React.FormEvent<HTMLFormElement>) => {
-    push('/login')
-  }
 
   const onClickContinue = (event: React.FormEvent<HTMLFormElement>) => {
     // prevent default form submission

@@ -11,12 +11,18 @@ import React from 'react'
 import Link from 'next/link'
 import Alert from '@/components/alert'
 import Input from '@/components/input'
-import { cookieStoreSet, cookieStoreRemove } from '@/services/cookie-store'
 import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
 
 interface FormFields {
   email: string
   pass: string
+}
+
+type AuthLoginResult = {
+  authLogin: {
+    token: string
+    refreshToken: string
+  }
 }
 
 const initialFormFields: FormFields = {
@@ -50,35 +56,6 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
   return hasErrors ? result : null
 }
 
-const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
-  // Clear login tokens
-  cookieStoreRemove(KEY_REFRESH_TOKEN)
-  cookieStoreRemove(KEY_JWT_TOKEN)
-
-  const payload = { authLogin: { ...data } }
-  const loginResult = await apiPost('/jsonql', payload)
-  if (loginResult.status !== ApiStatus.OK) {
-    return { text: 'Error logging in', type: SubmitResultType.error }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const authLogin = loginResult.result.authLogin
-
-  if (!(authLogin.token && authLogin.token.length > 20)) {
-    return { text: `${authLogin}`, type: SubmitResultType.error }
-  }
-
-  // Save login token
-  await cookieStoreSet(KEY_REFRESH_TOKEN, authLogin.refreshToken)
-  await cookieStoreSet(KEY_JWT_TOKEN, authLogin.token)
-
-  return {
-    text: 'Welcome! You will be redirected to the dashboard shortly',
-    type: SubmitResultType.success,
-  }
-}
-
 export default function LoginForm() {
   const { push } = useRouter()
   const [formErrors, setFormErrors] = React.useState(initialFormFields)
@@ -86,6 +63,39 @@ export default function LoginForm() {
     message: '',
     type: 'success',
   })
+
+  const setTokens = (jwtToken: string, refreshToken: string) => {
+    localStorage.setItem(KEY_JWT_TOKEN, jwtToken)
+    localStorage.setItem(KEY_REFRESH_TOKEN, refreshToken)
+  }
+
+  const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
+    const payload = { authLogin: { ...data } }
+    const loginResult = await apiPost('/jsonql', payload)
+    if (loginResult.status !== ApiStatus.OK) {
+      return { text: 'Error logging in', type: SubmitResultType.error }
+    }
+
+    const result = loginResult.result as AuthLoginResult
+    const authLogin = result.authLogin
+    // First, check if authLogin is a string, which indicates an error message.
+    if (typeof authLogin === 'string') {
+      return { text: authLogin, type: SubmitResultType.error }
+    }
+
+    // Next, check if the token is valid.
+    if (!authLogin.token || authLogin.token.length <= 20) {
+      return { text: 'Invalid login token received.', type: SubmitResultType.error }
+    }
+
+    // Use setTokens from context to update auth state
+    setTokens(authLogin.token, authLogin.refreshToken)
+
+    return {
+      text: 'Welcome! You will be redirected to the dashboard shortly',
+      type: SubmitResultType.success,
+    }
+  }
 
   const onClickLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -108,10 +118,6 @@ export default function LoginForm() {
     setAlert({ message: result.text, type: 'success' })
     await sleep(2000)
     push('/dashboard')
-  }
-
-  const onAlertClose = () => {
-    setAlert({ message: '', type: 'success' })
   }
 
   return (

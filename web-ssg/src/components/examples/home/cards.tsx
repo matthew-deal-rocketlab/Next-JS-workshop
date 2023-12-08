@@ -1,37 +1,46 @@
-import React from 'react'
+'use client'
+
+import React, { useEffect, useState } from 'react'
 import { apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
-import { SubmitResultType } from '@/types.d'
 
-const fetchCardData = async () => {
-  const cardData = await apiPost('/jsonql', { fetchCardData: {} })
+export default function Cards() {
+  const [cardData, setCardData] = useState({
+    totalPaidInvoices: 0,
+    totalPendingInvoices: 0,
+    numberOfInvoices: 0,
+    numberOfCustomers: 0,
+  })
 
-  if (cardData.status !== ApiStatus.OK) {
-    return { text: 'Error logging in', type: SubmitResultType.error }
-  }
-  const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers } =
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    cardData?.result?.fetchCardData
+  useEffect(() => {
+    const fetchCardData = async () => {
+      const response = await apiPost('/jsonql', { fetchCardData: {} })
 
-  return {
-    totalPaidInvoices,
-    totalPendingInvoices,
-    numberOfInvoices,
-    numberOfCustomers,
-  }
-}
+      if (response.status === ApiStatus.OK) {
+        const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers } =
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          response.result.fetchCardData
+        setCardData({
+          totalPaidInvoices,
+          totalPendingInvoices,
+          numberOfInvoices,
+          numberOfCustomers,
+        })
+      } else {
+        console.error('Error fetching card data:', response)
+      }
+    }
 
-export default async function Cards() {
-  const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers } =
-    await fetchCardData()
+    fetchCardData().catch(console.error)
+  }, [])
 
   return (
     <>
-      <Card title="Collected" value={totalPaidInvoices} type="collected" />
-      <Card title="Pending" value={totalPendingInvoices} type="pending" />
-      <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
-      <Card title="Total Customers" value={numberOfCustomers} type="customers" />
+      <Card title="Collected" value={cardData.totalPaidInvoices} type="collected" />
+      <Card title="Pending" value={cardData.totalPendingInvoices} type="pending" />
+      <Card title="Total Invoices" value={cardData.numberOfInvoices} type="invoices" />
+      <Card title="Total Customers" value={cardData.numberOfCustomers} type="customers" />
     </>
   )
 }

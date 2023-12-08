@@ -62,10 +62,16 @@ if [ "$1" = "dt-export" ]; then cd directus; ./run export ; EXITCODE=$? ; cd .. 
 if [ "$1" = "dt-import" ]; then cd directus; ./run import "$2" ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
 # Web dashboard commands
-if [ "$1" = "web-dev" ]; then cd web; PORT=$WEB_PORT pnpm dev ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "web-build" ]; then cd web; pnpm build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "web-start" ]; then cd web; PORT=$WEB_PORT pnpm start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
-if [ "$1" = "web-check" ]; then cd web; pnpm next lint ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssr-dev" ]; then cd web; PORT=$WEB_PORT pnpm dev ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssr-build" ]; then cd web; pnpm build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssr-start" ]; then cd web; PORT=$WEB_PORT pnpm start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssr-check" ]; then cd web; pnpm next lint ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+
+# Web-ssg dashboard commands
+if [ "$1" = "ssg-dev" ]; then cd web-ssg; PORT=$WEB_PORT pnpm dev ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssg-build" ]; then cd web-ssg; pnpm build ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssg-start" ]; then cd web-ssg; PORT=$WEB_PORT pnpm start ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
+if [ "$1" = "ssg-check" ]; then cd web-sgg; pnpm next lint ; EXITCODE=$? ; cd .. ; exit $EXITCODE ; fi
 
 # Start / stop all components
 if [ "$1" = "start-all" ]; then
@@ -75,7 +81,10 @@ if [ "$1" = "start-all" ]; then
   # start directus
   ./run dt-start
   # start Web dashboard
-  setLAUNCH_IN_TAB Grass "cd $PWD ; ./run web-dev"
+  setLAUNCH_IN_TAB Grass "cd $PWD ; ./run ssr-dev"
+  osascript -e "$LAUNCH_IN_TAB"
+  # start Web dashboard
+  setLAUNCH_IN_TAB Grass "cd $PWD ; ./run ssg-dev"
   osascript -e "$LAUNCH_IN_TAB"
   # start API
   sleep 1

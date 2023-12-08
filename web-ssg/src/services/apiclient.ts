@@ -2,8 +2,9 @@
 
 import { type JsonQLInput } from '@/types'
 
+type ApiStatusType = (typeof ApiStatus)[keyof typeof ApiStatus]
 export interface ApiResponse {
-  status: ApiStatus
+  status: ApiStatusType
   result: JsonQLInput | string | object
 }
 
@@ -16,8 +17,6 @@ export const ApiStatus = {
   NO_NETWORK: -2,
   UNKNOWN: -3,
 } as const
-
-type ApiStatus = typeof ApiStatus[keyof typeof ApiStatus]
 
 const defaultFetchOptions = {
   method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -37,15 +36,15 @@ const defaultFetchOptions = {
 const jsonFetch = async (url: string, options: RequestInit): Promise<ApiResponse> => {
   const fetchOptions = { ...defaultFetchOptions, ...options }
 
-  console.log(`${new Date()} ${options.method}: ${url}`)
-  console.log(fetchOptions)
-
   let response: Response
   try {
     response = await fetch(url, { ...fetchOptions })
   } catch (error) {
     console.log('>>> error:', error)
-    return { status: ApiStatus.UNKNOWN, result: `unknown error: ${error}` }
+    return {
+      status: ApiStatus.UNKNOWN,
+      result: error instanceof Error ? `unknown error: ${error.message}` : 'unknown error',
+    }
   }
   // console.log(`${new Date()} >>> response`, response)
 
