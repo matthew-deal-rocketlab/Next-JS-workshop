@@ -19,7 +19,7 @@ type AuthProviderProps = {
 type AuthContextType = {
   isAuthenticated: boolean | null
   clearTokens: () => void
-  refreshToken: () => Promise<void>
+  refreshToken: () => Promise<boolean | undefined>
 }
 
 /*

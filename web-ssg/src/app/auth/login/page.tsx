@@ -67,7 +67,6 @@ export default function LoginForm() {
   const setTokens = (jwtToken: string, refreshToken: string) => {
     localStorage.setItem(KEY_JWT_TOKEN, jwtToken)
     localStorage.setItem(KEY_REFRESH_TOKEN, refreshToken)
-    // setAuthenticated(true)
   }
 
   const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
