@@ -18,7 +18,6 @@ type AuthProviderProps = {
 
 type AuthContextType = {
   isAuthenticated: boolean | null
-  setTokens: (jwtToken: string, refreshToken: string) => void
   clearTokens: () => void
   refreshToken: () => Promise<void>
 }
@@ -33,8 +32,8 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [isAuthenticated, setAuthenticated] = useState<boolean | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isAuthenticated, setAuthenticated] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const router = useRouter()
   const pathname = usePathname()
 
@@ -43,16 +42,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     const jwtToken = localStorage.getItem(KEY_JWT_TOKEN)
     const refreshTokenValue = localStorage.getItem(KEY_REFRESH_TOKEN)
-
+    if (!jwtToken || !refreshTokenValue) {
+      router.push('/auth/login')
+    }
     const authStatus = !!jwtToken && !!refreshTokenValue
     setAuthenticated(authStatus)
 
     if (!authStatus && !pathname.startsWith('/auth')) {
       router.push('/auth/login')
-
-      if (!jwtToken || !refreshTokenValue) {
-        router.push('/auth/login')
-      }
 
       if (jwtToken && refreshTokenValue && !checkTokenStillValid(jwtToken)) {
         refreshToken().catch(err => {
@@ -62,12 +59,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
     setIsLoading(false)
   }, [router, pathname, refreshToken])
-
-  const setTokens = (jwtToken: string, refreshToken: string) => {
-    localStorage.setItem(KEY_JWT_TOKEN, jwtToken)
-    localStorage.setItem(KEY_REFRESH_TOKEN, refreshToken)
-    setAuthenticated(true)
-  }
 
   const clearTokens = () => {
     localStorage.removeItem(KEY_JWT_TOKEN)
@@ -80,8 +71,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setTokens, clearTokens, refreshToken }}>
-      {children}
+    <AuthContext.Provider value={{ isAuthenticated, clearTokens, refreshToken }}>
+      {isAuthenticated && children}
     </AuthContext.Provider>
   )
 }

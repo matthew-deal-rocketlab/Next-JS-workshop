@@ -5,13 +5,13 @@ import { isEmail } from '@/utils/validators'
 import { type SubmitResult, SubmitResultType, type IAlertMessage } from '@/types.d'
 import { apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
-import { useAuth } from '@/context/auth'
 import { sleep } from '@/utils/sleep'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import Link from 'next/link'
 import Alert from '@/components/alert'
 import Input from '@/components/input'
+import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
 
 interface FormFields {
   email: string
@@ -58,12 +58,17 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
 
 export default function LoginForm() {
   const { push } = useRouter()
-  const { setTokens } = useAuth()
   const [formErrors, setFormErrors] = React.useState(initialFormFields)
   const [alert, setAlert] = React.useState<IAlertMessage>({
     message: '',
     type: 'success',
   })
+
+  const setTokens = (jwtToken: string, refreshToken: string) => {
+    localStorage.setItem(KEY_JWT_TOKEN, jwtToken)
+    localStorage.setItem(KEY_REFRESH_TOKEN, refreshToken)
+    // setAuthenticated(true)
+  }
 
   const submitLoginFormData = async (data: FormFields): Promise<SubmitResult> => {
     const payload = { authLogin: { ...data } }
