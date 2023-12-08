@@ -1,11 +1,8 @@
 module.exports = {
   extends: [
-    "next/core-web-vitals",
-    "standard-with-typescript",
-    "standard-jsx",
-    "plugin:react/recommended",
-    "prettier",
+   'eslint:recommended', 'plugin:@typescript-eslint/recommended',
   ],
+  parser: '@typescript-eslint/parser',
   rules: {
     "react/prop-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
@@ -24,5 +21,5 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.json',
   },
-  plugins: ["prettier", "cypress"]
+  plugins: ["prettier", "cypress", "@typescript-eslint"]
 }
