@@ -6,10 +6,10 @@ import { useRouter } from 'next/navigation'
 import { apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
 import { isEmail } from '@/utils/validators'
-import { Button } from '@/components/button'
-import Input from '@/components/input'
+import { Button } from '@/components/button/button'
+import Input from '@/components/input/input'
 import Link from 'next/link'
-import Alert from '@/components/alert'
+import Alert from '@/components/alert/alert'
 
 interface FormFields {
   email: string

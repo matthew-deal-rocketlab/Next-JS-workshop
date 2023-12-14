@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/button'
+import { Button } from '@/components/button/button'
 import { isEmail } from '@/utils/validators'
 import { type SubmitResult, SubmitResultType, type IAlertMessage } from '@/types.d'
 import { apiPost } from '@/utils/api-client'
@@ -9,8 +9,8 @@ import { sleep } from '@/utils/sleep'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import Link from 'next/link'
-import Alert from '@/components/alert'
-import Input from '@/components/input'
+import Alert from '@/components/alert/alert'
+import Input from '@/components/input/input'
 import { cookieStoreSet, cookieStoreRemove } from '@/services/cookie-store'
 import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
 

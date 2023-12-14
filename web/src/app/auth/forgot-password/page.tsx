@@ -1,15 +1,15 @@
 'use client'
 
 import React from 'react'
-import Input from '@/components/input'
+import Input from '@/components/input/input'
 import { type SubmitResult, SubmitResultType, type IAlertMessage } from '@/types.d'
 import { apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
 import { isEmail } from '@/utils/validators'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/button'
+import { Button } from '@/components/button/button'
 import Link from 'next/link'
-import Alert from '@/components/alert'
+import Alert from '@/components/alert/alert'
 
 interface FormFields {
   email: string

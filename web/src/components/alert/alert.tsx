@@ -3,9 +3,10 @@ import React, { type FC } from 'react'
 
 const Alert: FC<{
   type: ColorType
+  title?: string
   message: string
   classes?: string
-}> = ({ type, message, classes }) => {
+}> = ({ type, title, message, classes }) => {
   const alertClasses = `border-l-4 px-4 py-3 ${
     type === 'success'
       ? 'border-green-500 bg-green-100 text-green-700'
@@ -18,7 +19,7 @@ const Alert: FC<{
 
   return (
     <div className={`${alertClasses} ${classes}`} role="alert">
-      <p className="font-bold">{type}</p>
+      <p className="font-bold">{title}</p>
       <p className="text-xs">{message}</p>
     </div>
   )

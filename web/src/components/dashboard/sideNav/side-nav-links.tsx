@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { type Collapsed } from './sidenav'
 
-import SvgIcon from '@/components/svgIcon'
+import SvgIcon from '@/components/svg-icon/svgIcon'
 
 // Map of links to display in the side navigation.
 const links = [

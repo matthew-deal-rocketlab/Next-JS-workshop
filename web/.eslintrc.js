@@ -1,6 +1,8 @@
 module.exports = {
   extends: [
-   'eslint:recommended', 'plugin:@typescript-eslint/recommended',
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:storybook/recommended"
   ],
   parser: '@typescript-eslint/parser',
   rules: {

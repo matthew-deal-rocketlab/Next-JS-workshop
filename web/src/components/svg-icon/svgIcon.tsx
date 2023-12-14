@@ -10,7 +10,7 @@ const SvgIcon: React.FC<SvgIconProps> = ({
   pathData,
   color = 'currentColor', // Default color is currentColor for CSS inheritance
   viewBox = '0 0 512 512',
-  className = '',
+  className = 'h-4 w-4',
   alt = '',
 }) => {
   return (

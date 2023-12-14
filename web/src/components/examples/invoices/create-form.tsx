@@ -9,7 +9,7 @@ import {
   CurrencyDollarIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline'
-import { Button } from '@/components/button'
+import { Button } from '@/components/button/button'
 import { type State, createInvoice } from '@/examples/lib/actions'
 import { useFormState } from 'react-dom'
 

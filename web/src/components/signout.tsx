@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { type FormEvent } from 'react'
 import { cookieStoreRemove } from '@/services/cookie-store'
 import { type Collapsed } from './dashboard/sideNav/sidenav'
-import SvgIcon from './svgIcon'
+import SvgIcon from './svg-icon/svgIcon'
 import { KEY_JWT_TOKEN, KEY_REFRESH_TOKEN } from '@/constants'
 
 export default function SignOut({ isCollapsed }: Collapsed) {
