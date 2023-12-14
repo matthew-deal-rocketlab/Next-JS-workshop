@@ -5,19 +5,19 @@ export const JWT_SECRET = process.env.JWT_SECRET || '1fef2b04-ce17-4365-bfa4-039
 export const SALT_PASS_SEPARATOR = '~'
 
 // Same enum is defined in client
-export enum ApiStatus {
-  OK = 200,
-  ERROR = 400,
-  EXPIRED = 419,
-  UPGRADE = 426, // Use to prompt user to upgrade client
-}
+export const ApiStatus = {
+  OK: 200,
+  ERROR: 400,
+  EXPIRED: 419,
+  UPGRADE: 426, // Use to prompt user to upgrade client
+} as const
 
-export enum UserStatus {
-  Pending = 'P',
-  Verified = 'V',
-  Blocked = 'B',
-  Deleted = 'D',
-}
+export const UserStatus = {
+  Pending: 'P',
+  Verified: 'V',
+  Blocked: 'B',
+  Deleted: 'D',
+} as const
 
 // a prefix on all transactional emails so that user can easily apply mailbox rules
 export const EMAIL_SUBJECT_PREFIX = '[rlwm]'
