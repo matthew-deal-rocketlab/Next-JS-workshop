@@ -27,11 +27,6 @@ const initialFormFields: FormFields = {
   confirmPass: '',
 }
 
-interface ColoredSpanProps {
-  type: SubmitResultType
-  children: string
-}
-
 const validateInputs = (inputs: FormFields): FormFields | null => {
   let hasErrors = false
   const result = { ...initialFormFields }
@@ -55,7 +50,6 @@ const validateInputs = (inputs: FormFields): FormFields | null => {
     hasErrors = true
     result.pass = 'Password can not be empty'
   } else if (inputs.pass.length < 8) {
-    console.log('Password', result.pass.length)
     hasErrors = true
     result.pass = 'Password must be at least 8 characters'
   }
@@ -105,6 +99,7 @@ export default function SignupForm() {
     type: SubmitResultType.success,
   })
   const [formErrors, setFormErrors] = useState<FormFields>(initialFormFields)
+  const alertTitle = submitResult?.type === 'success' ? 'Success' : 'Error'
 
   const onClickCancel = (event: React.FormEvent<HTMLFormElement>) => {
     push('/login')
@@ -195,7 +190,12 @@ export default function SignupForm() {
         </div>
         <SignupButton />
         {submitResult.text && (
-          <Alert classes="my-3" type={submitResult.type} message={submitResult.text} />
+          <Alert
+            classes="my-3"
+            type={submitResult.type}
+            message={submitResult.text}
+            title={alertTitle}
+          />
         )}
 
         <p className="mb-1 mt-4 text-center text-xs">

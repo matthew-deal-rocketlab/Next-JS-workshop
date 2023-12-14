@@ -119,3 +119,62 @@ export async function deleteInvoice(id: string) {
 
   revalidatePath('/example/invoices')
 }
+
+const schema = z
+  .object({
+    firstname: z.string().min(1, 'First name is required'),
+    lastname: z.string().min(1, 'Last name is required'),
+    email: z.string().email('Please enter a valid email'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    passwordConfirm: z.string().min(8, 'Password must be at least 8 characters'),
+  })
+  .refine(data => data.password === data.passwordConfirm, {
+    message: "Passwords don't match",
+    path: ['passwordConfirm'], // This will attach the error to passwordConfirm field
+  })
+
+export type ProfileState = {
+  errors?: {
+    firstname?: string[]
+    lastname?: string[]
+    email?: string[]
+    password?: string[]
+    passwordConfirm?: string[]
+  }
+  message?: string | null
+}
+
+export async function updateProfile(prevState: ProfileState, formData: FormData) {
+  const data = {
+    firstname: formData.get('firstname'),
+    lastname: formData.get('lastname'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+    passwordConfirm: formData.get('password-confirm'),
+  }
+
+  const result = schema.safeParse(data)
+
+  if (!result.success) {
+    return {
+      errors: result.error.flatten().fieldErrors,
+      message: 'Validation failed.',
+    }
+  }
+
+  const payload = { updateUser: { ...data, confirmPass: undefined } }
+  const updateUserProfile = await apiPost('/jsonql', payload)
+
+  // Implement your logic to update the user profil
+  if (updateUserProfile.status !== ApiStatus.OK) {
+    console.error('THIS IS A LOG', updateUserProfile)
+    return { text: 'Error updating user', type: SubmitResultType.error }
+  }
+
+  // For example, update the database with the new user data
+
+  // After successful update
+  revalidatePath('/dashboard/profile') // If you want to revalidate a specific path
+
+  return { message: 'Profile updated successfully' }
+}

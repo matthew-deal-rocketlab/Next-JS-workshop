@@ -18,15 +18,11 @@ const fetchCustomersData = async () => {
   // @ts-expect-error
   const { fetchCustomers } = customerData?.result
 
-  console.log('fetchCustomers', customerData)
-
   return fetchCustomers
 }
 
 export default async function Page() {
   const customers = await fetchCustomersData()
-
-  console.log('customers', customers)
 
   return (
     <main>

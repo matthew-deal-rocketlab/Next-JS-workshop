@@ -12,6 +12,8 @@ import {
   authSignup,
   authVerify,
   deleteUser,
+  updateUser,
+  updatePassword,
 } from '../resolvers/auth'
 import { userRead, userUpdate } from '../resolvers/user'
 import { dbClose, dbConnect } from '../services/db'
@@ -52,6 +54,8 @@ resolverMap.set('deleteUser', deleteUser)
 // user management
 resolverMap.set('userRead', userRead)
 resolverMap.set('userUpdate', userUpdate)
+resolverMap.set('updateUser', updateUser)
+resolverMap.set('updatePassword', updatePassword)
 
 // crud operations
 resolverMap.set('crudCreate', crudCreate)
@@ -127,14 +131,12 @@ const addRoutes = (app: Express) => {
 
       // check input
       const reqKeys = Object.keys(req.body)
-      if (reqKeys.length === 0)
-        return res.status(ApiStatus.ERROR).send({ error: 'invalid request' })
+      if (reqKeys.length === 0) return res.status(ApiStatus.ERROR).send({ error: 'invalid request' })
 
       // builder resolver context
       const userOrError = validateToken(req)
       if (req.headers['authorization'] && userOrError.error) {
-        const errorCode =
-          userOrError.error === ERROR_TOKEN_EXPIRED.error ? ApiStatus.EXPIRED : ApiStatus.ERROR
+        const errorCode = userOrError.error === ERROR_TOKEN_EXPIRED.error ? ApiStatus.EXPIRED : ApiStatus.ERROR
         return res.status(errorCode).send({ error: userOrError.error })
       }
 

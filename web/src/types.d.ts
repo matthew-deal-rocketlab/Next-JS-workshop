@@ -42,6 +42,8 @@ interface SubmitResult {
 
 type ColorType = 'error' | 'success' | 'warning' | 'info'
 
+type AlertType = keyof typeof AlertTypes
+
 interface SiteDetails {
   id?: number
   user_id?: number

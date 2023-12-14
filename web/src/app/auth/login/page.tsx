@@ -28,7 +28,6 @@ const initialFormFields: FormFields = {
 const validateInputs = (inputs: FormFields): FormFields | null => {
   let hasErrors = false
   const result = { ...initialFormFields }
-  console.log('inputs', inputs)
   // check email
   if (!inputs.email) {
     hasErrors = true

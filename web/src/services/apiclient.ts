@@ -17,7 +17,7 @@ export const ApiStatus = {
   UNKNOWN: -3,
 } as const
 
-type ApiStatus = typeof ApiStatus[keyof typeof ApiStatus]
+type ApiStatus = (typeof ApiStatus)[keyof typeof ApiStatus]
 
 const defaultFetchOptions = {
   method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -37,17 +37,12 @@ const defaultFetchOptions = {
 const jsonFetch = async (url: string, options: RequestInit): Promise<ApiResponse> => {
   const fetchOptions = { ...defaultFetchOptions, ...options }
 
-  console.log(`${new Date()} ${options.method}: ${url}`)
-  console.log(fetchOptions)
-
   let response: Response
   try {
     response = await fetch(url, { ...fetchOptions })
   } catch (error) {
-    console.log('>>> error:', error)
     return { status: ApiStatus.UNKNOWN, result: `unknown error: ${error}` }
   }
-  // console.log(`${new Date()} >>> response`, response)
 
   if (response.status === ApiStatus.OK) {
     const json = await response.json()

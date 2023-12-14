@@ -28,8 +28,6 @@ const fetchLatestInvoiceData = async ({ query, currentPage }: IvoiceTableQueryPr
   // @ts-expect-error
   const { fetchFilteredInvoices } = invoiceData?.result
 
-  console.log('fetchFilteredInvoices', invoiceData)
-
   return fetchFilteredInvoices
 }
 

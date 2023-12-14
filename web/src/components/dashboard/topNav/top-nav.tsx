@@ -1,5 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
+import SvgIcon from '@/components/svg-icon/svgIcon'
+import { user } from '@/components/svg-paths'
 
 export default function TopNav() {
   return (
@@ -10,8 +12,8 @@ export default function TopNav() {
             Your Logo
           </Link>
         </div>
-        <Link className="block rounded p-2" href="/profile">
-          User Profile
+        <Link className="block rounded p-2" href="/dashboard/profile">
+          <SvgIcon pathData={user} className="h-6 w-6" alt={'profile'} />
         </Link>
       </div>
     </nav>

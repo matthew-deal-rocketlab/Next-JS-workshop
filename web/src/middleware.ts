@@ -30,8 +30,6 @@ export async function middleware(request: NextRequest) {
     // Redirect if refresh fails
     if (token === '') return NextResponse.redirect(new URL('/auth/login', request.url))
 
-    console.log('token', token)
-
     const response = NextResponse.next()
 
     // Set the cookie with the refresh token

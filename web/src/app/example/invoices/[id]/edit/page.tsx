@@ -20,8 +20,6 @@ const fetchInvoiceByIdData = async (id: string) => {
   // @ts-expect-error
   const { fetchInvoiceById } = invoiceData.result
 
-  console.log('fetchInvoiceById', fetchInvoiceById)
-
   return fetchInvoiceById
 }
 
@@ -34,8 +32,6 @@ const fetchCustomersData = async () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   const { fetchCustomers } = customerData.result
-
-  console.log('fetchInvoiceById', fetchCustomers)
 
   return fetchCustomers
 }

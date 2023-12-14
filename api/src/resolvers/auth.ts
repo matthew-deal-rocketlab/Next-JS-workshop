@@ -45,12 +45,9 @@ const addUser = async (
   return { value: result.rows[0]['uid'] }
 }
 
-// Inserts a user into the database
-// Returns an empty string on success or the error message desribing problem
-export const deleteUser = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+// Deletes a user from the database
+// Returns a string on success or the error message desribing problem
+export const deleteUser = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -65,11 +62,44 @@ export const deleteUser = async (
   return { result: 'User deleted successfully' }
 }
 
+// Updates a user from the database
+// Returns a string on success or the error message desribing problem
+export const updateUser = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
+
+  const queryText = `UPDATE tbl_user SET firstname = $1, lastname = $2, email = $3 WHERE uid = $4`
+
+  let result = null
+  result = await dbQuery(rc.db, queryText, [input.firstname, input.lastname, input.email, useruid])
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount !== 1) return { error: 'Could not update user' }
+
+  return { result: 'User updated successfully' }
+}
+
+export const updatePassword = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
+  if (!rc.db) return ERROR_NO_DB
+  const useruid = rc.useruid
+  if (!useruid) return ERROR_INVALID_CREDENTIALS
+
+  const queryText = `UPDATE tbl_user SET pass = $1 WHERE uid = $2`
+
+  const salt = uuidv4(false)
+  const hashedPassword = hashPassword(input.password as string, salt)
+  const savedPassword = `${salt}${SALT_PASS_SEPARATOR}${hashedPassword}`
+
+  let result = null
+  result = await dbQuery(rc.db, queryText, [savedPassword, useruid])
+  if (result.error) return { error: result.error }
+  if (!result || result.rowCount !== 1) return { error: 'Could not update user' }
+
+  return { result: 'User updated successfully' }
+}
+
 // Adds a user in the system
-export const authSignup = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const authSignup = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
 
   // get input parameters. firstname and lastname is optional
@@ -109,10 +139,7 @@ export const authSignup = async (
   return { result: addResult.value }
 }
 
-export const authVerify = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const authVerify = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
 
   // get input parameters
@@ -141,11 +168,7 @@ export const authVerify = async (
   return RESULT_OK
 }
 
-const saveRefreshToken = async (
-  db: DBConnection,
-  userId: string,
-  refreshToken: string,
-): Promise<JsonQLOutput> => {
+const saveRefreshToken = async (db: DBConnection, userId: string, refreshToken: string): Promise<JsonQLOutput> => {
   const querySetSession = `UPDATE tbl_user SET session = $1 WHERE id = $2`
   let result = null
   result = await dbQuery(db, querySetSession, [refreshToken, userId])
@@ -184,11 +207,7 @@ export const authLogin = async (input: JsonQLInput, rc: ResolverContext): Promis
   const userRefreshToken = getUserRefreshToken(userUid)
 
   // Save refresh token
-  const saveResult = await saveRefreshToken(
-    rc.db!,
-    (userInfo['id'] ?? '') as string,
-    userRefreshToken,
-  )
+  const saveResult = await saveRefreshToken(rc.db!, (userInfo['id'] ?? '') as string, userRefreshToken)
   if (saveResult.error) return { error: saveResult.error }
 
   // Get other user details
@@ -203,10 +222,7 @@ export const authLogin = async (input: JsonQLInput, rc: ResolverContext): Promis
   }
 }
 
-export const authLogout = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const authLogout = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -220,10 +236,7 @@ export const authLogout = async (
   return RESULT_OK
 }
 
-export const authRefresh = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const authRefresh = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
 
   const refreshToken = (input['refreshToken'] as string) ?? ''
@@ -261,10 +274,7 @@ export const authRefresh = async (
 }
 
 // Initiates sending an email to reset password
-export const authForgotPassword = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const authForgotPassword = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
 
   // get input parameters
@@ -294,10 +304,7 @@ export const authForgotPassword = async (
   return RESULT_OK
 }
 
-export const authResetPassword = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const authResetPassword = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
 
   // get input parameters

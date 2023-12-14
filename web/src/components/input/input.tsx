@@ -28,6 +28,7 @@ const Input = (props: InputProps) => {
           name={name}
           placeholder={placeholder}
           onChange={onChange}
+          defaultValue={value}
         />
         {formErrors && <p className="mt-1 text-xs text-red-500">{formErrors}</p>}
       </div>

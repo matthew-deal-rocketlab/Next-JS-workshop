@@ -9,6 +9,15 @@ export interface User {
   password: string
 }
 
+export interface Profile {
+  id: string
+  uid: string
+  firstname: string
+  lastname?: string
+  email: string
+  password: string
+}
+
 export interface Customer {
   id: string
   name: string
