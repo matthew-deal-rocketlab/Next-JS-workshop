@@ -139,7 +139,14 @@ export default function LoginForm() {
           </div>
         </div>
         <LoginButton />
-        {alert.message && <Alert classes="my-3" type={alert.type} message={alert.message} />}
+        {alert.message && (
+          <Alert
+            classes="my-3"
+            type={alert.type}
+            title={alert.type === 'success' ? 'Success' : 'Error'}
+            message={alert.message}
+          />
+        )}
         <p className="mb-1 mt-4 text-center text-xs">
           Don't have an account?{' '}
           <Link className="text-blue-500" href="/auth/signup" role="link">

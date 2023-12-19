@@ -35,6 +35,7 @@ export default function Details({
             value={user.firstname}
             onChange={handleChange}
             placeholder="First name"
+            required
             formErrors={formErrors.errors?.firstname?.[0]}
           />
         </div>
@@ -47,6 +48,7 @@ export default function Details({
             value={user.lastname}
             onChange={handleChange}
             placeholder="Last name"
+            required
             formErrors={formErrors.errors?.lastname?.[0]}
           />
         </div>
@@ -59,10 +61,20 @@ export default function Details({
             value={user.email}
             onChange={handleChange}
             placeholder="Email"
+            required
             formErrors={formErrors.errors?.email?.[0]}
           />
         </div>
       </div>
+      {detailsResponseMessage && (
+        <div className="py-5">
+          <Alert
+            message={detailsResponseMessage.content}
+            type={detailsResponseMessage.type}
+            title={alertTitle}
+          />
+        </div>
+      )}
       <div className="mt-6 flex justify-end gap-4">
         <Link
           href="/dashboard"
@@ -70,15 +82,6 @@ export default function Details({
           Cancel
         </Link>
         <Button type="submit">Update User Details</Button>
-      </div>
-      <div className="py-5">
-        {detailsResponseMessage && (
-          <Alert
-            message={detailsResponseMessage.content}
-            type={detailsResponseMessage.type}
-            title={alertTitle}
-          />
-        )}
       </div>
     </form>
   )

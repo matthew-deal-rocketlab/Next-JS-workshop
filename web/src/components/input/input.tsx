@@ -8,16 +8,17 @@ interface InputProps {
   placeholder?: string
   value?: string
   formErrors?: string
+  required?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 const Input = (props: InputProps) => {
-  const { id, label, name, type, placeholder, value, formErrors, onChange } = props
+  const { id, label, name, type, placeholder, value, formErrors, required, onChange } = props
   return (
     <div>
       {label && (
         <label className="mb-2 mt-5 block text-xs font-medium text-gray-900" htmlFor={id}>
-          {label}
+          {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
       <div className="relative">

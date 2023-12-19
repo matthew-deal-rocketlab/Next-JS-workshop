@@ -14,6 +14,7 @@ export type ProfileState = {
     firstname?: string[]
     lastname?: string[]
     email?: string[]
+    oldPassword?: string[]
     password?: string[]
     passwordConfirm?: string[]
   }
@@ -35,6 +36,7 @@ const detailsSchema = z.object({
 
 export const passwordSchema = z
   .object({
+    oldPassword: z.string(),
     password: z.string().min(8, 'Password must be at least 8 characters'),
     passwordConfirm: z.string(),
   })
@@ -89,15 +91,23 @@ export default function EditProfileForm({ user }: { user: Profile }) {
     }
 
     const response = await apiPost('/jsonql', { updatePassword: formData })
-    if (response.status === ApiStatus.OK) {
-      setPasswordResponseMessage({ type: 'success', content: 'Password updated successfully' })
-    } else {
-      setPasswordResponseMessage({ type: 'error', content: 'Error updating password' })
-    }
+    if (response.status !== ApiStatus.OK) return
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const { updatePassword } = response.result
+    const type = updatePassword === 'invalid credentials' ? 'error' : 'success'
+    const message =
+      updatePassword === 'invalid credentials'
+        ? 'Old password is incorrect'
+        : 'Password updated successfully'
+    setPasswordResponseMessage({
+      type: type,
+      content: message,
+    })
   }
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setHasAttemptedSubmit(true)
+    if (!hasAttemptedSubmit) return
     const { name, value } = event.target
     setLocalFormData(prev => ({
       ...prev,

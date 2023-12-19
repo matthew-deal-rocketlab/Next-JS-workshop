@@ -84,18 +84,31 @@ export const updatePassword = async (input: JsonQLInput, rc: ResolverContext): P
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
 
+  const userInfo = await getUserBy(rc.db, 'uid', rc.useruid)
+  if (typeof userInfo === 'string') return ERROR_INVALID_CREDENTIALS
+
+  // compare password
+  const saltPassCombined = (userInfo['pass'] ?? '') as string
+  const saltPass = saltPassCombined.split(SALT_PASS_SEPARATOR)
+  const salt = saltPass[0] ?? ''
+  const password = saltPass[1]
+
+  if (hashPassword(input.oldPassword as string, salt) !== password) {
+    return ERROR_INVALID_CREDENTIALS
+  }
+
   const queryText = `UPDATE tbl_user SET pass = $1 WHERE uid = $2`
 
-  const salt = uuidv4(false)
-  const hashedPassword = hashPassword(input.password as string, salt)
-  const savedPassword = `${salt}${SALT_PASS_SEPARATOR}${hashedPassword}`
+  const newSalt = uuidv4(false)
+  const hashedPassword = hashPassword(input.password as string, newSalt)
+  const savedPassword = `${newSalt}${SALT_PASS_SEPARATOR}${hashedPassword}`
 
   let result = null
   result = await dbQuery(rc.db, queryText, [savedPassword, useruid])
   if (result.error) return { error: result.error }
-  if (!result || result.rowCount !== 1) return { error: 'Could not update user' }
+  if (!result || result.rowCount !== 1) return { error: 'Could not update password' }
 
-  return { result: 'User updated successfully' }
+  return { result: 'Password updated successfully' }
 }
 
 // Adds a user in the system
