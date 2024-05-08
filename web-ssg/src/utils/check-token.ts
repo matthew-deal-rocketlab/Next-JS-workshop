@@ -7,7 +7,6 @@ export const checkTokenStillValid = (accessToken: string) => {
   const date = new Date()
 
   if (decodedToken?.payload?.exp > dateToSeconds(date)) {
-    console.log('Decoded token:', decodedToken, dateToSeconds(date))
     return true
   }
   return false

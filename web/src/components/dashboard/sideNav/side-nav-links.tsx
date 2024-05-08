@@ -21,12 +21,12 @@ const links = [
   },
   {
     name: 'Examples',
-    href: '/example',
+    href: '/dashboard/example',
     iconPath: gauge,
   },
   {
     name: 'Invoices',
-    href: '/example/invoices',
+    href: '/dashboard/invoices',
     iconPath: fileInvoice,
   },
   {

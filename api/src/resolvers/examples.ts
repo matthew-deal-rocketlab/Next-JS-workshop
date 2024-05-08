@@ -2,10 +2,7 @@ import { ERROR_INVALID_CREDENTIALS, ERROR_NO_DB } from '../constants'
 import { dbQuery } from '../services/db'
 import { formatCurrency } from '../utils/misc'
 
-export const fetchCardData = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const fetchCardData = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -21,25 +18,16 @@ export const fetchCardData = async (
            FROM invoices`,
     )
 
-    const results = await Promise.allSettled([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
-    ])
+    const results = await Promise.allSettled([invoiceCountPromise, customerCountPromise, invoiceStatusPromise])
 
     // Processing results
-    const numberOfInvoices =
-      results[0].status === 'fulfilled' ? Number(results[0].value.rows[0].count ?? '0') : 'Error'
+    const numberOfInvoices = results[0].status === 'fulfilled' ? Number(results[0].value.rows[0].count ?? '0') : 'Error'
     const numberOfCustomers =
       results[1].status === 'fulfilled' ? Number(results[1].value.rows[0].count ?? '0') : 'Error'
     const totalPaidInvoices =
-      results[2].status === 'fulfilled'
-        ? formatCurrency(results[2].value.rows[0].paid ?? '0')
-        : 'Error'
+      results[2].status === 'fulfilled' ? formatCurrency(results[2].value.rows[0].paid ?? '0') : 'Error'
     const totalPendingInvoices =
-      results[2].status === 'fulfilled'
-        ? formatCurrency(results[2].value.rows[0].pending ?? '0')
-        : 'Error'
+      results[2].status === 'fulfilled' ? formatCurrency(results[2].value.rows[0].pending ?? '0') : 'Error'
 
     return {
       result: {
@@ -55,10 +43,7 @@ export const fetchCardData = async (
   }
 }
 
-export const fetchRevenue = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const fetchRevenue = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -75,10 +60,7 @@ export const fetchRevenue = async (
   return { result: revenue } as Revenue
 }
 
-export const fetchLatestInvoices = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const fetchLatestInvoices = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -104,10 +86,7 @@ export const fetchLatestInvoices = async (
   return { result: latestInvoices }
 }
 
-export const fetchInvoicesPages = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const fetchInvoicesPages = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -136,10 +115,7 @@ export const fetchInvoicesPages = async (
   return { result: totalPages }
 }
 
-export const fetchFilteredInvoices = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const fetchFilteredInvoices = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -178,10 +154,7 @@ export const fetchFilteredInvoices = async (
   return { result: result.rows }
 }
 
-export const fetchInvoiceById = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const fetchInvoiceById = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -210,10 +183,7 @@ export const fetchInvoiceById = async (
   return { result: invoice[0] }
 }
 
-export const fetchCustomers = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const fetchCustomers = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -237,10 +207,7 @@ export const fetchCustomers = async (
   return { result: customers }
 }
 
-export const createInvoice = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const createInvoice = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -266,10 +233,7 @@ export const createInvoice = async (
   return { result: result.rows[0] }
 }
 
-export const updateInvoice = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const updateInvoice = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS
@@ -281,12 +245,7 @@ export const updateInvoice = async (
   `
 
   let result = null
-  result = await dbQuery(rc.db, queryText, [
-    input.customerId,
-    input.amountInCents,
-    input.status,
-    input.id,
-  ])
+  result = await dbQuery(rc.db, queryText, [input.customerId, input.amountInCents, input.status, input.id])
 
   if (result.error) return { error: result.error }
   if (!result || result.rowCount == 0) return { error: 'no result' }
@@ -294,10 +253,7 @@ export const updateInvoice = async (
   return { result: result.rows[0] }
 }
 
-export const deleteInvoice = async (
-  input: JsonQLInput,
-  rc: ResolverContext,
-): Promise<JsonQLOutput> => {
+export const deleteInvoice = async (input: JsonQLInput, rc: ResolverContext): Promise<JsonQLOutput> => {
   if (!rc.db) return ERROR_NO_DB
   const useruid = rc.useruid
   if (!useruid) return ERROR_INVALID_CREDENTIALS

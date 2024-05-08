@@ -18,7 +18,6 @@ const jwtDecoder = (token: string): DecodedToken | null => {
   try {
     const header = JSON.parse(atob(headerEncoded))
     const payload = JSON.parse(atob(payloadEncoded))
-    console.log('Decoded JWT header:', header)
     return {
       header,
       payload,

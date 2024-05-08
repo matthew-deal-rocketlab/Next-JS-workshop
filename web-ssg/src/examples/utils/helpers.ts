@@ -19,7 +19,6 @@ export const formatDateToLocal = (dateStr: string, locale: string = 'en-US') => 
 }
 
 export const generateYAxis = (revenue: Revenue[]) => {
-  console.log('revenue', revenue)
   // Calculate what labels we need to display on the y-axis
   // based on highest record and in 1000s
   const yAxisLabels = []

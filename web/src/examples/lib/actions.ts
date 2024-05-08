@@ -74,6 +74,21 @@ export async function createInvoice(prevState: State, formData: FormData) {
   redirect('/example/invoices')
 }
 
+export async function fetchInvoicesPages(query: string) {
+  const invoiceData = await apiPost('/jsonql', {
+    fetchInvoicesPages: { query },
+  })
+
+  if (invoiceData.status !== ApiStatus.OK) {
+    return { text: 'Error logging in', type: SubmitResultType.error }
+  }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const { fetchInvoicesPages } = invoiceData.result
+
+  return fetchInvoicesPages
+}
+
 const UpdateInvoice = InvoiceSchema.omit({ date: true, id: true })
 
 export async function updateInvoice(id: string, formData: FormData) {

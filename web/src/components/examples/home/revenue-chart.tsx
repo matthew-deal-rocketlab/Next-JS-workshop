@@ -7,6 +7,7 @@ import { type Revenue } from '@/examples/types/types'
 
 const fetchRevenueData = async () => {
   const revenueData = await apiPost('/jsonql', { fetchRevenue: {} })
+  console.log(revenueData)
 
   if (revenueData.status !== ApiStatus.OK) {
     return { text: 'Error logging in', type: SubmitResultType.error }

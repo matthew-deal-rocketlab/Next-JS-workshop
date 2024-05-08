@@ -4,24 +4,8 @@ import Search from '@/components/examples/invoices/search'
 import Table from '@/components/examples/invoices/table'
 import { CreateInvoice } from '@/components/examples/invoices/buttons'
 import { InvoicesTableSkeleton } from '@/components/examples/skeletons'
-import { apiPost } from '@/utils/api-client'
-import { SubmitResultType } from '@/types.d'
-import { ApiStatus } from '@/services/apiclient'
 
-const fetchInvoicePagesData = async (query: string) => {
-  const invoiceData = await apiPost('/jsonql', {
-    fetchInvoicesPages: { query },
-  })
-
-  if (invoiceData.status !== ApiStatus.OK) {
-    return { text: 'Error logging in', type: SubmitResultType.error }
-  }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const { fetchInvoicesPages } = invoiceData.result
-
-  return fetchInvoicesPages
-}
+import { fetchInvoicesPages } from '@/examples/lib/actions'
 
 export default async function Page({
   searchParams,
@@ -32,11 +16,10 @@ export default async function Page({
   }
 }) {
   const query = searchParams?.query ?? ''
+
   const currentPage = Number(searchParams?.page) || 1
 
-  console.log('searchParams', searchParams)
-
-  const pages = await fetchInvoicePagesData(query)
+  const pages = await fetchInvoicesPages(query)
 
   return (
     <div className="w-full">
