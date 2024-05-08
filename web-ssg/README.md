@@ -51,7 +51,7 @@ The examples include:
 
 ## Dashboard Folder
 
-The dashboard folder contains a very minimal dashboard example. It is a good starting point for building a dashboard.
+This will have updated content at some point
 
 ## Tests
 
