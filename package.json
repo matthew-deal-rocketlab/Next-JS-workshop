@@ -5,7 +5,11 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
+    "@types/pg": "^8.11.6",
     "eslint": "^8",
     "prettier": "^3.0.3"
+  },
+  "dependencies": {
+    "pg": "^8.11.5"
   }
 }

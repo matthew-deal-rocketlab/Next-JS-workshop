@@ -1,7 +1,5 @@
 'use client' // Error components must be Client Components
 
-import { useEffect } from 'react'
-
 export default function Error({
   error,
   reset,
@@ -9,14 +7,8 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
-  useEffect(() => {
-    // Log the error to an error reporting service
-    console.error(error)
-  }, [error])
-
   return (
     <div className="flex w-full flex-col gap-5">
-      {' '}
       {/* Adjusted class to create a grid with 4 columns */}
       <div className="rounded-xl bg-red-400 p-2 shadow-sm">
         <div className="flex p-4">

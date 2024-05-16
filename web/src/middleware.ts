@@ -6,7 +6,7 @@ import { ApiStatus, jsonPost } from './services/apiclient'
 import { checkTokenStillValid } from './utils/check-token'
 
 export const config = {
-  matcher: ['/example/:path*', '/dashboard/:path*'],
+  matcher: ['/dashboard/:path*'],
 }
 
 export async function middleware(request: NextRequest) {

@@ -8,6 +8,7 @@ import { ApiStatus } from '@/services/apiclient'
 import { z } from 'zod'
 import PasswordForm from './password'
 import Details from './details'
+import { Button } from '../button/button'
 
 export type ProfileState = {
   errors?: {
@@ -160,7 +161,7 @@ export default function EditProfileForm({ user }: { user: Profile }) {
   }, [localFormData, passwordSchema, setFormErrors, hasAttemptedSubmit])
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       <Details
         formErrors={formErrors}
         handleSubmitUser={handleSubmitUser}

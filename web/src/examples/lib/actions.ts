@@ -8,6 +8,16 @@ import { apiPost } from '@/utils/api-client'
 import { ApiStatus } from '@/services/apiclient'
 import { SubmitResultType } from '@/types.d'
 
+import { Pool } from 'pg'
+
+const pool = new Pool({
+  user: 'rlwm_user',
+  host: 'localhost',
+  database: 'rlwm_db',
+  password: '7c169799-d793-481f-9e08-af606f96d517',
+  port: 5432,
+})
+
 const InvoiceSchema = z.object({
   id: z.string(),
   customerId: z.string({
@@ -82,6 +92,7 @@ export async function fetchInvoicesPages(query: string) {
   if (invoiceData.status !== ApiStatus.OK) {
     return { text: 'Error logging in', type: SubmitResultType.error }
   }
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   const { fetchInvoicesPages } = invoiceData.result
@@ -91,34 +102,55 @@ export async function fetchInvoicesPages(query: string) {
 
 const UpdateInvoice = InvoiceSchema.omit({ date: true, id: true })
 
+// export async function updateInvoice(id: string, formData: FormData) {
+//   const { customerId, amount, status } = UpdateInvoice.parse({
+//     customerId: formData.get('customerId'),
+//     amount: formData.get('amount'),
+//     status: formData.get('status'),
+//   })
+
+//   const amountInCents = Number(amount) * 100
+
+//   const updateInvoiceFetch = await apiPost('/jsonql', {
+//     updateInvoice: {
+//       id,
+//       customer_id: customerId,
+//       amount: amountInCents,
+//       status,
+//     },
+//   })
+
+//   if (updateInvoiceFetch.status !== ApiStatus.OK) {
+//     return { text: 'Error logging in', type: SubmitResultType.error }
+//   }
+
+//   revalidatePath('/dashboard/invoices')
+//   redirect('/dashboard/invoices')
+// }
+
+// Full Stack Next Js Example
+
 export async function updateInvoice(id: string, formData: FormData) {
-  const { customerId, amount, status } = UpdateInvoice.parse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  })
+  const customerId = formData.get('customerId')
+  const amount = formData.get('amount')
+  const status = formData.get('status')
 
   const amountInCents = Number(amount) * 100
 
-  const input = {
-    id,
-    customerId,
-    amountInCents,
-    status,
+  const query = `
+    UPDATE invoices
+    SET customer_id = $1, amount = $2, status = $3
+    WHERE id = $4
+  `
+
+  const res = await pool.query(query, [customerId, amountInCents, status, id])
+
+  if (!res) {
+    return { text: 'No invoice found with the given ID', type: 'error' }
   }
 
-  const updateInvoiceFetch = await apiPost('/jsonql', {
-    updateInvoice: {
-      input,
-    },
-  })
-
-  if (updateInvoiceFetch.status !== ApiStatus.OK) {
-    return { text: 'Error logging in', type: SubmitResultType.error }
-  }
-
-  revalidatePath('/example/invoices')
-  redirect('/example/invoices')
+  revalidatePath('/dashboard/invoices')
+  redirect('/dashboard/invoices')
 }
 
 export async function deleteInvoice(id: string) {

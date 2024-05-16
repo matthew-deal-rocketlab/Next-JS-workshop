@@ -10,8 +10,6 @@ const fetchCardData = async () => {
     return { text: 'Error logging in', type: SubmitResultType.error }
   }
 
-  // if (cardData) throw new Error('Oops! Your Card Data is not available')
-
   const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers } =
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error

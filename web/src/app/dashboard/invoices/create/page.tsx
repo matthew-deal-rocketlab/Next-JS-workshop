@@ -16,7 +16,7 @@ const fetchCustomersData = async () => {
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
-  const { fetchCustomers } = customerData?.result
+  const { fetchCustomers } = customerData.result
 
   return fetchCustomers
 }
@@ -28,10 +28,10 @@ export default async function Page() {
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Invoices', href: '/example/invoices' },
+          { label: 'Invoices', href: '/dashboard/example/invoices' },
           {
             label: 'Create Invoice',
-            href: '/example/invoices/create',
+            href: '/dashboard/example/invoices/create',
             active: true,
           },
         ]}

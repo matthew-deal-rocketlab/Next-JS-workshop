@@ -12,12 +12,12 @@ cp env.api.sample .env
 
 # install node modules
 cd api
-yarn install
+pnpm install
 
 The next step depends on if you're using the ssg or ssr template
 SSR:
 cd ../web
-yarn install
+pnpm install
 
 SSG:
 cd ../web-ssg
@@ -38,7 +38,7 @@ cd directus ; ./run init ; cd ..
 cp env.directus.sample ./directus/_data/opt/app/.env
 
 # Import database backup
-./db import rlwm_db.sql.tgz rlwm_db
+./db import rlwm_db2024-05-16_145441.sql.gz rlwm_db
 ```
 
 ## Quick startup

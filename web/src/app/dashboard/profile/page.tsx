@@ -1,10 +1,15 @@
 import EditProfileForm from '@/components/profile/profile-form'
+import { Profile } from '@/examples/types/types'
 import { ApiStatus } from '@/services/apiclient'
 import { SubmitResultType } from '@/types.d'
 import { apiPost } from '@/utils/api-client'
 import React from 'react'
 
-const fetchUserPagesData = async () => {
+type userRead = {
+  userRead: Profile
+}
+
+export default async function Page() {
   const userData = await apiPost('/jsonql', {
     userRead: {},
   })
@@ -12,15 +17,10 @@ const fetchUserPagesData = async () => {
   if (userData.status !== ApiStatus.OK) {
     return { text: 'Error logging in', type: SubmitResultType.error }
   }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const { userRead } = userData.result
 
-  return userRead
-}
+  const { userRead } = userData.result as userRead
 
-export default async function Page() {
-  const user = await fetchUserPagesData()
+  const user = userRead
 
   return (
     <div className="w-full">

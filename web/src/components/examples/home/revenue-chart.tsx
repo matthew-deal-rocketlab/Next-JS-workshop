@@ -1,33 +1,11 @@
 import React from 'react'
 import { generateYAxis } from '@/examples/utils/helpers'
-import { ApiStatus } from '@/services/apiclient'
-import { SubmitResultType } from '@/types.d'
-import { apiPost } from '@/utils/api-client'
-import { type Revenue } from '@/examples/types/types'
+import { Revenue } from '@/examples/types/types'
 
-const fetchRevenueData = async () => {
-  const revenueData = await apiPost('/jsonql', { fetchRevenue: {} })
-  console.log(revenueData)
-
-  if (revenueData.status !== ApiStatus.OK) {
-    return { text: 'Error logging in', type: SubmitResultType.error }
-  }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  const { fetchRevenue } = revenueData?.result
-
-  return fetchRevenue
-}
-
-export default async function RevenueChart() {
-  const fetchRevenue = await fetchRevenueData()
-  const { yAxisLabels, topLabel } = generateYAxis(fetchRevenue)
-  const revenue: Revenue[] = fetchRevenue
-  const chartHeight = 350
-
-  if (!revenue || revenue.length === 0) {
-    return <p className="mt-4 text-gray-400">No data available.</p>
-  }
+export default async function RevenueChart({ revenueData }: { revenueData: Revenue[] }) {
+  const { yAxisLabels, topLabel } = generateYAxis(revenueData)
+  const revenue = revenueData
+  const chartHeight = 400
 
   return (
     <div className="w-full md:col-span-4">
@@ -43,7 +21,7 @@ export default async function RevenueChart() {
             ))}
           </div>
 
-          {revenue.map(month => (
+          {revenue?.map(month => (
             <div key={month.month} className="col-span-1 flex flex-col items-center gap-2">
               <div
                 className="w-full rounded-md bg-blue-300"

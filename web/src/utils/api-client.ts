@@ -15,7 +15,6 @@ export const apiPost = async (
     'Content-type': 'application/json',
     'x-api-key': API_STATIC_KEY,
     Authorization: '',
-    cache: 'no-cache',
   }
 
   // if a refresh token exists we must be in a logged in state

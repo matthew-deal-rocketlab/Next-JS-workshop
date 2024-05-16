@@ -219,13 +219,7 @@ export const createInvoice = async (input: JsonQLInput, rc: ResolverContext): Pr
   `
 
   let result = null
-  result = await dbQuery(rc.db, queryText, [
-    input.invoiceId,
-    input.customerId,
-    input.amountInCents,
-    input.status,
-    input.date,
-  ])
+  result = await dbQuery(rc.db, queryText, [input.invoiceId, input.customerId, input.amount, input.status, input.date])
 
   if (result.error) return { error: result.error }
   if (!result || result.rowCount == 0) return { error: 'no result' }
@@ -239,13 +233,16 @@ export const updateInvoice = async (input: JsonQLInput, rc: ResolverContext): Pr
   if (!useruid) return ERROR_INVALID_CREDENTIALS
 
   const queryText = `
-    UPDATE invoices
-    SET customer_id = $1, amount = $2, status = $3
-    WHERE id = $4
+  UPDATE invoices
+  SET customer_id = $1, amount = $2, status = $3
+  WHERE id = $4
+  RETURNING *
   `
 
   let result = null
-  result = await dbQuery(rc.db, queryText, [input.customerId, input.amountInCents, input.status, input.id])
+  result = await dbQuery(rc.db, queryText, [input.customer_id, input.amount, input.status, input.id])
+
+  console.log('updateInvoice', result)
 
   if (result.error) return { error: result.error }
   if (!result || result.rowCount == 0) return { error: 'no result' }
